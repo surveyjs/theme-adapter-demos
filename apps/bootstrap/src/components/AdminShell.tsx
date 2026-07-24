@@ -53,7 +53,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </div>
       </Navbar>
 
-      <div className="d-flex flex-grow-1" style={{ height: 0 }}>
+      <div className="d-flex flex-grow-1" style={{ minHeight: 0 }}>
         {/* Persistent sidebar (large screens) */}
         <aside
           className="d-none d-lg-block border-end bg-body"
@@ -76,7 +76,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         <main
           className={isBuilder ? "flex-grow-1" : "flex-grow-1 p-3 p-md-4"}
-          style={{ minWidth: 0 }}
+          style={{ minWidth: 0, minHeight: 0, overflowY: "auto" }}
         >
           {isBuilder ? (
             children
