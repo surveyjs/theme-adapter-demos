@@ -20,7 +20,7 @@ export function BorderlessToggle() {
   }
 
   return (
-    <Label htmlFor="borderless-questions" className="gap-2">
+    <Label htmlFor="borderless-questions" className="gap-2 flex items-center">
       <Switch
         id="borderless-questions"
         checked={borderless}
