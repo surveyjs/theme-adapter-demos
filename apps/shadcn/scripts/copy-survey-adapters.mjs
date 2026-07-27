@@ -35,8 +35,6 @@ const watchMode = useLocal && process.argv.includes("--watch");
 // Keep in sync with VISUAL_STYLES in src/lib/styles.ts (a .mjs script can't
 // import the TS module).
 const styleIds = [
-  "default",
-  "new-york",
   "base-nova",
   "base-vega",
   "base-maia",
@@ -45,6 +43,8 @@ const styleIds = [
   "base-luma",
   "base-sera",
   "base-rhea",
+  "default",
+  "new-york",
 ];
 
 /**
