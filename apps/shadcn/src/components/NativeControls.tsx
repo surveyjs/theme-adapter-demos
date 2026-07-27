@@ -10,7 +10,6 @@ import {
 // Comparison column shows the active style's REAL shadcn button (per-style,
 // CLI-generated). Aliased to Button so every form button below picks it up.
 import { StyledButton as Button } from "@/components/ui/styled-button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
   Combobox,
@@ -808,14 +807,6 @@ export function NativeControls() {
               </Field>
               </FieldGroup>
             </FieldGroup>
-          )}
-
-          {showErrors && !isPageValid(currentPage) && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                Please fix the highlighted fields before continuing.
-              </AlertDescription>
-            </Alert>
           )}
 
           {/* ── Wizard navigation ─────────────────────────────────── */}

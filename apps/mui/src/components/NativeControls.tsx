@@ -6,7 +6,6 @@ import {
   type FormEvent,
   type PointerEvent,
 } from "react";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -712,12 +711,6 @@ export function NativeControls() {
                 sx={{ maxWidth: { sm: "calc(50% - 8px)" } }}
               />
             </Stack>
-          )}
-
-          {showErrors && !isPageValid(currentPage) && (
-            <Alert severity="error" sx={{ mt: 3, py: 0.5 }}>
-              Please fix the highlighted fields before continuing.
-            </Alert>
           )}
 
           {/* ── Wizard navigation ─────────────────────────────────── */}

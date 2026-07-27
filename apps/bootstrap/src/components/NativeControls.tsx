@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type ChangeEvent, type FormEvent, type PointerEvent } from "react";
-import { Alert, Button, Card, Col, Form, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
 import { medicalFormJson, medicalFormSample } from "@adapter/schemas";
 import { Trash } from 'react-bootstrap-icons';
 import { FormCompleted } from "./FormCompleted";
@@ -707,12 +707,6 @@ export function NativeControls() {
                 />
               </Form.Group>
             </>
-          )}
-
-          {showErrors && !isPageValid(currentPage) && (
-            <Alert variant="danger" className="py-2 small mt-4 mb-0">
-              Please fix the highlighted fields before continuing.
-            </Alert>
           )}
 
           {/* ── Wizard navigation ─────────────────────────────────── */}
