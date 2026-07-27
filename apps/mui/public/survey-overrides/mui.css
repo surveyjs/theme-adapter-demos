@@ -8,6 +8,43 @@
  * use SurveyJS class selectors only when tokens are not enough.
  */
 
+/* ── container padding ────────────────────────────────────────────────────
+   SurveyForm drops the survey straight into a `<Card variant="outlined">`
+   with no `<CardContent>`, so the survey has to supply the inner padding the
+   native column gets from CardContent (16px). That is a consequence of how
+   this app nests the form, not of how any MUI component looks, so it stays
+   out of the adapter. */
+.sd-body.sd-body--responsive,
+.sd-progress-buttons,
+.sv-header__content {
+  padding: 16px;
+}
+
+/* ── responsive ───────────────────────────────────────────────────────────
+   SurveyJS' own mobile mode is off, so the survey follows the same MUI
+   breakpoints as the rest of this app. The native column stacks its rows
+   with `direction={{ xs: "column", sm: "row" }}`, i.e. below `sm` (600px);
+   these rules make the SurveyJS rows collapse at the same point. Which
+   breakpoint to pick is an app decision, so it is not part of the adapter. */
 .sd-root-modern {
   --sd-mobile-width: 0px;
+}
+
+/* xs — phones */
+@media (width < 600px) {
+  .sd-row.sd-row--multiple {
+    flex-direction: column;
+  }
+}
+
+/* sm and down — tablets */
+@media (width < 900px) {
+}
+
+/* md and down — small desktops */
+@media (width < 1200px) {
+}
+
+/* xl and up — large desktops */
+@media (width >= 1536px) {
 }

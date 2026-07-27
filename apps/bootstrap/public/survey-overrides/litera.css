@@ -8,3 +8,10 @@
  * Prefer `--sjs2-*` token overrides on `.sjs-theme-overrides` when possible;
  * use SurveyJS class selectors only when tokens are not enough.
  */
+
+.sjs-theme-overrides {
+  /* Litera's `.lead` colour. The survey description imitates the native
+     column's `<p className="lead">`, an app choice rather than a Bootstrap
+     component default, so it is set here instead of in the adapter. */
+  --sjs2-color-component-header-default-description: #868e96;
+}

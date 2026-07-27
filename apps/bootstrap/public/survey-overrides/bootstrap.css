@@ -15,6 +15,15 @@
   --sjs2-layout-component-page-content-area-gap-horizontal: 1rem;
 
   --sjs2-layout-component-page-footer-action-group-gap: 0.5rem;
+
+  /* The survey description mirrors the native column's `<p className="lead">`.
+     `.lead` is a utility this app opts into, not part of how a Bootstrap
+     component looks by default, so the adapter does not ship it. */
+  --sjs2-typography-font-size-component-header-description: 1.25rem;
+  --sjs2-typography-font-weight-component-header-description: 300;
+
+  /* Circular step markers — see the stepper section below. */
+  --sjs2-radius-component-stepper-item: 100%;
 }
 
 .sv-header__title~.sv-header__description {
@@ -28,7 +37,13 @@
 
 }
 
-/* stepper */
+/* ── stepper ──────────────────────────────────────────────────────────────
+   Bootstrap has NO stepper component, so there is nothing for the SurveyJS
+   adapter to imitate: the native column's wizard is hand-built here (see
+   `.native-stepper` in src/components/NativeControls.css). Everything below
+   matches the SurveyJS progress bar to that app-owned widget — numbered
+   1.5rem circles in `--bs-secondary-bg`, 0.875rem/500 titles underneath —
+   which is why it lives with the app rather than in the adapter. */
 .sd-progress-buttons {
   padding-top: 1rem;
   padding-bottom: 2rem;
@@ -49,7 +64,36 @@
 }
 
 .sd-progress-buttons__page-title {
+  font-size: 0.875rem;
+  font-weight: 500;
   line-height: 1.5;
+  color: var(--bs-body-color);
+}
+
+.sd-progress-buttons__list li:first-child,
+.sd-progress-buttons__list li:last-child {
+  align-items: center;
+}
+
+.sd-progress-buttons--numbered .sd-progress-buttons__button {
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-secondary-color);
+  font-size: 0.75rem;
+  font-weight: 400;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.sd-progress-buttons--numbered.sd-progress-buttons--titles-bottom .sd-progress-buttons__list li:after {
+  top: 0.75rem;
+  bottom: unset;
+}
+
+.sd-progress-buttons--numbered .sd-progress-buttons__list li::after,
+.sd-progress-buttons--numbered .sd-progress-buttons__list li:nth-child(2):not(:last-child)::after,
+.sd-progress-buttons--numbered .sd-progress-buttons__list li:nth-child(n + 3):last-child::after {
+  width: calc(100% - 1.5rem);
+  right: calc(50% + 0.75rem);
 }
 
 /* body */
@@ -71,6 +115,36 @@
   padding-top: 1.5rem;
 }
 
+/* ── responsive ───────────────────────────────────────────────────────────
+   SurveyJS' own mobile mode is off (`--sd-mobile-width: 0px`), so the survey
+   follows the same Bootstrap breakpoints as the rest of this app. The native
+   column lays its fields out with `<Form.Group as={Col} md={6}>`, i.e. two
+   columns down to `md`; these rules make the SurveyJS rows collapse at the
+   same point. Which breakpoint to pick is an app decision, so it is not part
+   of the adapter. */
 .sd-root-modern {
   --sd-mobile-width: 0px;
+}
+
+/* xs — phones */
+@media (width < 576px) {
+}
+
+/* sm and down */
+@media (width < 768px) {
+  .sd-row.sd-row--multiple {
+    flex-direction: column;
+  }
+}
+
+/* md and down */
+@media (width < 992px) {
+}
+
+/* lg and down */
+@media (width < 1200px) {
+}
+
+/* xxl and up */
+@media (width >= 1400px) {
 }
