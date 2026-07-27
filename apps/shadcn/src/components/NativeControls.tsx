@@ -57,6 +57,7 @@ import {
   StepperSeparator,
 } from "@/components/ui/stepper";
 import { FormCompleted } from "./FormCompleted";
+import { RequiredLabel, RequiredMark } from "./RequiredLabel";
 
 /**
  * Hand-built shadcn/ui twin of the SurveyJS medical-intake form
@@ -315,7 +316,7 @@ export function NativeControls() {
             <FieldGroup>
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
                 <Field data-invalid={showErrors && errors.firstName}>
-                  <FieldLabel htmlFor="nf-first">First name</FieldLabel>
+                  <RequiredLabel htmlFor="nf-first">First name</RequiredLabel>
                   <Input
                     id="nf-first"
                     value={firstName}
@@ -327,7 +328,7 @@ export function NativeControls() {
                   )}
                 </Field>
                 <Field data-invalid={showErrors && errors.lastName}>
-                  <FieldLabel htmlFor="nf-last">Last name</FieldLabel>
+                  <RequiredLabel htmlFor="nf-last">Last name</RequiredLabel>
                   <Input
                     id="nf-last"
                     value={lastName}
@@ -342,7 +343,7 @@ export function NativeControls() {
 
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
                 <Field data-invalid={showErrors && errors.dob}>
-                  <FieldLabel htmlFor="nf-dob">Date of birth</FieldLabel>
+                  <RequiredLabel htmlFor="nf-dob">Date of birth</RequiredLabel>
                   <Input
                     id="nf-dob"
                     type="date"
@@ -425,7 +426,7 @@ export function NativeControls() {
                   <FieldGroup>
                     <FieldGroup className="grid gap-4 sm:grid-cols-2">
                       <Field data-invalid={showErrors && errors.carrier}>
-                        <FieldLabel htmlFor="nf-carrier">Insurance carrier</FieldLabel>
+                        <RequiredLabel htmlFor="nf-carrier">Insurance carrier</RequiredLabel>
                         <Input
                           id="nf-carrier"
                           value={carrier}
@@ -437,7 +438,7 @@ export function NativeControls() {
                         )}
                       </Field>
                       <Field data-invalid={showErrors && errors.memberId}>
-                        <FieldLabel htmlFor="nf-member">Member ID</FieldLabel>
+                        <RequiredLabel htmlFor="nf-member">Member ID</RequiredLabel>
                         <Input
                           id="nf-member"
                           value={memberId}
@@ -504,7 +505,7 @@ export function NativeControls() {
                   <CardContent>
                     <FieldGroup className="grid gap-4 sm:grid-cols-2">
                       <Field data-invalid={showErrors && errors.carrier2}>
-                        <FieldLabel htmlFor="nf-carrier2">Insurance carrier</FieldLabel>
+                        <RequiredLabel htmlFor="nf-carrier2">Insurance carrier</RequiredLabel>
                         <Input
                           id="nf-carrier2"
                           value={carrier2}
@@ -516,7 +517,7 @@ export function NativeControls() {
                         )}
                       </Field>
                       <Field data-invalid={showErrors && errors.memberId2}>
-                        <FieldLabel htmlFor="nf-member2">Member ID</FieldLabel>
+                        <RequiredLabel htmlFor="nf-member2">Member ID</RequiredLabel>
                         <Input
                           id="nf-member2"
                           value={memberId2}
@@ -594,7 +595,9 @@ export function NativeControls() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="text-center">Allergen</TableHead>
+                        <TableHead className="text-center">
+                          Allergen <RequiredMark />
+                        </TableHead>
                         <TableHead className="text-center">Severity</TableHead>
                         <TableHead className="text-center">Reaction</TableHead>
                         <TableHead />
@@ -701,9 +704,9 @@ export function NativeControls() {
                   onCheckedChange={(checked: boolean | "indeterminate") => setConsentTreatment(checked === true)}
                 />
                 <FieldContent>
-                  <FieldLabel htmlFor="nf-consent-treatment">
+                  <RequiredLabel htmlFor="nf-consent-treatment">
                     I consent to treatment
-                  </FieldLabel>
+                  </RequiredLabel>
                   {showErrors && errors.consentTreatment && (
                     <FieldError>Consent to treatment is required.</FieldError>
                   )}
@@ -720,9 +723,9 @@ export function NativeControls() {
                   onCheckedChange={(checked: boolean | "indeterminate") => setConsentPrivacy(checked === true)}
                 />
                 <FieldContent>
-                  <FieldLabel htmlFor="nf-consent-privacy">
+                  <RequiredLabel htmlFor="nf-consent-privacy">
                     I acknowledge the privacy practices (HIPAA)
-                  </FieldLabel>
+                  </RequiredLabel>
                   {showErrors && errors.consentPrivacy && (
                     <FieldError>Acknowledgement is required.</FieldError>
                   )}

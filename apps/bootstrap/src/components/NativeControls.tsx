@@ -5,6 +5,7 @@ import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
 import { medicalFormJson, medicalFormSample } from "@adapter/schemas";
 import { Trash } from 'react-bootstrap-icons';
 import { FormCompleted } from "./FormCompleted";
+import { RequiredLabel, RequiredMark } from "./RequiredLabel";
 import "./NativeControls.css";
 
 /**
@@ -267,7 +268,7 @@ export function NativeControls() {
             <>
               <Row className="mb-3">
                 <Form.Group as={Col} md={6} controlId="nf-first-name">
-                  <Form.Label>First name</Form.Label>
+                  <RequiredLabel>First name</RequiredLabel>
                   <Form.Control
                     type="text"
                     value={firstName}
@@ -280,7 +281,7 @@ export function NativeControls() {
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} md={6} controlId="nf-last-name">
-                  <Form.Label>Last name</Form.Label>
+                  <RequiredLabel>Last name</RequiredLabel>
                   <Form.Control
                     type="text"
                     value={lastName}
@@ -296,7 +297,7 @@ export function NativeControls() {
 
               <Row className="mb-3">
                 <Form.Group as={Col} md={6} controlId="nf-dob">
-                  <Form.Label>Date of birth</Form.Label>
+                  <RequiredLabel>Date of birth</RequiredLabel>
                   <Form.Control
                     type="date"
                     value={dob}
@@ -370,7 +371,7 @@ export function NativeControls() {
                 <Card.Title>Primary insurance</Card.Title>
                 <Row className="mb-3">
                   <Form.Group as={Col} md={6} controlId="nf-carrier">
-                    <Form.Label>Insurance carrier</Form.Label>
+                    <RequiredLabel>Insurance carrier</RequiredLabel>
                     <Form.Control
                       type="text"
                       value={carrier}
@@ -383,7 +384,7 @@ export function NativeControls() {
                     </Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group as={Col} md={6} controlId="nf-member-id">
-                    <Form.Label>Member ID</Form.Label>
+                    <RequiredLabel>Member ID</RequiredLabel>
                     <Form.Control
                       type="text"
                       value={memberId}
@@ -444,7 +445,7 @@ export function NativeControls() {
                   <Card.Title>Secondary insurance</Card.Title>
                   <Row>
                     <Form.Group as={Col} md={6} controlId="nf-carrier2">
-                      <Form.Label>Insurance carrier</Form.Label>
+                      <RequiredLabel>Insurance carrier</RequiredLabel>
                       <Form.Control
                         type="text"
                         value={carrier2}
@@ -457,7 +458,7 @@ export function NativeControls() {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md={6} controlId="nf-member-id2">
-                      <Form.Label>Member ID</Form.Label>
+                      <RequiredLabel>Member ID</RequiredLabel>
                       <Form.Control
                         type="text"
                         value={memberId2}
@@ -523,7 +524,9 @@ export function NativeControls() {
                 <Table className="mb-2 align-middle">
                   <thead>
                     <tr>
-                      <th scope="col" className="text-center fw-normal">Allergen</th>
+                      <th scope="col" className="text-center fw-normal">
+                        Allergen <RequiredMark />
+                      </th>
                       <th scope="col" className="text-center fw-normal" style={{ width: 140 }}>
                         Severity
                       </th>
@@ -614,7 +617,11 @@ export function NativeControls() {
                 <Form.Check
                   type="checkbox"
                   id="nf-consent-treatment"
-                  label="I consent to treatment"
+                  label={
+                    <>
+                      I consent to treatment <RequiredMark />
+                    </>
+                  }
                   checked={consentTreatment}
                   onChange={(e) => setConsentTreatment(e.target.checked)}
                   isInvalid={showErrors && errors.consentTreatment}
@@ -626,7 +633,11 @@ export function NativeControls() {
                 <Form.Check
                   type="checkbox"
                   id="nf-consent-privacy"
-                  label="I acknowledge the privacy practices (HIPAA)"
+                  label={
+                    <>
+                      I acknowledge the privacy practices (HIPAA) <RequiredMark />
+                    </>
+                  }
                   checked={consentPrivacy}
                   onChange={(e) => setConsentPrivacy(e.target.checked)}
                   isInvalid={showErrors && errors.consentPrivacy}

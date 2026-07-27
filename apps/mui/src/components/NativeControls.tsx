@@ -34,6 +34,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { medicalFormJson, medicalFormSample } from "@adapter/schemas";
 import { FormCompleted } from "./FormCompleted";
+import { RequiredMark } from "./RequiredLabel";
 
 /**
  * Hand-built Material UI twin of the SurveyJS medical-intake form
@@ -513,7 +514,9 @@ export function NativeControls() {
                   <Table sx={{ mb: 1 }}>
                     <TableHead>
                       <TableRow>
-                        <TableCell  align="center">Allergen</TableCell>
+                        <TableCell align="center">
+                          Allergen <RequiredMark />
+                        </TableCell>
                         <TableCell sx={{ width: 140 }} align="center">Severity</TableCell>
                         <TableCell align="center">Reaction</TableCell>
                         <TableCell sx={{ width: 48 }} />
@@ -525,7 +528,7 @@ export function NativeControls() {
                           <TableCell>
                             <TextField
                               fullWidth
-                              placeholder="Allergen *"
+                              placeholder="Allergen"
                               aria-label="Allergen"
                               value={allergy.allergen}
                               onChange={(e) => updateAllergy(index, "allergen", e.target.value)}
@@ -599,6 +602,7 @@ export function NativeControls() {
             <Stack spacing={2}>
               <FormControl error={showErrors && errors.consentTreatment}>
                 <FormControlLabel
+                  required
                   control={
                     <Checkbox
                       checked={consentTreatment}
@@ -614,6 +618,7 @@ export function NativeControls() {
 
               <FormControl error={showErrors && errors.consentPrivacy}>
                 <FormControlLabel
+                  required
                   control={
                     <Checkbox
                       checked={consentPrivacy}
