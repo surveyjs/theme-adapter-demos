@@ -9,9 +9,10 @@
     "apps/*"
   ],
   "scripts": {
-    "install:all": "npm install --workspaces --include-workspace-root && npm run install:ui --workspace @adapter/shadcn",
+    "postinstall": "npm run install:ui --workspace @adapter/shadcn",
+    "install:all": "npm install --workspaces --include-workspace-root",
     "install:bootstrap": "npm install --workspace @adapter/bootstrap",
-    "install:shadcn": "npm install --workspace @adapter/shadcn && npm run install:ui --workspace @adapter/shadcn",
+    "install:shadcn": "npm install --workspace @adapter/shadcn",
     "install:mui": "npm install --workspace @adapter/mui",
     "dev": "turbo run dev",
     "dev:bootstrap": "concurrently -k -n core,react-ui,demo -c blue,magenta,green \"npm run watch:dev --prefix ../survey-library/packages/survey-core\" \"npm run watch:dev --prefix ../survey-library/packages/survey-react-ui\" \"npm run dev --workspace @adapter/bootstrap\"",
