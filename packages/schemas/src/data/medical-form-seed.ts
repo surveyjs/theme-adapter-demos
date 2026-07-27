@@ -9,8 +9,6 @@ import type { SurveyData } from "../types";
  * object, so the SurveyJS form and its hand-built twin prefill to identical
  * answers. Renderer-agnostic: depends on nothing but `SurveyData`.
  *
- * The signature (a drawn canvas) is intentionally omitted — it can't be
- * represented as seed data and neither column can replay a drawn stroke.
  */
 export const medicalFormSample: SurveyData = {
   // Patient
@@ -46,5 +44,6 @@ export const medicalFormSample: SurveyData = {
   // Consent
   consentTreatment: true,
   consentPrivacy: true,
+  signature: "Jordan Avery",
   signedDate: "2026-06-29",
 };

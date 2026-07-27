@@ -1,11 +1,9 @@
 "use client";
 
 import {
-  useRef,
   useState,
   type ChangeEvent,
   type FormEvent,
-  type PointerEvent,
 } from "react";
 // Comparison column shows the active style's REAL shadcn button (per-style,
 // CLI-generated). Aliased to Button so every form button below picks it up.
@@ -69,7 +67,7 @@ import { FormCompleted } from "./FormCompleted";
  * Mirrors the SAME chrome (the survey title + description) and the SAME
  * behaviours: controlled inputs, per-page required-field validation that blocks
  * Next, a conditional secondary-insurance section, dynamic add/remove allergy
- * rows, a drawable signature pad, and a final Complete that validates the whole
+ * rows, and a final Complete that validates the whole
  * form and shows a success state.
  *
  * This column is deliberately UNBRIDGED: it is the "what you'd hand-write per
@@ -147,54 +145,10 @@ export function NativeControls() {
   // Consent
   const [consentTreatment, setConsentTreatment] = useState(false);
   const [consentPrivacy, setConsentPrivacy] = useState(false);
+  const [signature, setSignature] = useState("");
   const [signedDate, setSignedDate] = useState("");
 
   const [submitted, setSubmitted] = useState(false);
-
-  // Signature pad
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const drawing = useRef(false);
-
-  function pointerPos(e: PointerEvent<HTMLCanvasElement>) {
-    const canvas = canvasRef.current!;
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: ((e.clientX - rect.left) / rect.width) * canvas.width,
-      y: ((e.clientY - rect.top) / rect.height) * canvas.height,
-    };
-  }
-
-  function startStroke(e: PointerEvent<HTMLCanvasElement>) {
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
-    drawing.current = true;
-    const { x, y } = pointerPos(e);
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    canvasRef.current?.setPointerCapture(e.pointerId);
-  }
-
-  function moveStroke(e: PointerEvent<HTMLCanvasElement>) {
-    if (!drawing.current) return;
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
-    const { x, y } = pointerPos(e);
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "currentColor";
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  }
-
-  function endStroke() {
-    drawing.current = false;
-  }
-
-  function clearSignature() {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
 
   // Dynamic allergy rows
   function addAllergy() {
@@ -309,6 +263,7 @@ export function NativeControls() {
       case 3:
         setConsentTreatment(s.consentTreatment as boolean);
         setConsentPrivacy(s.consentPrivacy as boolean);
+        setSignature(s.signature as string);
         setSignedDate(s.signedDate as string);
         break;
     }
@@ -776,24 +731,13 @@ export function NativeControls() {
 
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
               <Field>
-                <FieldLabel>Signature</FieldLabel>
-                <Card>
-                  <CardContent>
-                    <canvas
-                      ref={canvasRef}
-                      width={400}
-                      height={140}
-                      style={{ touchAction: "none", cursor: "crosshair", display: "block", width: "100%" }}
-                      onPointerDown={startStroke}
-                      onPointerMove={moveStroke}
-                      onPointerUp={endStroke}
-                      onPointerLeave={endStroke}
-                    />
-                  </CardContent>
-                </Card>
-                <Button type="button" variant="link" size="sm" onClick={clearSignature}>
-                  Clear signature
-                </Button>
+                <FieldLabel htmlFor="nf-signature">Signature</FieldLabel>
+                <Input
+                  id="nf-signature"
+                  type="text"
+                  value={signature}
+                  onChange={(e) => setSignature(e.target.value)}
+                />
               </Field>
 
               <Field>
