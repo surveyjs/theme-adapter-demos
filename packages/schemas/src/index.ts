@@ -39,6 +39,10 @@ export {
   navItems,
   routes,
   getNavItem,
+  themedPath,
+  themeFromPathname,
+  pagePathFromPathname,
+  isActiveRoute,
   type NavItem,
   type NavId,
 } from "./ia/navigation";

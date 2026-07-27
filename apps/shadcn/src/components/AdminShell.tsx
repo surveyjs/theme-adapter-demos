@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { routes } from "@adapter/schemas";
+import { isActiveRoute, routes } from "@adapter/schemas";
 import { MenuIcon, LayersIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,7 +49,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   // padding, and a height pinned to the area below the sticky header. Every
   // other route keeps the padded, max-width reading column.
   const pathname = usePathname();
-  const isBuilder = pathname === routes.builder;
+  const isBuilder = isActiveRoute(pathname, routes.builder);
 
   return (
     <div className="bg-background text-foreground flex h-svh min-h-svh flex-col">

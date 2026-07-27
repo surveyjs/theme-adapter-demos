@@ -11,7 +11,7 @@ import type { SurveyJSON } from "@adapter/schemas";
 //                              consuming the SAME `--sjs2-*` custom properties
 //                              on the SAME `.sjs-theme-overrides` theme root
 //   3. the shadcn adapter    — loaded from survey-core/themes/adapters by
-//                              <ShadcnSurveyAdapterStyles /> (ThemeProvider).
+//                              [theme]/layout.
 //
 // KEY INSIGHT (prompt 4): there is intentionally NO separate Creator adapter.
 // The Creator emits the same `.sjs-theme-overrides` theme root the form does, so

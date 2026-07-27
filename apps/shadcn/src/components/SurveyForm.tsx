@@ -18,7 +18,7 @@ import { FormCompleted } from "./FormCompleted";
 // adapter's `--sjs2-*` overrides win by source order. The active visual-style
 // adapter, shared overrides (`/survey-overrides/shadcn.css`), and optional
 // per-style overrides (`/survey-overrides/<id>.css`) are loaded by
-// <ShadcnSurveyAdapterStyles /> (see ThemeProvider) and track `data-shadcn-style`
+// linked from [theme]/layout and track `data-shadcn-style`
 // on <html>; light/dark flips shadcn tokens via `.dark` on the same root.
 // Host overrides load AFTER the adapter for custom app chrome the adapter
 // cannot cover.

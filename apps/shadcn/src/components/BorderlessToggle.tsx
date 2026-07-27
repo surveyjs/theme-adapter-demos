@@ -1,29 +1,20 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { routes } from "@adapter/schemas";
+import { isActiveRoute, pagePathFromPathname, routes } from "@adapter/schemas";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useBorderlessMode } from "./BorderlessMode";
 
-/**
- * Header control for the "Borderless questions" mode (survey-core `isCompact`).
- *
- * It lives in the top menu and shows only where it does something: the Dashboard
- * (no survey), the Builder (the Creator owns its own chrome) and Records (its
- * questions all live inside a panel, so `isCompact` has no visible effect there)
- * render nothing. The state is shared with the pages' live SurveyModels through
- * BorderlessModeContext. A native shadcn/ui <Switch> with a <Label> — host
- * chrome, not a SurveyJS control.
- */
 export function BorderlessToggle() {
   const pathname = usePathname();
   const { borderless, setBorderless } = useBorderlessMode();
+  const page = pagePathFromPathname(pathname);
 
   if (
-    pathname === routes.home ||
-    pathname === routes.builder ||
-    pathname === routes.records
+    page === routes.home ||
+    isActiveRoute(pathname, routes.builder) ||
+    isActiveRoute(pathname, routes.records)
   ) {
     return null;
   }

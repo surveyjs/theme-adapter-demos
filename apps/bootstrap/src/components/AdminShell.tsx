@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { routes } from "@adapter/schemas";
+import { isActiveRoute, routes } from "@adapter/schemas";
 import { Container, Navbar, Offcanvas } from "react-bootstrap";
 import { Sidebar } from "./Sidebar";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -21,7 +21,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   // filling the area below the sticky header. Every other route keeps the
   // padded reading column.
   const pathname = usePathname();
-  const isBuilder = pathname === routes.builder;
+  const isBuilder = isActiveRoute(pathname, routes.builder);
 
   return (
     <div className="d-flex flex-column min-vh-100 vh-100 bg-body-tertiary">
