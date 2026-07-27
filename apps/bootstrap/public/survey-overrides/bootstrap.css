@@ -9,6 +9,8 @@
  */
 
 .sjs-theme-overrides {
+  --sjs2-color-component-header-default-description: unset;
+
   --sjs2-typography-line-height-component-header-title: 1.2;
 
   --sjs2-layout-component-page-content-area-gap-vertical: 1rem;
