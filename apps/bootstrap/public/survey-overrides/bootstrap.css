@@ -13,8 +13,20 @@
 
   --sjs2-typography-line-height-component-header-title: 1.2;
 
+  --sjs2-layout-component-survey-box-padding-top: 0;
+  --sjs2-layout-component-survey-box-padding-bottom: var(--bs-card-spacer-y);
+  --sjs2-layout-component-survey-box-gap-vertical: 0;
+
+  --sjs2-layout-component-survey-footer-padding-top: 1.5rem;
+  --sjs2-layout-component-survey-footer-padding-bottom: 0;
+  --sjs2-layout-component-survey-footer-padding-horizontal: var(--bs-card-spacer-x);
+  --sjs2-layout-component-survey-footer-action-group-gap: 0.5rem;
+
   --sjs2-layout-component-page-content-area-gap-vertical: 1rem;
   --sjs2-layout-component-page-content-area-gap-horizontal: 1rem;
+
+  --sjs2-layout-component-page-header-padding-horizontal: var(--bs-card-spacer-x);
+  --sjs2-layout-component-page-content-area-padding-horizontal: var(--bs-card-spacer-x);
 
   --sjs2-layout-component-page-footer-action-group-gap: 0.5rem;
 
@@ -97,15 +109,6 @@
   width: calc(100% - 1.5rem);
   right: calc(50% + 0.75rem);
 }
-
-/* body */
-.sd-body.sd-body--responsive {
-
-  /*padding: 0 var(--bs-card-spacer-x);*/
-
-}
-
-
 
 .sd-root--compact .sd-page,
 .sd-root--compact .sd-page__content {
