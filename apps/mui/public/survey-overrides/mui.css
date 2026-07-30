@@ -7,14 +7,50 @@
  * Prefer `--sjs2-*` token overrides on `.sjs-theme-overrides` when possible;
  * use SurveyJS class selectors only when tokens are not enough.
  */
+/* Layout/typography below mirrors NativeControls (MUI spacing unit = 8px):
+   outer Box `p: 2`, field Stack `spacing={3}`, row Stack `spacing={2}`,
+   footer Stack `spacing={1}` + `mt: 3`, titles as Typography h5/h6. */
+.sjs-theme-overrides {
+  /* Typography h5 fontWeight={600} — adapter already sets size/weight. */
+  --sjs2-typography-line-height-component-header-title: 1.334;
+
+  /* Outer Box `p: 2`. Top comes from the header; bottom matches the chrome. */
+  --sjs2-layout-component-survey-box-padding-top: 0;
+  --sjs2-layout-component-survey-box-padding-bottom: 16px;
+  --sjs2-layout-component-survey-box-gap-vertical: 0;
+
+  /* Footer Stack `spacing={1}` `sx={{ mt: 3 }}`. */
+  --sjs2-layout-component-survey-footer-padding-top: 24px;
+  --sjs2-layout-component-survey-footer-padding-bottom: 0;
+  --sjs2-layout-component-survey-footer-padding-horizontal: 16px;
+  --sjs2-layout-component-survey-footer-action-group-gap: 8px;
+
+  /* Page title Typography h6 `sx={{ mb: 2 }}` → gap to content. */
+  --sjs2-layout-component-page-box-gap-vertical: 16px;
+  /* Stack `spacing={3}` between questions. */
+  --sjs2-layout-component-page-content-area-gap-vertical: 24px;
+  /* Stack `spacing={2}` in multi-column rows. */
+  --sjs2-layout-component-page-content-area-gap-horizontal: 16px;
+
+  --sjs2-layout-component-page-header-padding-horizontal: 16px;
+  --sjs2-layout-component-page-header-gap-vertical: 0;
+  --sjs2-layout-component-page-content-area-padding-horizontal: 16px;
+  --sjs2-layout-component-page-box-gap-vertical: 16px;
+
+  --sjs2-layout-component-page-footer-action-group-gap: 8px;
+
+  /* Page title is Typography variant="h6" (lineHeight 1.6). */
+  --sjs2-typography-line-height-component-page-title: 1.6;
+
+  /* MUI <Stepper> uses circular step icons. */
+  --sjs2-radius-component-stepper-item: 100%;
+}
 
 /* ── container padding ────────────────────────────────────────────────────
    SurveyForm drops the survey into a bordered rectangle with no inner pad, so
-   the survey has to supply the padding the native column gets from its own
-   content padding (16px). That is a consequence of how this app nests the
-   form, not of how any MUI component looks, so it stays out of the adapter. */
-.sd-body.sd-body--responsive,
-.sd-progress-buttons,
+   the survey has to supply the padding the native column gets from Box `p: 2`
+   (16px). That is a consequence of how this app nests the form, not of how
+   any MUI component looks, so it stays out of the adapter. */
 .sv-header__content {
   padding: 16px;
 }

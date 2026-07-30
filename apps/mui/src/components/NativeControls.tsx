@@ -292,7 +292,7 @@ export function NativeControls() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   error={showErrors && errors.firstName}
-                  helperText={showErrors && errors.firstName ? "First name is required." : " "}
+                  helperText={showErrors && errors.firstName ? "First name is required." : undefined}
                   required
                 />
                 <TextField
@@ -302,7 +302,7 @@ export function NativeControls() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   error={showErrors && errors.lastName}
-                  helperText={showErrors && errors.lastName ? "Last name is required." : " "}
+                  helperText={showErrors && errors.lastName ? "Last name is required." : undefined}
                   required
                 />
               </Stack>
@@ -317,7 +317,7 @@ export function NativeControls() {
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   error={showErrors && errors.dob}
-                  helperText={showErrors && errors.dob ? "Date of birth is required." : " "}
+                  helperText={showErrors && errors.dob ? "Date of birth is required." : undefined}
                   required
                 />
                 <FormControl fullWidth>
@@ -379,7 +379,7 @@ export function NativeControls() {
                         value={carrier}
                         onChange={(e) => setCarrier(e.target.value)}
                         error={showErrors && errors.carrier}
-                        helperText={showErrors && errors.carrier ? "Insurance carrier is required." : " "}
+                        helperText={showErrors && errors.carrier ? "Insurance carrier is required." : undefined}
                         required
                       />
                       <TextField
@@ -388,7 +388,7 @@ export function NativeControls() {
                         value={memberId}
                         onChange={(e) => setMemberId(e.target.value)}
                         error={showErrors && errors.memberId}
-                        helperText={showErrors && errors.memberId ? "Member ID is required." : " "}
+                        helperText={showErrors && errors.memberId ? "Member ID is required." : undefined}
                         required
                       />
                     </Stack>
@@ -440,7 +440,7 @@ export function NativeControls() {
                         value={carrier2}
                         onChange={(e) => setCarrier2(e.target.value)}
                         error={showErrors && errors.carrier2}
-                        helperText={showErrors && errors.carrier2 ? "Insurance carrier is required." : " "}
+                        helperText={showErrors && errors.carrier2 ? "Insurance carrier is required." : undefined}
                         required
                       />
                       <TextField
@@ -449,7 +449,7 @@ export function NativeControls() {
                         value={memberId2}
                         onChange={(e) => setMemberId2(e.target.value)}
                         error={showErrors && errors.memberId2}
-                        helperText={showErrors && errors.memberId2 ? "Member ID is required." : " "}
+                        helperText={showErrors && errors.memberId2 ? "Member ID is required." : undefined}
                         required
                       />
                     </Stack>
