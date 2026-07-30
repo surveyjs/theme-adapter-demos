@@ -54,6 +54,9 @@
 .sv-header__content {
   padding: 16px;
 }
+.sv-header__description {
+  margin-bottom: 14px;
+}
 
 /* ── responsive ───────────────────────────────────────────────────────────
    SurveyJS' own mobile mode is off, so the survey follows the same MUI
@@ -64,6 +67,11 @@
 .sd-root-modern {
   --sd-mobile-width: 0px;
 }
+
+.sd-progress-buttons {
+  padding: 0 16px 32px;
+}
+
 
 /* xs — phones */
 @media (width < 600px) {
