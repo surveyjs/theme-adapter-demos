@@ -9,11 +9,10 @@
  */
 
 /* ── container padding ────────────────────────────────────────────────────
-   SurveyForm drops the survey straight into a `<Card variant="outlined">`
-   with no `<CardContent>`, so the survey has to supply the inner padding the
-   native column gets from CardContent (16px). That is a consequence of how
-   this app nests the form, not of how any MUI component looks, so it stays
-   out of the adapter. */
+   SurveyForm drops the survey into a bordered rectangle with no inner pad, so
+   the survey has to supply the padding the native column gets from its own
+   content padding (16px). That is a consequence of how this app nests the
+   form, not of how any MUI component looks, so it stays out of the adapter. */
 .sd-body.sd-body--responsive,
 .sd-progress-buttons,
 .sv-header__content {

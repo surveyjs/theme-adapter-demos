@@ -14,27 +14,31 @@
   --sjs2-typography-line-height-component-header-title: 1.2;
 
   --sjs2-layout-component-survey-box-padding-top: 0;
-  --sjs2-layout-component-survey-box-padding-bottom: var(--bs-card-spacer-y);
+  --sjs2-layout-component-survey-box-padding-bottom: 1rem;
   --sjs2-layout-component-survey-box-gap-vertical: 0;
 
   --sjs2-layout-component-survey-footer-padding-top: 1.5rem;
   --sjs2-layout-component-survey-footer-padding-bottom: 0;
-  --sjs2-layout-component-survey-footer-padding-horizontal: var(--bs-card-spacer-x);
+  --sjs2-layout-component-survey-footer-padding-horizontal: 1rem;
   --sjs2-layout-component-survey-footer-action-group-gap: 0.5rem;
 
+  --sjs2-layout-component-page-box-gap-vertical: 1rem;
   --sjs2-layout-component-page-content-area-gap-vertical: 1rem;
   --sjs2-layout-component-page-content-area-gap-horizontal: 1rem;
 
-  --sjs2-layout-component-page-header-padding-horizontal: var(--bs-card-spacer-x);
-  --sjs2-layout-component-page-content-area-padding-horizontal: var(--bs-card-spacer-x);
+  --sjs2-layout-component-page-header-padding-horizontal: 1rem;
+  --sjs2-layout-component-page-content-area-padding-horizontal: 1rem;
 
   --sjs2-layout-component-page-footer-action-group-gap: 0.5rem;
+  --sjs2-layout-component-page-content-area-gap-horizontal: 1.5rem;
 
   /* The survey description mirrors the native column's `<p className="lead">`.
      `.lead` is a utility this app opts into, not part of how a Bootstrap
      component looks by default, so the adapter does not ship it. */
   --sjs2-typography-font-size-component-header-description: 1.25rem;
   --sjs2-typography-font-weight-component-header-description: 300;
+
+  --sjs2-typography-line-height-component-page-title: 1.2;
 
   /* Circular step markers — see the stepper section below. */
   --sjs2-radius-component-stepper-item: 100%;
@@ -46,9 +50,7 @@
 
 /* header */
 .sv-header__content {
-
-  padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
-
+  padding: 1rem;
 }
 
 /* ── stepper ──────────────────────────────────────────────────────────────
@@ -61,6 +63,7 @@
 .sd-progress-buttons {
   padding-top: 1rem;
   padding-bottom: 2rem;
+  padding-inline: 1rem;
 }
 
 .sd-progress-buttons--titles-bottom .sd-progress-buttons__button {
@@ -108,16 +111,6 @@
 .sd-progress-buttons--numbered .sd-progress-buttons__list li:nth-child(n + 3):last-child::after {
   width: calc(100% - 1.5rem);
   right: calc(50% + 0.75rem);
-}
-
-.sd-root--compact .sd-page,
-.sd-root--compact .sd-page__content {
-  row-gap: var(--sjs2-layout-component-page-content-area-gap-vertical);
-}
-
-.sd-root--compact .sd-body.sd-body--responsive .sd-body__navigation,
-.sd-root--compact .sd-body.sd-body--static .sd-body__navigation {
-  padding-top: 1.5rem;
 }
 
 /* ── responsive ───────────────────────────────────────────────────────────

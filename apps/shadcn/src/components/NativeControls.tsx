@@ -21,7 +21,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -280,12 +279,15 @@ export function NativeControls() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Patient Intake (Native shadcn)</CardTitle>
-        <CardDescription>{medicalFormJson.description as string}</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="border p-6">
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold leading-none tracking-tight">
+            Patient Intake (Native shadcn)
+          </h2>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            {medicalFormJson.description as string}
+          </p>
+        </div>
         <FieldGroup>
           <Stepper value={String(currentPage)}>
             <StepperList aria-label="Form steps" className="gap-3">
@@ -307,7 +309,9 @@ export function NativeControls() {
             </StepperList>
           </Stepper>
 
-          <CardTitle>{PAGES[currentPage]}</CardTitle>
+          <h3 className="text-2xl font-semibold leading-none tracking-tight">
+            {PAGES[currentPage]}
+          </h3>
 
         <form noValidate onSubmit={handleSubmit}>
           <FieldGroup>
@@ -778,7 +782,6 @@ export function NativeControls() {
           </FieldGroup>
         </form>
         </FieldGroup>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

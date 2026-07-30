@@ -1,8 +1,7 @@
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 
 /**
  * Shared "form submitted" screen rendered by BOTH the SurveyJS column
@@ -21,21 +20,19 @@ export function FormCompleted({
   onEdit: () => void;
 }) {
   return (
-    <Card variant="outlined">
-      <CardContent>
-        <Alert severity="success" sx={{ mb: 0 }}>
-          <AlertTitle sx={{ fontWeight: 600 }}>{message}</AlertTitle>
-          <Button
-            variant="outlined"
-            color="success"
-            size="small"
-            sx={{ mt: 1 }}
-            onClick={onEdit}
-          >
-            Edit Response
-          </Button>
-        </Alert>
-      </CardContent>
-    </Card>
+    <Box sx={{ border: 1, borderColor: "divider", p: 2 }}>
+      <Alert severity="success" sx={{ mb: 0 }}>
+        <AlertTitle sx={{ fontWeight: 600 }}>{message}</AlertTitle>
+        <Button
+          variant="outlined"
+          color="success"
+          size="small"
+          sx={{ mt: 1 }}
+          onClick={onEdit}
+        >
+          Edit Response
+        </Button>
+      </Alert>
+    </Box>
   );
 }

@@ -203,48 +203,46 @@ export default function RecordsPage() {
         {/* SurveyJS owns ONLY this form. One schema, four lifecycle modes. */}
         <div className="col-12 col-xl-5">
           <div className="position-sticky" style={{ top: "5rem" }}>
-            <Card>
-              <Card.Header className="d-flex align-items-center justify-content-between gap-2">
-                <span className="fw-medium">{editor ? editorTitle : "Form"}</span>
-                {editor && (
-                  <div className="d-flex gap-2">
-                    {editor.mode === "view" && editor.record && (
-                      <Button
-                        size="sm"
-                        variant="outline-primary"
-                        onClick={() => open("edit", editor.record)}
-                      >
-                        Edit
-                      </Button>
-                    )}
+            <div className="d-flex align-items-center justify-content-between gap-2 mb-3">
+              <span className="fw-medium">{editor ? editorTitle : "Form"}</span>
+              {editor && (
+                <div className="d-flex gap-2">
+                  {editor.mode === "view" && editor.record && (
                     <Button
                       size="sm"
-                      variant="outline-secondary"
-                      onClick={() => setEditor(null)}
+                      variant="outline-primary"
+                      onClick={() => open("edit", editor.record)}
                     >
-                      Close
+                      Edit
                     </Button>
-                  </div>
-                )}
-              </Card.Header>
-              <Card.Body>
-                {editor ? (
-                  <SurveyForm
-                    key={editor.key}
-                    schema={insuranceClaimSchema}
-                    data={editor.record?.data}
-                    mode={editor.mode === "view" ? "display" : "edit"}
-                    onComplete={
-                      editor.mode === "view" ? undefined : handleComplete
-                    }
-                  />
-                ) : (
-                  <p className="text-body-secondary text-center py-5 mb-0">
-                    Select a record to view or edit, or create a new claim.
-                  </p>
-                )}
-              </Card.Body>
-            </Card>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="outline-secondary"
+                    onClick={() => setEditor(null)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              )}
+            </div>
+            {editor ? (
+              <SurveyForm
+                key={editor.key}
+                schema={insuranceClaimSchema}
+                data={editor.record?.data}
+                mode={editor.mode === "view" ? "display" : "edit"}
+                onComplete={
+                  editor.mode === "view" ? undefined : handleComplete
+                }
+              />
+            ) : (
+              <div className="border p-3">
+                <p className="text-body-secondary text-center py-5 mb-0">
+                  Select a record to view or edit, or create a new claim.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -226,8 +226,7 @@ export function NativeControls() {
   }
 
   return (
-    <Card>
-      <Card.Body>
+    <div className="border p-3">
         {/* Survey title + description — mirrors the SurveyJS column's header,
             sharing the schema's exact description so only the "(…)" suffix
             differs between the two forms. */}
@@ -483,7 +482,7 @@ export function NativeControls() {
               <Form.Label className="d-block">
                 Have you ever been diagnosed with any of the following?
               </Form.Label>
-              <Table className="mb-4 align-middle">
+              <Table className="align-middle">
                 <thead>
                   <tr>
                     <th scope="col" />
@@ -521,7 +520,7 @@ export function NativeControls() {
                 <div className="text-muted">No allergies added.</div>
               )}
               {allergies.length > 0 && (
-                <Table className="mb-2 align-middle">
+                <Table className="align-middle">
                   <thead>
                     <tr>
                       <th scope="col" className="text-center fw-normal">
@@ -591,7 +590,7 @@ export function NativeControls() {
               <Button
                 variant="light"
                 size="sm"
-                className="mb-4"
+                className="mt-2"
                 onClick={addAllergy}
               >
                 Add allergy
@@ -689,7 +688,6 @@ export function NativeControls() {
             </Button>
           </div>
         </Form>
-      </Card.Body>
-    </Card>
+    </div>
   );
 }
