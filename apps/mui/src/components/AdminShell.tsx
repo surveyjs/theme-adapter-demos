@@ -48,7 +48,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   );
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "background.default" }}>
+    <Box sx={{ display: "flex", height: "100vh", bgcolor: "background.default" }}>
       <AppBar
         position="fixed"
         color="default"
@@ -115,27 +115,33 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </Drawer>
       </Box>
 
+      {/* Column flex + `height: 0` / flexGrow on the content pane locks the
+          area below the AppBar spacer to the remaining viewport — same pattern
+          as the Bootstrap AdminShell (`vh-100` shell, `height: 0` + grow row,
+          `height: 100%` content). */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           minWidth: 0,
+          minHeight: 0,
+          height: "100%",
           width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-          ...(isBuilder && {
-            display: "flex",
-            flexDirection: "column",
-            minHeight: "100vh",
-          }),
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {/* Spacer matching the fixed AppBar height. */}
-        <Toolbar />
+        <Toolbar sx={{ flexShrink: 0 }} />
         {isBuilder ? (
           // Fill the remaining height below the AppBar spacer; the Creator inside
           // stretches to 100% of this region.
-          <Box sx={{ flexGrow: 1, minHeight: 0 }}>{children}</Box>
+          <Box sx={{ flexGrow: 1, minHeight: 0, height: 0 }}>{children}</Box>
         ) : (
-          <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 } }}>
+          <Container
+            maxWidth="xl"
+            sx={{ py: { xs: 3, md: 4 }, flexGrow: 1, minHeight: 0, height: 0 }}
+          >
             {children}
           </Container>
         )}

@@ -11,8 +11,6 @@ import { useBorderlessMode } from "./BorderlessMode";
 // This page adds NO adapter code — it reuses the existing stylesheet verbatim.
 import "survey-core/survey-core.min.css";
 import "survey-core/themes/adapters/mui.min.css";
-// Host-chrome sticky-TOC fix for the window-scrolled shell (see the CSS file).
-import "./AllQuestionsGallery.css";
 
 /**
  * All-questions gallery — the adapter's widest fidelity sweep. Builds ONE

@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { routes } from "@adapter/schemas";
+import { isActiveRoute, routes } from "@adapter/schemas";
 import { Container, Navbar, Offcanvas } from "react-bootstrap";
 import { Sidebar } from "./Sidebar";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -21,10 +21,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
   // filling the area below the sticky header. Every other route keeps the
   // padded reading column.
   const pathname = usePathname();
-  const isBuilder = pathname === routes.builder;
+  const isBuilder = isActiveRoute(pathname, routes.builder);
 
   return (
-    <div className="d-flex flex-column min-vh-100 bg-body-tertiary">
+    <div className="d-flex flex-column min-vh-100 vh-100 bg-body-tertiary">
       <Navbar
         as="header"
         sticky="top"
@@ -36,7 +36,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
           className="d-lg-none me-2"
           onClick={() => setNavOpen(true)}
         />
-        <Navbar.Brand className="fw-bold d-flex align-items-center gap-2">
+        <Navbar.Brand
+          className="fw-bold d-flex align-items-center gap-2"
+          style={{ color: "var(--bs-body-color)" }}
+        >
           <span aria-hidden>🧩</span>
           SurveyJS Theme Adapter
           <span className="badge text-bg-primary fw-normal">Bootstrap</span>
@@ -50,7 +53,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </div>
       </Navbar>
 
-      <div className="d-flex flex-grow-1">
+      <div className="d-flex flex-grow-1" style={{ minHeight: 0 }}>
         {/* Persistent sidebar (large screens) */}
         <aside
           className="d-none d-lg-block border-end bg-body"
@@ -73,12 +76,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         <main
           className={isBuilder ? "flex-grow-1" : "flex-grow-1 p-3 p-md-4"}
-          style={{ minWidth: 0 }}
+          style={{ minWidth: 0, minHeight: 0, overflowY: "auto" }}
         >
           {isBuilder ? (
             children
           ) : (
-            <Container fluid className="px-0">
+            <Container fluid className="px-0" style={{ height: "100%" }}>
               {children}
             </Container>
           )}

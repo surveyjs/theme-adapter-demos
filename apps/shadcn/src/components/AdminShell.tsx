@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { routes } from "@adapter/schemas";
+import { isActiveRoute, routes } from "@adapter/schemas";
 import { MenuIcon, LayersIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,11 +49,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
   // padding, and a height pinned to the area below the sticky header. Every
   // other route keeps the padded, max-width reading column.
   const pathname = usePathname();
-  const isBuilder = pathname === routes.builder;
+  const isBuilder = isActiveRoute(pathname, routes.builder);
 
   return (
-    <div className="bg-background text-foreground min-h-svh">
-      <header className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 flex h-14 items-center gap-3 border-b px-4 backdrop-blur">
+    <div className="bg-background text-foreground flex h-svh min-h-svh flex-col">
+      <header className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 flex h-14 shrink-0 items-center gap-3 border-b px-4 backdrop-blur">
         {/* Mobile nav trigger */}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
@@ -90,20 +90,23 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <div className="flex">
+      {/* `height: 0` + flex-1 locks this row to the space below the header so
+          survey / content children can use height: 100% without growing past
+          the viewport (same pattern as the Bootstrap AdminShell). */}
+      <div className="flex min-h-0 flex-1" style={{ height: 0 }}>
         {/* Permanent sidebar (lg+) */}
         <aside
-          className="bg-sidebar text-sidebar-foreground sticky top-14 hidden h-[calc(100svh-3.5rem)] shrink-0 overflow-y-auto border-r lg:block"
+          className="bg-sidebar text-sidebar-foreground hidden h-full shrink-0 overflow-y-auto border-r lg:block"
           style={{ width: SIDEBAR_WIDTH }}
         >
           <Sidebar />
         </aside>
 
-        <main className="min-w-0 flex-1">
+        <main className="min-h-0 min-w-0 flex-1">
           {isBuilder ? (
-            <div className="h-[calc(100svh-3.5rem)]">{children}</div>
+            <div className="h-full">{children}</div>
           ) : (
-            <div className="mx-auto w-full max-w-[96rem] px-4 py-6 sm:px-6 lg:py-8">
+            <div className="mx-auto h-full w-full max-w-[96rem] px-4 py-6 sm:px-6 lg:py-8">
               {children}
             </div>
           )}

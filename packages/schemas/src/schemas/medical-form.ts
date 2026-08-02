@@ -5,7 +5,7 @@ import type { SchemaDefinition, SurveyJSON } from "../types";
  *
  * Demonstrates: paged sections, demographics, insurance coverage with a
  * conditional secondary-insurance panel, a matrix of yes/no medical history,
- * allergies (dynamic rows), and a signature/consent step.
+ * allergies (dynamic rows), and a consent step.
  *
  * Representative V3 JSON — drop-in replaceable with a real patient-intake schema.
  */
@@ -56,6 +56,8 @@ export const medicalFormJson: SurveyJSON = {
           type: "text",
           name: "phone",
           title: "Mobile phone",
+          description: "We'll send appointment reminders to this number.",
+          descriptionLocation: "underInput",
           inputType: "tel",
           maskType: "pattern",
           maskSettings: { pattern: "+1 (999) 999-9999" },
@@ -220,7 +222,7 @@ export const medicalFormJson: SurveyJSON = {
           ],
         },
         {
-          type: "signaturepad",
+          type: "text",
           name: "signature",
           title: "Signature",
         },

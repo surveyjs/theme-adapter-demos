@@ -1,14 +1,10 @@
 /**
  * Visual-style registry — the shadcn analog of Bootswatch themes / MUI palettes.
  *
- * Each entry is a TOKEN PRESET applied to <html> via the `data-shadcn-style`
- * attribute (see src/app/globals.css). Every shadcn style that ships a matching
- * `shadcn-<id>.css` adapter in survey-core/themes/adapters is wired here (all
- * 10), so the chrome and the SurveyJS adapter stay paired.
+ * Style selection lives in the URL (`/<style>/<page>`). Other axes (base color,
+ * accent, radius, light/dark) stay client-side.
  */
 export const VISUAL_STYLES = [
-  { id: "default", label: "Default" },
-  { id: "new-york", label: "New York" },
   { id: "base-nova", label: "Base Nova" },
   { id: "base-vega", label: "Base Vega" },
   { id: "base-maia", label: "Base Maia" },
@@ -17,15 +13,14 @@ export const VISUAL_STYLES = [
   { id: "base-luma", label: "Base Luma" },
   { id: "base-sera", label: "Base Sera" },
   { id: "base-rhea", label: "Base Rhea" },
+  { id: "default", label: "Default (legacy)" },
+  { id: "new-york", label: "New York (legacy)" },
 ] as const;
 
 export type VisualStyleId = (typeof VISUAL_STYLES)[number]["id"];
 
-export const DEFAULT_STYLE_ID: VisualStyleId = "default";
+export const DEFAULT_STYLE_ID: VisualStyleId = "base-rhea";
 
-/** localStorage key — read by the pre-paint inline script AND the React provider. */
-export const STYLE_STORAGE_KEY = "shadcn-style";
-
-export function isVisualStyleId(value: string | null): value is VisualStyleId {
-  return value !== null && VISUAL_STYLES.some((style) => style.id === value);
+export function isVisualStyleId(value: string | null | undefined): value is VisualStyleId {
+  return value != null && VISUAL_STYLES.some((style) => style.id === value);
 }

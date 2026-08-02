@@ -3,7 +3,7 @@ import { applyLocalSurveyJs } from "../../scripts/webpack-surveyjs-dev.mjs";
 
 const nextConfig = {
   reactStrictMode: true,
-  // The dev-only local SurveyJS builds live outside this app's dir.
+  // Local SurveyJS builds (when aliased) live outside this app's dir.
   experimental: {
     externalDir: true,
   },
@@ -23,8 +23,8 @@ const nextConfig = {
     // Keep resolving the workspace-linked @adapter/schemas through this app's
     // node_modules rather than its realpath.
     config.resolve.symlinks = false;
-    // In dev, alias survey-* to the local builds (if present); no-op in prod,
-    // where the published npm `next` packages are used.
+    // Alias survey-* to local builds in `next dev`, or in `next build` when
+    // SURVEYJS_LIBV3 is set; otherwise use the published npm packages.
     return applyLocalSurveyJs(config, { dev });
   },
 };

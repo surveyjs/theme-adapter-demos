@@ -8,6 +8,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { Providers } from "@/components/Providers";
 import { AdminShell } from "@/components/AdminShell";
+import { surveyOverridesBootstrapScript } from "@/lib/surveyOverridesCss";
 
 export const metadata: Metadata = {
   title: "SurveyJS Theme Adapter for MUI",
@@ -19,6 +20,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     // InitColorSchemeScript applies the persisted scheme class to <html> before
     // hydration, so the client markup intentionally differs from SSR here.
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/*
+          Creates the app-local SurveyJS overrides <link> for the persisted
+          palette. Runs while the document is still parsing so the sheet is
+          render-blocking at first paint. (MuiSurveyOverridesStyles re-points
+          the same element on palette change.)
+        */}
+        <script
+          dangerouslySetInnerHTML={{ __html: surveyOverridesBootstrapScript() }}
+        />
+      </head>
       <body>
         {/*
           No-flash bootstrap. Must be the FIRST node in <body>: it runs before

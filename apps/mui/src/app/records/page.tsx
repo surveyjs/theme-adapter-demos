@@ -4,8 +4,6 @@ import { useCallback, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
 import Chip from "@mui/material/Chip";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -238,52 +236,55 @@ export default function RecordsPage() {
 
         {/* SurveyJS owns ONLY this form. One schema, four lifecycle modes. */}
         <Box sx={{ position: { lg: "sticky" }, top: { lg: "5rem" } }}>
-          <Card variant="outlined">
-            <CardHeader
-              title={editorTitle}
-              slotProps={{ title: { variant: "subtitle1", fontWeight: 600 } }}
-              action={
-                editor ? (
-                  <Stack direction="row" spacing={1}>
-                    {editor.mode === "view" && editor.record && (
-                      <Button
-                        size="small"
-                        onClick={() => open("edit", editor.record)}
-                      >
-                        Edit
-                      </Button>
-                    )}
-                    <Button
-                      size="small"
-                      color="inherit"
-                      onClick={() => setEditor(null)}
-                    >
-                      Close
-                    </Button>
-                  </Stack>
-                ) : undefined
-              }
-            />
-            <CardContent>
-              {editor ? (
-                <SurveyForm
-                  key={editor.key}
-                  schema={insuranceClaimSchema}
-                  data={editor.record?.data}
-                  mode={editor.mode === "view" ? "display" : "edit"}
-                  onComplete={editor.mode === "view" ? undefined : handleComplete}
-                />
-              ) : (
-                <Typography
-                  color="text.secondary"
-                  align="center"
-                  sx={{ py: 6 }}
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+            sx={{ mb: 2 }}
+          >
+            <Typography variant="subtitle1" fontWeight={600}>
+              {editorTitle}
+            </Typography>
+            {editor ? (
+              <Stack direction="row" spacing={1}>
+                {editor.mode === "view" && editor.record && (
+                  <Button
+                    size="small"
+                    onClick={() => open("edit", editor.record)}
+                  >
+                    Edit
+                  </Button>
+                )}
+                <Button
+                  size="small"
+                  color="inherit"
+                  onClick={() => setEditor(null)}
                 >
-                  Select a record to view or edit, or create a new claim.
-                </Typography>
-              )}
-            </CardContent>
-          </Card>
+                  Close
+                </Button>
+              </Stack>
+            ) : null}
+          </Stack>
+          {editor ? (
+            <SurveyForm
+              key={editor.key}
+              schema={insuranceClaimSchema}
+              data={editor.record?.data}
+              mode={editor.mode === "view" ? "display" : "edit"}
+              onComplete={editor.mode === "view" ? undefined : handleComplete}
+            />
+          ) : (
+            <Box sx={{ border: 1, borderColor: "divider", p: 2 }}>
+              <Typography
+                color="text.secondary"
+                align="center"
+                sx={{ py: 6 }}
+              >
+                Select a record to view or edit, or create a new claim.
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Box>
 

@@ -2,7 +2,6 @@
 
 import "@/lib/survey-ssr-environment";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Card } from "react-bootstrap";
 import { Survey } from "survey-react-ui";
 import type { Question } from "survey-core";
 import {
@@ -14,11 +13,12 @@ import {
 import { useBorderlessMode } from "./BorderlessMode";
 import { FormCompleted } from "./FormCompleted";
 
-// Base V3 CSS only. The per-theme Bootstrap adapter (`bootstrap-<id>`) is loaded
-// as a swappable <link> by the pre-paint script + ThemeProvider (keyed to the
-// active theme), so it re-skins the form automatically whenever the theme/mode
-// changes. Its `--sjs2-* → --bs-*` overrides live on the `.sjs-theme-overrides`
-// root — there is NO SurveyJS-specific theme code here.
+// Base V3 CSS only. The per-theme Bootstrap adapter (`bootstrap-<id>`), shared
+// app-local overrides (`/survey-overrides/bootstrap.css`), and optional
+// per-theme overrides (`/survey-overrides/<id>.css`) are loaded as <link>s by
+// the pre-paint script + ThemeProvider. Adapter `--sjs2-* → --bs-*` overrides
+// live on `.sjs-theme-overrides`; host overrides load AFTER the adapter for
+// custom app chrome the adapter cannot cover.
 import "survey-core/survey-core.min.css";
 
 /**
@@ -140,13 +140,12 @@ export function SurveyForm({
     return <FormCompleted message={completedMessage} onEdit={handleEdit} />;
   }
 
-  // Wrap the live form in the same bordered Card as the native column (and as
-  // this column's own completion screen) so the SurveyJS root sits in identical
-  // chrome. No Card.Body padding — the survey body already supplies its own
-  // inner padding; `overflow-hidden` clips the form's title bar to the radius.
+  // Same bordered rectangle as the native column (and this column's completion
+  // screen): default border, page background — no Card chrome. The survey body
+  // supplies its own inner padding; `overflow-hidden` clips the title bar.
   return (
-    <Card className="overflow-hidden">
+    <div className="border overflow-hidden">
       <Survey model={model} />
-    </Card>
+    </div>
   );
 }

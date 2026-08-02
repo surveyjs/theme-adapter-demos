@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent, type FormEvent, type PointerEvent } from "react";
-import { Alert, Button, Card, Col, Form, Row, Table } from "react-bootstrap";
+import { useState, type ChangeEvent, type FormEvent } from "react";
+import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
 import { medicalFormJson, medicalFormSample } from "@adapter/schemas";
 import { Trash } from 'react-bootstrap-icons';
 import { FormCompleted } from "./FormCompleted";
+import { RequiredLabel, RequiredMark } from "./RequiredLabel";
 import "./NativeControls.css";
 
 /**
@@ -16,7 +17,7 @@ import "./NativeControls.css";
  * Mirrors the SAME chrome (the survey title + description) and the SAME
  * behaviours: controlled inputs, per-page required-field validation that blocks
  * Next, a conditional secondary-insurance section, dynamic add/remove allergy
- * rows, a drawable signature pad, and a final Complete that validates the whole
+ * rows, and a final Complete that validates the whole
  * form and shows a success state.
  *
  * This column is deliberately UNBRIDGED: it is the "what you'd hand-write per
@@ -91,54 +92,10 @@ export function NativeControls() {
   // Consent
   const [consentTreatment, setConsentTreatment] = useState(false);
   const [consentPrivacy, setConsentPrivacy] = useState(false);
+  const [signature, setSignature] = useState("");
   const [signedDate, setSignedDate] = useState("");
 
   const [submitted, setSubmitted] = useState(false);
-
-  // Signature pad
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const drawing = useRef(false);
-
-  function pointerPos(e: PointerEvent<HTMLCanvasElement>) {
-    const canvas = canvasRef.current!;
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: ((e.clientX - rect.left) / rect.width) * canvas.width,
-      y: ((e.clientY - rect.top) / rect.height) * canvas.height,
-    };
-  }
-
-  function startStroke(e: PointerEvent<HTMLCanvasElement>) {
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
-    drawing.current = true;
-    const { x, y } = pointerPos(e);
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    canvasRef.current?.setPointerCapture(e.pointerId);
-  }
-
-  function moveStroke(e: PointerEvent<HTMLCanvasElement>) {
-    if (!drawing.current) return;
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
-    const { x, y } = pointerPos(e);
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "#212529";
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  }
-
-  function endStroke() {
-    drawing.current = false;
-  }
-
-  function clearSignature() {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
 
   // Dynamic allergy rows
   function addAllergy() {
@@ -253,6 +210,7 @@ export function NativeControls() {
       case 3:
         setConsentTreatment(s.consentTreatment as boolean);
         setConsentPrivacy(s.consentPrivacy as boolean);
+        setSignature(s.signature as string);
         setSignedDate(s.signedDate as string);
         break;
     }
@@ -268,8 +226,7 @@ export function NativeControls() {
   }
 
   return (
-    <Card>
-      <Card.Body>
+    <div className="border p-3">
         {/* Survey title + description — mirrors the SurveyJS column's header,
             sharing the schema's exact description so only the "(…)" suffix
             differs between the two forms. */}
@@ -308,9 +265,9 @@ export function NativeControls() {
           {/* ── Patient ───────────────────────────────────────────── */}
           {currentPage === 0 && (
             <>
-              <Row className="g-3 mb-3">
+              <Row className="mb-3">
                 <Form.Group as={Col} md={6} controlId="nf-first-name">
-                  <Form.Label>First name</Form.Label>
+                  <RequiredLabel>First name</RequiredLabel>
                   <Form.Control
                     type="text"
                     value={firstName}
@@ -323,7 +280,7 @@ export function NativeControls() {
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} md={6} controlId="nf-last-name">
-                  <Form.Label>Last name</Form.Label>
+                  <RequiredLabel>Last name</RequiredLabel>
                   <Form.Control
                     type="text"
                     value={lastName}
@@ -337,9 +294,9 @@ export function NativeControls() {
                 </Form.Group>
               </Row>
 
-              <Row className="g-3 mb-3">
+              <Row className="mb-3">
                 <Form.Group as={Col} md={6} controlId="nf-dob">
-                  <Form.Label>Date of birth</Form.Label>
+                  <RequiredLabel>Date of birth</RequiredLabel>
                   <Form.Control
                     type="date"
                     value={dob}
@@ -374,7 +331,7 @@ export function NativeControls() {
                 </Form.Group>
               </Row>
 
-              <Row className="g-3">
+              <Row>
                 <Form.Group as={Col} md={6} controlId="nf-phone">
                   <Form.Label>Mobile phone</Form.Label>
                   <Form.Control
@@ -384,6 +341,9 @@ export function NativeControls() {
                     value={phone}
                     onChange={(e) => setPhone(maskPhone(e.target.value))}
                   />
+                  <Form.Text muted>
+                    We&apos;ll send appointment reminders to this number.
+                  </Form.Text>
                 </Form.Group>
                 <Form.Group as={Col} md={6} controlId="nf-contact">
                   <Form.Label>Preferred contact method</Form.Label>
@@ -408,9 +368,9 @@ export function NativeControls() {
             <>
               <Card body className="mb-3">
                 <Card.Title>Primary insurance</Card.Title>
-                <Row className="g-3 mb-3">
+                <Row className="mb-3">
                   <Form.Group as={Col} md={6} controlId="nf-carrier">
-                    <Form.Label>Insurance carrier</Form.Label>
+                    <RequiredLabel>Insurance carrier</RequiredLabel>
                     <Form.Control
                       type="text"
                       value={carrier}
@@ -423,7 +383,7 @@ export function NativeControls() {
                     </Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group as={Col} md={6} controlId="nf-member-id">
-                    <Form.Label>Member ID</Form.Label>
+                    <RequiredLabel>Member ID</RequiredLabel>
                     <Form.Control
                       type="text"
                       value={memberId}
@@ -436,7 +396,7 @@ export function NativeControls() {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Row>
-                <Row className="g-3 mb-3">
+                <Row className="mb-3">
                   <Form.Group as={Col} md={6} controlId="nf-group-number">
                     <Form.Label>Group number</Form.Label>
                     <Form.Control
@@ -482,9 +442,9 @@ export function NativeControls() {
               {hasSecondary && (
                 <Card body>
                   <Card.Title>Secondary insurance</Card.Title>
-                  <Row className="g-3">
+                  <Row>
                     <Form.Group as={Col} md={6} controlId="nf-carrier2">
-                      <Form.Label>Insurance carrier</Form.Label>
+                      <RequiredLabel>Insurance carrier</RequiredLabel>
                       <Form.Control
                         type="text"
                         value={carrier2}
@@ -497,7 +457,7 @@ export function NativeControls() {
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md={6} controlId="nf-member-id2">
-                      <Form.Label>Member ID</Form.Label>
+                      <RequiredLabel>Member ID</RequiredLabel>
                       <Form.Control
                         type="text"
                         value={memberId2}
@@ -522,7 +482,7 @@ export function NativeControls() {
               <Form.Label className="d-block">
                 Have you ever been diagnosed with any of the following?
               </Form.Label>
-              <Table className="mb-4 align-middle">
+              <Table className="align-middle">
                 <thead>
                   <tr>
                     <th scope="col" />
@@ -560,10 +520,12 @@ export function NativeControls() {
                 <div className="text-muted">No allergies added.</div>
               )}
               {allergies.length > 0 && (
-                <Table className="mb-2 align-middle">
+                <Table className="align-middle">
                   <thead>
                     <tr>
-                      <th scope="col" className="text-center fw-normal">Allergen</th>
+                      <th scope="col" className="text-center fw-normal">
+                        Allergen <RequiredMark />
+                      </th>
                       <th scope="col" className="text-center fw-normal" style={{ width: 140 }}>
                         Severity
                       </th>
@@ -628,7 +590,7 @@ export function NativeControls() {
               <Button
                 variant="light"
                 size="sm"
-                className="mb-4"
+                className="mt-2"
                 onClick={addAllergy}
               >
                 Add allergy
@@ -654,7 +616,11 @@ export function NativeControls() {
                 <Form.Check
                   type="checkbox"
                   id="nf-consent-treatment"
-                  label="I consent to treatment"
+                  label={
+                    <>
+                      I consent to treatment <RequiredMark />
+                    </>
+                  }
                   checked={consentTreatment}
                   onChange={(e) => setConsentTreatment(e.target.checked)}
                   isInvalid={showErrors && errors.consentTreatment}
@@ -666,7 +632,11 @@ export function NativeControls() {
                 <Form.Check
                   type="checkbox"
                   id="nf-consent-privacy"
-                  label="I acknowledge the privacy practices (HIPAA)"
+                  label={
+                    <>
+                      I acknowledge the privacy practices (HIPAA) <RequiredMark />
+                    </>
+                  }
                   checked={consentPrivacy}
                   onChange={(e) => setConsentPrivacy(e.target.checked)}
                   isInvalid={showErrors && errors.consentPrivacy}
@@ -675,41 +645,25 @@ export function NativeControls() {
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label className="d-block">Signature</Form.Label>
-                <canvas
-                  ref={canvasRef}
-                  width={400}
-                  height={140}
-                  className="border rounded w-100 bg-body"
-                  style={{ touchAction: "none", cursor: "crosshair", maxWidth: "100%" }}
-                  onPointerDown={startStroke}
-                  onPointerMove={moveStroke}
-                  onPointerUp={endStroke}
-                  onPointerLeave={endStroke}
-                />
-                <div>
-                  <Button variant="link" size="sm" className="px-0" onClick={clearSignature}>
-                    Clear signature
-                  </Button>
-                </div>
-              </Form.Group>
-
-              <Form.Group controlId="nf-signed-date">
-                <Form.Label>Date</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={signedDate}
-                  onChange={(e) => setSignedDate(e.target.value)}
-                />
-              </Form.Group>
+              <Row className="mb-3">
+                <Form.Group as={Col} md={6} controlId="nf-signature">
+                  <Form.Label>Signature</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={signature}
+                    onChange={(e) => setSignature(e.target.value)}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} md={6} controlId="nf-signed-date">
+                  <Form.Label>Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={signedDate}
+                    onChange={(e) => setSignedDate(e.target.value)}
+                  />
+                </Form.Group>
+              </Row>
             </>
-          )}
-
-          {showErrors && !isPageValid(currentPage) && (
-            <Alert variant="danger" className="py-2 small mt-4 mb-0">
-              Please fix the highlighted fields before continuing.
-            </Alert>
           )}
 
           {/* ── Wizard navigation ─────────────────────────────────── */}
@@ -734,7 +688,6 @@ export function NativeControls() {
             </Button>
           </div>
         </Form>
-      </Card.Body>
-    </Card>
+    </div>
   );
 }

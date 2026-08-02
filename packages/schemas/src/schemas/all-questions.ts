@@ -140,6 +140,7 @@ export const allQuestionsJson: SurveyJSON = {
           type: "multipletext",
           name: "q_multipletext",
           title: "Multiple Text Boxes",
+          itemTitleWidth: "100px",
           items: [
             { name: "city", title: "City" },
             { name: "state", title: "State" },

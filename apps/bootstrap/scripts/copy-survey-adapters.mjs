@@ -10,24 +10,27 @@
  * with stock survey-core V3 styling and then re-skinned. Mirrors the shadcn
  * app's scripts/copy-survey-adapters.mjs (and this app's scripts/copy-themes.mjs).
  *
- * Run automatically via the `predev` / `prebuild` npm scripts. Pass `--dev` to
- * source the bundles from the local V3 build (what `next dev` aliases survey-*
- * to); without it they are resolved from the published `survey-core` package,
- * matching what `next build` compiles against. Pass `--watch` (dev only) to keep
+ * Run automatically via the `predev` / `prebuild` npm scripts. Pass `--dev`, or
+ * set `SURVEYJS_LIBV3` (shell / repo-root `.env`), to source the bundles from
+ * the local V3 build (what webpack aliases survey-* to). Otherwise they come
+ * from the published `survey-core` package. Pass `--watch` (local only) to keep
  * re-copying as you edit the adapters in the library checkout.
  */
 import { createRequire } from "node:module";
 import { mkdirSync, copyFileSync, existsSync, watch } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { BUILD_DIRS } from "../../../scripts/webpack-surveyjs-dev.mjs";
+import {
+  BUILD_DIRS,
+  hasSurveyJsLibV3,
+} from "../../../scripts/webpack-surveyjs-dev.mjs";
 
 const require = createRequire(import.meta.url);
 const here = dirname(fileURLToPath(import.meta.url));
 const outDir = resolve(here, "..", "public", "survey-adapters");
 
-const dev = process.argv.includes("--dev");
-const watchMode = dev && process.argv.includes("--watch");
+const useLocal = process.argv.includes("--dev") || hasSurveyJsLibV3;
+const watchMode = useLocal && process.argv.includes("--watch");
 
 // Keep in sync with `colorThemes` in src/lib/themes.ts (a .mjs script can't
 // import the TS module). Each id has a matching `bootstrap-<id>` adapter bundle.
@@ -57,11 +60,10 @@ function surveyCoreRoot() {
   return dir;
 }
 
-// In dev, source from the local V3 build — exactly what the webpack alias points
-// survey-* imports at, so you develop against your working copy. Otherwise take
-// the published package, matching what `next build` compiles against.
+// When local, source from the V3 build — exactly what the webpack alias points
+// survey-* imports at. Otherwise take the published package.
 const sourceDir = resolve(
-  dev ? BUILD_DIRS["survey-core"] : surveyCoreRoot(),
+  useLocal ? BUILD_DIRS["survey-core"] : surveyCoreRoot(),
   "themes/adapters"
 );
 
@@ -72,7 +74,7 @@ function sourceFor(id) {
     throw new Error(
       `[survey-adapters] No Bootstrap adapter for "${id}".\n` +
         `Expected: ${from}\n` +
-        (dev
+        (useLocal
           ? `Build the survey-library checkout (or unset SURVEYJS_LIBV3).`
           : `The installed survey-core ships no per-theme Bootstrap adapters — the ` +
             `app's adapter <link>s cannot resolve. Install a survey-core that includes them.`)

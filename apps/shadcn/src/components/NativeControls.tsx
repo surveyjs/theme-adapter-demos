@@ -1,16 +1,13 @@
 "use client";
 
 import {
-  useRef,
   useState,
   type ChangeEvent,
   type FormEvent,
-  type PointerEvent,
 } from "react";
 // Comparison column shows the active style's REAL shadcn button (per-style,
 // CLI-generated). Aliased to Button so every form button below picks it up.
 import { StyledButton as Button } from "@/components/ui/styled-button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
   Combobox,
@@ -24,7 +21,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -60,6 +56,7 @@ import {
   StepperSeparator,
 } from "@/components/ui/stepper";
 import { FormCompleted } from "./FormCompleted";
+import { RequiredLabel, RequiredMark } from "./RequiredLabel";
 
 /**
  * Hand-built shadcn/ui twin of the SurveyJS medical-intake form
@@ -70,7 +67,7 @@ import { FormCompleted } from "./FormCompleted";
  * Mirrors the SAME chrome (the survey title + description) and the SAME
  * behaviours: controlled inputs, per-page required-field validation that blocks
  * Next, a conditional secondary-insurance section, dynamic add/remove allergy
- * rows, a drawable signature pad, and a final Complete that validates the whole
+ * rows, and a final Complete that validates the whole
  * form and shows a success state.
  *
  * This column is deliberately UNBRIDGED: it is the "what you'd hand-write per
@@ -148,54 +145,10 @@ export function NativeControls() {
   // Consent
   const [consentTreatment, setConsentTreatment] = useState(false);
   const [consentPrivacy, setConsentPrivacy] = useState(false);
+  const [signature, setSignature] = useState("");
   const [signedDate, setSignedDate] = useState("");
 
   const [submitted, setSubmitted] = useState(false);
-
-  // Signature pad
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const drawing = useRef(false);
-
-  function pointerPos(e: PointerEvent<HTMLCanvasElement>) {
-    const canvas = canvasRef.current!;
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: ((e.clientX - rect.left) / rect.width) * canvas.width,
-      y: ((e.clientY - rect.top) / rect.height) * canvas.height,
-    };
-  }
-
-  function startStroke(e: PointerEvent<HTMLCanvasElement>) {
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
-    drawing.current = true;
-    const { x, y } = pointerPos(e);
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    canvasRef.current?.setPointerCapture(e.pointerId);
-  }
-
-  function moveStroke(e: PointerEvent<HTMLCanvasElement>) {
-    if (!drawing.current) return;
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
-    const { x, y } = pointerPos(e);
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "currentColor";
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  }
-
-  function endStroke() {
-    drawing.current = false;
-  }
-
-  function clearSignature() {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
 
   // Dynamic allergy rows
   function addAllergy() {
@@ -310,6 +263,7 @@ export function NativeControls() {
       case 3:
         setConsentTreatment(s.consentTreatment as boolean);
         setConsentPrivacy(s.consentPrivacy as boolean);
+        setSignature(s.signature as string);
         setSignedDate(s.signedDate as string);
         break;
     }
@@ -325,12 +279,15 @@ export function NativeControls() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Patient Intake (Native shadcn)</CardTitle>
-        <CardDescription>{medicalFormJson.description as string}</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="border p-6">
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold leading-none tracking-tight">
+            Patient Intake (Native shadcn)
+          </h2>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            {medicalFormJson.description as string}
+          </p>
+        </div>
         <FieldGroup>
           <Stepper value={String(currentPage)}>
             <StepperList aria-label="Form steps" className="gap-3">
@@ -352,7 +309,9 @@ export function NativeControls() {
             </StepperList>
           </Stepper>
 
-          <CardTitle>{PAGES[currentPage]}</CardTitle>
+          <h3 className="text-2xl font-semibold leading-none tracking-tight">
+            {PAGES[currentPage]}
+          </h3>
 
         <form noValidate onSubmit={handleSubmit}>
           <FieldGroup>
@@ -361,7 +320,7 @@ export function NativeControls() {
             <FieldGroup>
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
                 <Field data-invalid={showErrors && errors.firstName}>
-                  <FieldLabel htmlFor="nf-first">First name</FieldLabel>
+                  <RequiredLabel htmlFor="nf-first">First name</RequiredLabel>
                   <Input
                     id="nf-first"
                     value={firstName}
@@ -373,7 +332,7 @@ export function NativeControls() {
                   )}
                 </Field>
                 <Field data-invalid={showErrors && errors.lastName}>
-                  <FieldLabel htmlFor="nf-last">Last name</FieldLabel>
+                  <RequiredLabel htmlFor="nf-last">Last name</RequiredLabel>
                   <Input
                     id="nf-last"
                     value={lastName}
@@ -388,7 +347,7 @@ export function NativeControls() {
 
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
                 <Field data-invalid={showErrors && errors.dob}>
-                  <FieldLabel htmlFor="nf-dob">Date of birth</FieldLabel>
+                  <RequiredLabel htmlFor="nf-dob">Date of birth</RequiredLabel>
                   <Input
                     id="nf-dob"
                     type="date"
@@ -429,6 +388,9 @@ export function NativeControls() {
                     value={phone}
                     onChange={(e) => setPhone(maskPhone(e.target.value))}
                   />
+                  <FieldDescription>
+                    We&apos;ll send appointment reminders to this number.
+                  </FieldDescription>
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="nf-contact">Preferred contact method</FieldLabel>
@@ -468,7 +430,7 @@ export function NativeControls() {
                   <FieldGroup>
                     <FieldGroup className="grid gap-4 sm:grid-cols-2">
                       <Field data-invalid={showErrors && errors.carrier}>
-                        <FieldLabel htmlFor="nf-carrier">Insurance carrier</FieldLabel>
+                        <RequiredLabel htmlFor="nf-carrier">Insurance carrier</RequiredLabel>
                         <Input
                           id="nf-carrier"
                           value={carrier}
@@ -480,7 +442,7 @@ export function NativeControls() {
                         )}
                       </Field>
                       <Field data-invalid={showErrors && errors.memberId}>
-                        <FieldLabel htmlFor="nf-member">Member ID</FieldLabel>
+                        <RequiredLabel htmlFor="nf-member">Member ID</RequiredLabel>
                         <Input
                           id="nf-member"
                           value={memberId}
@@ -547,7 +509,7 @@ export function NativeControls() {
                   <CardContent>
                     <FieldGroup className="grid gap-4 sm:grid-cols-2">
                       <Field data-invalid={showErrors && errors.carrier2}>
-                        <FieldLabel htmlFor="nf-carrier2">Insurance carrier</FieldLabel>
+                        <RequiredLabel htmlFor="nf-carrier2">Insurance carrier</RequiredLabel>
                         <Input
                           id="nf-carrier2"
                           value={carrier2}
@@ -559,7 +521,7 @@ export function NativeControls() {
                         )}
                       </Field>
                       <Field data-invalid={showErrors && errors.memberId2}>
-                        <FieldLabel htmlFor="nf-member2">Member ID</FieldLabel>
+                        <RequiredLabel htmlFor="nf-member2">Member ID</RequiredLabel>
                         <Input
                           id="nf-member2"
                           value={memberId2}
@@ -637,7 +599,9 @@ export function NativeControls() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="text-center">Allergen</TableHead>
+                        <TableHead className="text-center">
+                          Allergen <RequiredMark />
+                        </TableHead>
                         <TableHead className="text-center">Severity</TableHead>
                         <TableHead className="text-center">Reaction</TableHead>
                         <TableHead />
@@ -744,9 +708,9 @@ export function NativeControls() {
                   onCheckedChange={(checked: boolean | "indeterminate") => setConsentTreatment(checked === true)}
                 />
                 <FieldContent>
-                  <FieldLabel htmlFor="nf-consent-treatment">
+                  <RequiredLabel htmlFor="nf-consent-treatment">
                     I consent to treatment
-                  </FieldLabel>
+                  </RequiredLabel>
                   {showErrors && errors.consentTreatment && (
                     <FieldError>Consent to treatment is required.</FieldError>
                   )}
@@ -763,9 +727,9 @@ export function NativeControls() {
                   onCheckedChange={(checked: boolean | "indeterminate") => setConsentPrivacy(checked === true)}
                 />
                 <FieldContent>
-                  <FieldLabel htmlFor="nf-consent-privacy">
+                  <RequiredLabel htmlFor="nf-consent-privacy">
                     I acknowledge the privacy practices (HIPAA)
-                  </FieldLabel>
+                  </RequiredLabel>
                   {showErrors && errors.consentPrivacy && (
                     <FieldError>Acknowledgement is required.</FieldError>
                   )}
@@ -774,24 +738,13 @@ export function NativeControls() {
 
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
               <Field>
-                <FieldLabel>Signature</FieldLabel>
-                <Card>
-                  <CardContent>
-                    <canvas
-                      ref={canvasRef}
-                      width={400}
-                      height={140}
-                      style={{ touchAction: "none", cursor: "crosshair", display: "block", width: "100%" }}
-                      onPointerDown={startStroke}
-                      onPointerMove={moveStroke}
-                      onPointerUp={endStroke}
-                      onPointerLeave={endStroke}
-                    />
-                  </CardContent>
-                </Card>
-                <Button type="button" variant="link" size="sm" onClick={clearSignature}>
-                  Clear signature
-                </Button>
+                <FieldLabel htmlFor="nf-signature">Signature</FieldLabel>
+                <Input
+                  id="nf-signature"
+                  type="text"
+                  value={signature}
+                  onChange={(e) => setSignature(e.target.value)}
+                />
               </Field>
 
               <Field>
@@ -805,14 +758,6 @@ export function NativeControls() {
               </Field>
               </FieldGroup>
             </FieldGroup>
-          )}
-
-          {showErrors && !isPageValid(currentPage) && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                Please fix the highlighted fields before continuing.
-              </AlertDescription>
-            </Alert>
           )}
 
           {/* ── Wizard navigation ─────────────────────────────────── */}
@@ -837,7 +782,6 @@ export function NativeControls() {
           </FieldGroup>
         </form>
         </FieldGroup>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

@@ -1,8 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { MoonIcon, SunIcon, PaletteIcon, DropletIcon, PaintbrushIcon, RadiusIcon, CheckIcon } from "lucide-react";
+import {
+  MoonIcon,
+  SunIcon,
+  PaletteIcon,
+  DropletIcon,
+  PaintbrushIcon,
+  RadiusIcon,
+  CheckIcon,
+} from "lucide-react";
+import {
+  pagePathFromPathname,
+  themeFromPathname,
+  themedPath,
+} from "@adapter/schemas";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,33 +30,30 @@ import { useStyle } from "./StyleProvider";
 import { useBaseColor } from "./BaseColorProvider";
 import { useThemeColor } from "./ThemeColorProvider";
 import { useRadius } from "./RadiusProvider";
-import { VISUAL_STYLES } from "@/lib/styles";
+import {
+  DEFAULT_STYLE_ID,
+  isVisualStyleId,
+  VISUAL_STYLES,
+  type VisualStyleId,
+} from "@/lib/styles";
 import { BASE_COLORS } from "@/lib/baseColors";
 import { THEMES } from "@/lib/themes";
 import { RADII } from "@/lib/radii";
 
 /**
- * Header theme controls — the native shadcn analog of Bootswatch / MUI palettes:
- *  - a light/dark toggle (next-themes `setTheme`)
- *  - a visual-style dropdown that flips `data-shadcn-style` on <html> (geometry)
- *  - a base-color dropdown that flips `data-shadcn-base-color` on <html> (neutral palette)
- *  - a theme dropdown that flips `data-shadcn-theme` on <html> (accent hue)
- *  - a radius dropdown that flips `data-shadcn-radius` on <html> (corner rounding)
- *
- * The style, base-color, theme and radius axes are independent and compose
- * freely. All selections persist and re-apply before paint (next-themes + the
- * layout's inline script), so the whole shell re-themes with zero flash.
+ * Header theme controls. Visual style navigates to `/<style>/<page>`;
+ * other axes stay client-side (localStorage / next-themes).
  */
 export function ThemeSwitcher() {
   const { resolvedTheme, setTheme } = useTheme();
-  const { style, setStyle } = useStyle();
+  const { style } = useStyle();
   const { baseColor, setBaseColor } = useBaseColor();
   const { theme: accent, setTheme: setAccent } = useThemeColor();
   const { radius, setRadius } = useRadius();
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
-  // next-themes / localStorage are client-only — render a stable placeholder
-  // until mounted to avoid a hydration mismatch.
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
@@ -51,6 +62,17 @@ export function ThemeSwitcher() {
 
   const isDark = resolvedTheme === "dark";
 
+  const selectStyle = (next: VisualStyleId) => {
+    if (next === style) return;
+    router.push(themedPath(next, pagePathFromPathname(pathname)));
+  };
+
+  // Prefer URL segment (source of truth) over context if they ever drift.
+  const themeSegment = themeFromPathname(pathname);
+  const activeStyle = isVisualStyleId(themeSegment)
+    ? themeSegment
+    : style ?? DEFAULT_STYLE_ID;
+
   return (
     <div className="flex items-center gap-2">
       <DropdownMenu>
@@ -58,7 +80,7 @@ export function ThemeSwitcher() {
           <Button variant="outline" size="sm" className="gap-2">
             <PaletteIcon />
             <span className="hidden sm:inline">
-              {VISUAL_STYLES.find((s) => s.id === style)?.label ?? "Style"}
+              {VISUAL_STYLES.find((s) => s.id === activeStyle)?.label ?? "Style"}
             </span>
           </Button>
         </DropdownMenuTrigger>
@@ -68,11 +90,11 @@ export function ThemeSwitcher() {
           {VISUAL_STYLES.map((s) => (
             <DropdownMenuItem
               key={s.id}
-              onSelect={() => setStyle(s.id)}
+              onSelect={() => selectStyle(s.id)}
               className="justify-between"
             >
               {s.label}
-              {s.id === style && <CheckIcon className="size-4" />}
+              {s.id === activeStyle && <CheckIcon className="size-4" />}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

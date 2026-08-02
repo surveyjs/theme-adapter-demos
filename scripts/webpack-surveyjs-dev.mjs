@@ -1,20 +1,20 @@
 /**
- * Dev-only SurveyJS resolution for the demo apps.
+ * Local SurveyJS resolution for the demo apps.
  *
  * The root package.json pins the survey-* packages to the published `next`
- * dist-tag, so `npm install` + `next build` / `next start` (production) consume
- * the npm packages. In `next dev` we alias the survey-* imports to the local
- * V3 `build/` folders — so you develop against your working copy of the library
- * with no package.json edits.
+ * dist-tag, so by default `next build` / `next start` consume the npm packages.
+ * `next dev` always aliases survey-* imports to the local V3 `build/` folders.
+ * `next build` does the same when `SURVEYJS_LIBV3` is set (shell or repo-root
+ * `.env` / `.env.local`), so production builds can target your working copy
+ * without package.json edits.
  *
  * Local build location: the parent folder of this repo by default (the folder
  * that holds the `survey-library` and `survey-creator` checkouts). Override it
  * with the SURVEYJS_LIBV3 env var (absolute, or relative to the repo root).
- * The var can be set in the shell, or in a repo-root `.env` / `.env.local`
- * (loaded here directly, since Next only reads per-app .env and Turbo's strict
- * env mode strips undeclared vars before they reach the dev process).
- * Dev REQUIRES these builds — if any are missing the config throws instead of
- * quietly falling back to the npm packages.
+ * Loaded here directly, since Next only reads per-app .env and Turbo's strict
+ * env mode strips undeclared vars before they reach the task process.
+ * When local resolution is active, missing builds throw instead of quietly
+ * falling back to the npm packages.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -59,14 +59,17 @@ function loadRootDotenv() {
 
 loadRootDotenv();
 
-const base = process.env.SURVEYJS_LIBV3
+/** True when SURVEYJS_LIBV3 is set (shell or repo-root .env / .env.local). */
+export const hasSurveyJsLibV3 = Boolean(process.env.SURVEYJS_LIBV3);
+
+const base = hasSurveyJsLibV3
   ? resolve(repoRoot, process.env.SURVEYJS_LIBV3)
   : resolve(repoRoot, "..");
 
 /**
- * The local V3 build folder each survey-* import is aliased to in dev. Exported
- * so dev-time asset scripts (e.g. apps/shadcn/scripts/copy-survey-adapters.mjs)
- * pull from the exact same place webpack does.
+ * The local V3 build folder each survey-* import is aliased to. Exported so
+ * asset scripts (e.g. apps/shadcn/scripts/copy-survey-adapters.mjs) pull from
+ * the exact same place webpack does.
  */
 export const BUILD_DIRS = {
   "survey-core": resolve(base, "survey-library/packages/survey-core/build"),
@@ -85,17 +88,18 @@ function missingSurveyBuilds() {
 }
 
 /**
- * In dev, alias survey-* to the local builds and wire up file watching so the
- * apps hot-reload against your working copy. No-op in production builds.
+ * Alias survey-* to the local builds when `next dev` is running, or when
+ * `SURVEYJS_LIBV3` is set (so `next build` can target the same working copy).
+ * No-op for production builds without the env var — those use the published
+ * npm packages.
  *
- * Dev REQUIRES the local builds — if any are missing we throw rather than
- * silently falling back to the npm packages, so a broken local setup fails
- * loudly instead of quietly running against the published `next` release.
+ * When local resolution is active, missing builds throw rather than silently
+ * falling back to npm, so a broken local setup fails loudly.
  * @param {import('webpack').Configuration} config
  * @param {{ dev: boolean }} ctx
  */
 export function applyLocalSurveyJs(config, { dev }) {
-  if (!dev) return config;
+  if (!dev && !hasSurveyJsLibV3) return config;
 
   const missing = missingSurveyBuilds();
   if (missing.length > 0) {
@@ -103,8 +107,8 @@ export function applyLocalSurveyJs(config, { dev }) {
       `[surveyjs-dev] Local SurveyJS builds not found for: ${missing.join(", ")}.\n` +
         `Expected under base "${base}" (override with SURVEYJS_LIBV3). Missing paths:\n` +
         missing.map((name) => `  - ${BUILD_DIRS[name]}`).join("\n") +
-        `\nBuild the survey-library / survey-creator checkouts, or run a production ` +
-        `build (next build) to use the published npm packages.`
+        `\nBuild the survey-library / survey-creator checkouts, or unset ` +
+        `SURVEYJS_LIBV3 / comment it out in .env to use the published npm packages.`
     );
   }
 
@@ -124,7 +128,8 @@ export function applyLocalSurveyJs(config, { dev }) {
     ...(config.resolve.modules ?? ["node_modules"]),
   ];
 
-  // Hot-reload edits made in the local builds.
+  // Hot-reload edits made in the local builds (dev), and avoid stale caches
+  // when switching between local and npm resolution.
   config.cache = false;
   config.snapshot = { ...config.snapshot, immutablePaths: [], managedPaths: [] };
   config.watchOptions = {

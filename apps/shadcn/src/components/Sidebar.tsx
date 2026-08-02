@@ -10,15 +10,16 @@ import {
   LayoutGridIcon,
   type LucideIcon,
 } from "lucide-react";
-import { navItems, type NavId } from "@adapter/schemas";
+import {
+  isActiveRoute,
+  navItems,
+  themeFromPathname,
+  themedPath,
+  type NavId,
+} from "@adapter/schemas";
+import { DEFAULT_STYLE_ID, isVisualStyleId } from "@/lib/styles";
 import { cn } from "@/lib/utils";
 
-/**
- * Sidebar navigation. The item list comes straight from the shared IA
- * (`navItems` in @adapter/schemas) — no local copy, identical order — so the
- * Bootstrap, shadcn, and MUI shells expose the identical routes. Only the icon
- * mapping (pure host chrome) is app-local.
- */
 const ICONS: Record<NavId, LucideIcon> = {
   claims: ClipboardListIcon,
   checkout: ShoppingCartIcon,
@@ -29,17 +30,19 @@ const ICONS: Record<NavId, LucideIcon> = {
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const themeSegment = themeFromPathname(pathname);
+  const theme = isVisualStyleId(themeSegment) ? themeSegment : DEFAULT_STYLE_ID;
 
   return (
     <nav aria-label="Primary" className="flex flex-col gap-1 p-3">
       {navItems.map((item) => {
-        const active =
-          pathname === item.path || pathname.startsWith(`${item.path}/`);
+        const href = themedPath(theme, item.path);
+        const active = isActiveRoute(pathname, item.path);
         const Icon = ICONS[item.id];
         return (
           <Link
             key={item.id}
-            href={item.path}
+            href={href}
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
             className={cn(

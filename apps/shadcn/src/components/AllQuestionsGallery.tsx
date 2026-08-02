@@ -8,10 +8,8 @@ import { useAllQuestionsMode } from "./AllQuestionsMode";
 import { useBorderlessMode } from "./BorderlessMode";
 
 // Same import order as SurveyForm: base V3 CSS first; the active shadcn adapter
-// bundle is loaded by <ShadcnSurveyAdapterStyles /> in ThemeProvider.
+// bundle is linked from [theme]/layout.
 import "survey-core/survey-core.min.css";
-// Host-chrome sticky-TOC fix for the window-scrolled shell (see the CSS file).
-import "./AllQuestionsGallery.css";
 
 /**
  * All-questions gallery — the adapter's widest fidelity sweep. Builds ONE

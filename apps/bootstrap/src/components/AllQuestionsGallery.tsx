@@ -11,8 +11,6 @@ import { useBorderlessMode } from "./BorderlessMode";
 // swappable <link> loaded by the pre-paint script + ThemeProvider — this page
 // adds NO adapter code.
 import "survey-core/survey-core.min.css";
-// Host-chrome sticky-TOC fix for the window-scrolled shell (see the CSS file).
-import "./AllQuestionsGallery.css";
 
 /**
  * All-questions gallery — the adapter's widest fidelity sweep. Builds ONE

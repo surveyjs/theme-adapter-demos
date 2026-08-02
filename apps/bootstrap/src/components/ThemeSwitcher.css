@@ -1,0 +1,19 @@
+/*
+ * Bootswatch Zephyr paints `.btn-outline-secondary` with a hard-coded
+ * `color: #212529` (bypassing the `--bs-btn-color` variable), which makes the
+ * header buttons unreadable on a dark navbar. Re-assert the variable-driven
+ * colors with higher specificity so every theme/mode combination works.
+ */
+.theme-switcher .btn.btn-outline-secondary {
+  --bs-btn-color: var(--bs-body-color);
+  color: var(--bs-btn-color);
+}
+
+.theme-switcher .btn.btn-outline-secondary:hover {
+  color: var(--bs-btn-hover-color);
+}
+
+.theme-switcher .btn.btn-outline-secondary:active,
+.theme-switcher .btn.btn-outline-secondary.show {
+  color: var(--bs-btn-active-color);
+}

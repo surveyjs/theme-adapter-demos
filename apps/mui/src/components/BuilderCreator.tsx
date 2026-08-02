@@ -11,6 +11,10 @@ import type { SurveyJSON } from "@adapter/schemas";
 //                              consuming the SAME `--sjs2-*` custom properties
 //                              on the SAME `.sjs-theme-overrides` theme root
 //   3. the MUI adapter        — maps `--sjs2-* → --mui-*` on `.sjs-theme-overrides`
+//   4. app-local overrides    — `/survey-overrides/mui.css` (always) + optional
+//                              `/survey-overrides/<palette-id>.css` (swappable
+//                              <link>; host-only SurveyJS tweaks the adapter
+//                              cannot cover)
 //
 // KEY INSIGHT (prompt 4): there is intentionally NO separate Creator adapter.
 // The Creator emits the same `.sjs-theme-overrides` theme root the form does, so

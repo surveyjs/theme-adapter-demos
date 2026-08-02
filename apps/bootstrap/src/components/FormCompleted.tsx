@@ -1,4 +1,4 @@
-import { Alert, Button, Card } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 
 /**
  * Shared "form submitted" screen rendered by BOTH the SurveyJS column
@@ -17,20 +17,18 @@ export function FormCompleted({
   onEdit: () => void;
 }) {
   return (
-    <Card>
-      <Card.Body>
-        <Alert variant="success" className="mb-0">
-          <Alert.Heading className="h6">{message}</Alert.Heading>
-          <Button
-            variant="outline-success"
-            size="sm"
-            className="mt-2"
-            onClick={onEdit}
-          >
-            Edit Response
-          </Button>
-        </Alert>
-      </Card.Body>
-    </Card>
+    <div className="border p-3">
+      <Alert variant="success" className="mb-0">
+        <Alert.Heading className="h6">{message}</Alert.Heading>
+        <Button
+          variant="outline-success"
+          size="sm"
+          className="mt-2"
+          onClick={onEdit}
+        >
+          Edit Response
+        </Button>
+      </Alert>
+    </div>
   );
 }

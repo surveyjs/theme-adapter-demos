@@ -2,22 +2,18 @@
 
 import { usePathname } from "next/navigation";
 import { Form } from "react-bootstrap";
-import { routes } from "@adapter/schemas";
+import { isActiveRoute, routes } from "@adapter/schemas";
 import { useAllQuestionsMode } from "./AllQuestionsMode";
 
 /**
  * Header control for the All-Questions gallery's read-only ⇄ editable mode.
- *
- * It lives in the top menu but is route-scoped: on every route except
- * `/all-questions` it renders nothing. The state is shared with the page's live
- * SurveyModel through AllQuestionsModeContext. A native react-bootstrap
- * <Form.Check type="switch"> — host chrome, not a SurveyJS control.
+ * Route-scoped via theme-agnostic page path.
  */
 export function AllQuestionsToggle() {
   const pathname = usePathname();
   const { readOnly, setReadOnly } = useAllQuestionsMode();
 
-  if (pathname !== routes.allQuestions) return null;
+  if (!isActiveRoute(pathname, routes.allQuestions)) return null;
 
   return (
     <Form.Check

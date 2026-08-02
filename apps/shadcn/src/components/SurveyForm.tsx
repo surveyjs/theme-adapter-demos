@@ -4,7 +4,6 @@ import "@/lib/survey-ssr-environment";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Survey } from "survey-react-ui";
 import type { Question } from "survey-core";
-import { Card } from "@/components/ui/card";
 import {
   createSurveyModel,
   type SchemaInput,
@@ -16,9 +15,12 @@ import { FormCompleted } from "./FormCompleted";
 
 // Base V3 CSS FIRST, then the shadcn adapter from survey-core ON TOP so the
 // adapter's `--sjs2-*` overrides win by source order. The active visual-style
-// bundle is loaded by <ShadcnSurveyAdapterStyles /> (see ThemeProvider) and
-// tracks `data-shadcn-style` on <html>; light/dark flips shadcn tokens via
-// `.dark` on the same root.
+// adapter, shared overrides (`/survey-overrides/shadcn.css`), and optional
+// per-style overrides (`/survey-overrides/<id>.css`) are loaded by
+// linked from [theme]/layout and track `data-shadcn-style`
+// on <html>; light/dark flips shadcn tokens via `.dark` on the same root.
+// Host overrides load AFTER the adapter for custom app chrome the adapter
+// cannot cover.
 import "survey-core/survey-core.min.css";
 
 /**
@@ -140,14 +142,12 @@ export function SurveyForm({
     return <FormCompleted message={completedMessage} onEdit={handleEdit} />;
   }
 
-  // Wrap the live form in the same bordered Card as the native column (and as
-  // this column's own completion screen) so the SurveyJS root sits in identical
-  // chrome. `py-0 gap-0` strips the Card's built-in vertical padding — the
-  // survey body already supplies its own inner padding; `overflow-hidden` clips
-  // the form's title bar to the radius.
+  // Same bordered rectangle as the native column (and this column's completion
+  // screen): default border, page background — no Card chrome. The survey body
+  // supplies its own inner padding; `overflow-hidden` clips the title bar.
   return (
-    <Card className="overflow-hidden py-0 gap-0">
+    <div className="border overflow-hidden">
       <Survey model={model} />
-    </Card>
+    </div>
   );
 }
