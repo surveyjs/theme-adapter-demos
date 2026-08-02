@@ -4,8 +4,12 @@ import { Button } from "@/components/ui/button";
  * Shared "form submitted" screen rendered by BOTH the SurveyJS column
  * (SurveyForm) and the native column (NativeControls), so the two are identical.
  *
- * shadcn/ui ships no Alert primitive, so this is a simple green-tinted success
- * box built with Tailwind in the shadcn idiom.
+ * Same bordered rectangle as the form it replaces: default border, page
+ * background — deliberately NOT a green success tint. Hard-coded `green-*`
+ * utilities sit outside the shadcn token set, so they ignore the active style
+ * and both light/dark modes, and the low-contrast fill swallowed the outline
+ * button. The default button re-themes with the rest of the chrome and matches
+ * the native column's "Complete".
  *
  * It lives in its own file on purpose: the /claims "code cost" footer measures
  * the form-BUILDING code in each column, so this shared completion chrome is
@@ -20,9 +24,9 @@ export function FormCompleted({
   onEdit: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-green-600/30 bg-green-500/10 p-6 text-green-900 dark:text-green-200">
+    <div className="border p-6">
       <p className="font-semibold">{message}</p>
-      <Button variant="outline" className="mt-4" onClick={onEdit}>
+      <Button className="mt-4" onClick={onEdit}>
         Edit Response
       </Button>
     </div>
