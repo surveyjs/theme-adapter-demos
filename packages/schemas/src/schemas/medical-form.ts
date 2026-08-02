@@ -196,6 +196,13 @@ export const medicalFormJson: SurveyJSON = {
           displayMode: "checkbox",
           titleLocation: "hidden",
           isRequired: true,
+          validators: [
+            {
+              type: "expression",
+              expression: "{consentTreatment} = true",
+              text: "Consent to treatment is required.",
+            },
+          ],
         },
         {
           type: "boolean",
@@ -204,6 +211,13 @@ export const medicalFormJson: SurveyJSON = {
           displayMode: "checkbox",
           titleLocation: "hidden",
           isRequired: true,
+          validators: [
+            {
+              type: "expression",
+              expression: "{consentPrivacy} = true",
+              text: "Acknowledgement is required.",
+            },
+          ],
         },
         {
           type: "signaturepad",
