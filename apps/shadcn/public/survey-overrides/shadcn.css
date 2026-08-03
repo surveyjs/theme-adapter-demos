@@ -11,7 +11,38 @@
 .sjs-theme-overrides {
   /* Circular step markers — see the stepper section below. */
   --sjs2-radius-component-stepper-item: 100%;
+
+  --sjs2-typography-font-size-component-header-title: var(--text-2xl);
+  --sjs2-typography-line-height-component-header-title: 1;
+
+  --sjs2-typography-font-size-component-header-description: var(--text-sm);
+  --sjs2-typography-line-height-component-header-description: var(--text-sm--line-height);
+
+  --sjs2-layout-component-survey-box-padding-top: calc(var(--spacing) * 6);
+  --sjs2-layout-component-survey-box-padding-bottom: calc(var(--spacing) * 6);
+  --sjs2-layout-component-survey-box-gap-vertical: calc(var(--spacing) * 6);
+
+  --sjs2-layout-component-page-header-gap-vertical: 0;
+  --sjs2-layout-component-page-header-padding-horizontal: calc(var(--spacing) * 6);
+  --sjs2-layout-component-page-box-gap-vertical: calc(var(--spacing) * 6);
+  --sjs2-layout-component-page-content-area-gap-vertical: calc(var(--spacing) * 4);
+  --sjs2-layout-component-page-content-area-padding-horizontal: calc(var(--spacing) * 6);
+  --sjs2-layout-component-page-content-area-gap-horizontal: calc(var(--spacing) * 4);
+
+  --sjs2-layout-component-survey-footer-padding-horizontal: calc(var(--spacing) * 6);
+  --sjs2-layout-component-survey-footer-action-group-gap: calc(var(--spacing) * 3);
+
+  
 }
+
+.sv-header__content {
+  padding: calc(var(--spacing) * 6);
+}
+.sv-header__title~.sv-header__description {
+  margin-top: calc(var(--spacing) * 1.5);
+  margin-bottom: calc(var(--spacing) * 6);
+}
+
 
 /* ── stepper ──────────────────────────────────────────────────────────────
    The shadcn registry has no stepper, so there is nothing for the SurveyJS
@@ -20,15 +51,24 @@
    below matches the SurveyJS progress bar to that app-owned widget — the
    2.25rem `--stepper-indicator-size` circles with `shadow-sm`, and
    `text-sm/medium text-muted-foreground` titles underneath. */
+.sd-progress-buttons {
+  padding: 0 calc(var(--spacing) * 6) calc(var(--spacing) * 2);
+}
+
 .sd-progress-buttons__page-title {
   font-size: var(--text-sm);
   font-weight: var(--font-weight-medium);
+  line-height: 1.25;
   color: var(--muted-foreground);
 }
 
 .sd-progress-buttons__list li:first-child,
 .sd-progress-buttons__list li:last-child {
   align-items: center;
+}
+
+.sd-progress-buttons--titles-bottom .sd-progress-buttons__list-container {
+  padding-top: 0;
 }
 
 .sd-progress-buttons--numbered .sd-progress-buttons__button {

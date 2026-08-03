@@ -281,7 +281,7 @@ export function NativeControls() {
   return (
     <div className="border p-6">
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold leading-none tracking-tight">
+          <h2 className="text-2xl font-semibold leading-none">
             Patient Intake (Native shadcn)
           </h2>
           <p className="mt-1.5 text-sm text-muted-foreground">

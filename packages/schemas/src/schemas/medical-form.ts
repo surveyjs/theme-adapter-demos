@@ -92,7 +92,7 @@ export const medicalFormJson: SurveyJSON = {
               type: "text",
               name: "groupNumber",
               title: "Group number",
-              width: "50%"
+              maxWidth: "50%"
             },
             {
               type: "radiogroup",
