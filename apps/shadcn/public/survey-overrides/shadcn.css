@@ -22,17 +22,18 @@
   --sjs2-layout-component-survey-box-padding-bottom: calc(var(--spacing) * 6);
   --sjs2-layout-component-survey-box-gap-vertical: calc(var(--spacing) * 6);
 
+  /* Page layout mirrors NativeControls, which is shared by every visual style:
+     the `p-6` box and the `grid gap-4 sm:grid-cols-2` rows. The vertical gap
+     BETWEEN questions comes from the vendored FieldGroup instead, so it lives
+     in `/survey-overrides/<style>.css`. */
   --sjs2-layout-component-page-header-gap-vertical: 0;
   --sjs2-layout-component-page-header-padding-horizontal: calc(var(--spacing) * 6);
   --sjs2-layout-component-page-box-gap-vertical: calc(var(--spacing) * 6);
-  --sjs2-layout-component-page-content-area-gap-vertical: calc(var(--spacing) * 4);
   --sjs2-layout-component-page-content-area-padding-horizontal: calc(var(--spacing) * 6);
   --sjs2-layout-component-page-content-area-gap-horizontal: calc(var(--spacing) * 4);
 
   --sjs2-layout-component-survey-footer-padding-horizontal: calc(var(--spacing) * 6);
   --sjs2-layout-component-survey-footer-action-group-gap: calc(var(--spacing) * 3);
-
-  
 }
 
 .sv-header__content {
