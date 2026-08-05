@@ -26,12 +26,19 @@ export const medicalFormJson: SurveyJSON = {
       name: "patient",
       title: "Patient",
       elements: [
-        { type: "text", name: "firstName", title: "First name", isRequired: true },
+        {
+          type: "text",
+          name: "firstName",
+          title: "First name",
+          isRequired: true,
+          requiredErrorText: "First name is required.",
+        },
         {
           type: "text",
           name: "lastName",
           title: "Last name",
           isRequired: true,
+          requiredErrorText: "Last name is required.",
           startWithNewLine: false,
         },
         {
@@ -40,6 +47,7 @@ export const medicalFormJson: SurveyJSON = {
           title: "Date of birth",
           inputType: "date",
           isRequired: true,
+          requiredErrorText: "Date of birth is required.",
         },
         {
           type: "radiogroup",
@@ -80,12 +88,19 @@ export const medicalFormJson: SurveyJSON = {
           name: "primaryInsurance",
           title: "Primary insurance",
           elements: [
-            { type: "text", name: "carrier", title: "Insurance carrier", isRequired: true },
+            {
+              type: "text",
+              name: "carrier",
+              title: "Insurance carrier",
+              isRequired: true,
+              requiredErrorText: "Insurance carrier is required.",
+            },
             {
               type: "text",
               name: "memberId",
               title: "Member ID",
               isRequired: true,
+              requiredErrorText: "Member ID is required.",
               startWithNewLine: false,
             },
             {
@@ -125,12 +140,19 @@ export const medicalFormJson: SurveyJSON = {
           title: "Secondary insurance",
           visibleIf: "{hasSecondary} = true",
           elements: [
-            { type: "text", name: "carrier2", title: "Insurance carrier", isRequired: true },
+            {
+              type: "text",
+              name: "carrier2",
+              title: "Insurance carrier",
+              isRequired: true,
+              requiredErrorText: "Insurance carrier is required.",
+            },
             {
               type: "text",
               name: "memberId2",
               title: "Member ID",
               isRequired: true,
+              requiredErrorText: "Member ID is required.",
               startWithNewLine: false,
             },
           ],
@@ -171,6 +193,7 @@ export const medicalFormJson: SurveyJSON = {
               title: "Allergen",
               cellType: "text",
               isRequired: true,
+              requiredErrorText: "Allergen is required.",
               placeholder: "Allergen *"
             },
             {
@@ -202,6 +225,7 @@ export const medicalFormJson: SurveyJSON = {
           displayMode: "checkbox",
           titleLocation: "hidden",
           isRequired: true,
+          requiredErrorText: "Consent to treatment is required.",
           validators: [
             {
               type: "expression",
@@ -217,6 +241,7 @@ export const medicalFormJson: SurveyJSON = {
           displayMode: "checkbox",
           titleLocation: "hidden",
           isRequired: true,
+          requiredErrorText: "Acknowledgement is required.",
           validators: [
             {
               type: "expression",
