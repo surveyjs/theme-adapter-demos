@@ -40,8 +40,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
           className="fw-bold d-flex align-items-center gap-2"
           style={{ color: "var(--bs-body-color)" }}
         >
-          <span aria-hidden>🧩</span>
-          SurveyJS Theme Adapter
+          <a
+            href="https://surveyjs.io/themes/theme-adapters"
+            target="_blank"
+            rel="noreferrer"
+            className="d-flex align-items-center gap-2 text-decoration-none"
+            style={{ color: "inherit" }}
+          >
+            <span aria-hidden>🧩</span>
+            SurveyJS Theme Adapter
+          </a>
           <span className="badge text-bg-primary fw-normal">Bootstrap</span>
         </Navbar.Brand>
         <div className="ms-auto d-flex align-items-center gap-3">

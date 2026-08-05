@@ -31,10 +31,17 @@ const SIDEBAR_WIDTH = "17rem";
 function Brand() {
   return (
     <div className="flex items-center gap-2">
-      <span className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md">
-        <LayersIcon className="size-4" />
-      </span>
-      <span className="text-sm font-semibold">SurveyJS Theme Adapter</span>
+      <a
+        href="https://surveyjs.io/themes/theme-adapters"
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-2 text-inherit no-underline"
+      >
+        <span className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md">
+          <LayersIcon className="size-4" />
+        </span>
+        <span className="text-sm font-semibold">SurveyJS Theme Adapter</span>
+      </a>
       <span className="bg-secondary text-secondary-foreground rounded-full px-2 py-0.5 text-xs font-medium">
         shadcn
       </span>

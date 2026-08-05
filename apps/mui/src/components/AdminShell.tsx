@@ -11,6 +11,7 @@ import Chip from "@mui/material/Chip";
 import Container from "@mui/material/Container";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Sidebar } from "./Sidebar";
@@ -19,6 +20,7 @@ import { AllQuestionsToggle } from "./AllQuestionsToggle";
 import { BorderlessToggle } from "./BorderlessToggle";
 
 const DRAWER_WIDTH = 280;
+const ADAPTER_URL = "https://surveyjs.io/themes/theme-adapters";
 
 /**
  * Classic MUI admin layout, native chrome only — no SurveyJS yet.
@@ -40,10 +42,19 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   const brand = (
     <Toolbar sx={{ gap: 1 }}>
-      <WidgetsIcon color="primary" />
-      <Typography variant="h6" noWrap sx={{ fontWeight: 700, flexGrow: 1 }}>
-        SurveyJS Theme Adapter
-      </Typography>
+      <Link
+        href={ADAPTER_URL}
+        target="_blank"
+        rel="noreferrer"
+        underline="none"
+        color="inherit"
+        sx={{ display: "flex", alignItems: "center", gap: 1, flexGrow: 1 }}
+      >
+        <WidgetsIcon color="primary" />
+        <Typography variant="h6" noWrap sx={{ fontWeight: 700 }}>
+          SurveyJS Theme Adapter
+        </Typography>
+      </Link>
     </Toolbar>
   );
 
@@ -70,10 +81,19 @@ export function AdminShell({ children }: { children: ReactNode }) {
           >
             <MenuIcon />
           </IconButton>
-          <WidgetsIcon color="primary" sx={{ display: { xs: "none", md: "block" } }} />
-          <Typography variant="h6" noWrap sx={{ fontWeight: 700 }}>
-            SurveyJS Theme Adapter
-          </Typography>
+          <Link
+            href={ADAPTER_URL}
+            target="_blank"
+            rel="noreferrer"
+            underline="none"
+            color="inherit"
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          >
+            <WidgetsIcon color="primary" sx={{ display: { xs: "none", md: "block" } }} />
+            <Typography variant="h6" noWrap sx={{ fontWeight: 700 }}>
+              SurveyJS Theme Adapter
+            </Typography>
+          </Link>
           <Chip label="MUI" color="primary" size="small" sx={{ ml: 1 }} />
           <Box sx={{ flexGrow: 1 }} />
           {/* Renders only on survey routes — hidden on /, /builder and /records. */}
