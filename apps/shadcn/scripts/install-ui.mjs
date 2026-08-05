@@ -1,6 +1,9 @@
 /**
  * Installs shadcn/ui registry components and writes the style-switching glue.
  *
+ * Run manually via `npm run install:ui` (not hooked to npm postinstall — the
+ * shadcn CLI rewrites node_modules and breaks workspace installs).
+ *
  *   node scripts/install-ui.mjs             → full install (CLI + glue)
  *   node scripts/install-ui.mjs --glue-only → regenerate glue from existing files
  *

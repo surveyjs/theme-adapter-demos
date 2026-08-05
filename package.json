@@ -9,11 +9,11 @@
     "apps/*"
   ],
   "scripts": {
-    "postinstall": "npm run install:ui --workspace @adapter/shadcn",
     "install:all": "npm install --workspaces --include-workspace-root",
     "install:bootstrap": "npm install --workspace @adapter/bootstrap",
     "install:shadcn": "npm install --workspace @adapter/shadcn",
     "install:mui": "npm install --workspace @adapter/mui",
+    "install:ui": "npm run install:ui --workspace @adapter/shadcn",
     "dev": "turbo run dev",
     "dev:bootstrap": "concurrently -k -n core,react-ui,demo -c blue,magenta,green \"npm run watch:dev --prefix ../survey-library/packages/survey-core\" \"npm run watch:dev --prefix ../survey-library/packages/survey-react-ui\" \"npm run dev --workspace @adapter/bootstrap\"",
     "dev:bootstrap:creator": "concurrently -k -n core,react-ui,creator-core,creator-react,demo -c blue,magenta,cyan,yellow,green \"npm run watch:dev --prefix ../survey-library/packages/survey-core\" \"npm run watch:dev --prefix ../survey-library/packages/survey-react-ui\" \"npm run watch:dev --prefix ../survey-creator/packages/survey-creator-core\" \"npm run watch:dev --prefix ../survey-creator/packages/survey-creator-react\" \"npm run dev --workspace @adapter/bootstrap\"",

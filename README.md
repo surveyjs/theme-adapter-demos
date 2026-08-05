@@ -42,28 +42,36 @@ git clone https://github.com/surveyjs/theme-adapter-demos.git
 cd theme-adapter-demos
 ```
 
-Install dependencies:
+Install dependencies from the **repository root** (npm workspaces):
 
 ```bash
 npm install
 ```
 
-Navigate to a demo:
-
-```bash
-cd bootstrap
-```
-
-Install its dependencies:
-
-```bash
-npm install
-```
-
-Start the development server:
+Start all demos:
 
 ```bash
 npm run dev
+```
+
+- Bootstrap — http://localhost:3000
+- shadcn/ui — http://localhost:3001
+- MUI — http://localhost:3002
+
+Or start a single demo:
+
+```bash
+npm run dev --workspace @adapter/bootstrap
+npm run dev --workspace @adapter/shadcn
+npm run dev --workspace @adapter/mui
+```
+
+### Regenerating shadcn/ui components
+
+Committed UI sources under `apps/shadcn` are enough for day-to-day work. To reinstall components from the shadcn registry (manual, not part of `npm install`):
+
+```bash
+npm run install:ui
 ```
 
 ## License
