@@ -288,7 +288,7 @@ export function NativeControls() {
             {medicalFormJson.description as string}
           </p>
         </div>
-        <FieldGroup>
+        <div className="flex flex-col gap-6">
           <Stepper value={String(currentPage)}>
             <StepperList aria-label="Form steps" className="gap-3">
               {PAGES.map((title, index) => (
@@ -314,7 +314,6 @@ export function NativeControls() {
           </h3>
 
         <form noValidate onSubmit={handleSubmit}>
-          <FieldGroup>
           {/* ── Patient ───────────────────────────────────────────── */}
           {currentPage === 0 && (
             <FieldGroup>
@@ -761,7 +760,7 @@ export function NativeControls() {
           )}
 
           {/* ── Wizard navigation ─────────────────────────────────── */}
-          <Field orientation="horizontal">
+          <Field className="mt-6" orientation="horizontal">
             {currentPage > 0 && (
               <Button type="button" variant="outline" onClick={goBack}>
                 Previous
@@ -779,9 +778,8 @@ export function NativeControls() {
               Prefill demo data
             </Button>
           </Field>
-          </FieldGroup>
         </form>
-        </FieldGroup>
+        </div>
     </div>
   );
 }

@@ -11,3 +11,8 @@
  *
  * Cross-style rules belong in `/survey-overrides/shadcn.css`.
  */
+
+.sjs-theme-overrides {
+  /* FieldGroup `gap-7` — the gap the native column puts between questions. */
+  --sjs2-layout-component-page-content-area-gap-vertical: calc(var(--spacing) * 7);
+}
