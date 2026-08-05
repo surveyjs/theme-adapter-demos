@@ -74,6 +74,7 @@ export const medicalFormJson: SurveyJSON = {
           type: "dropdown",
           name: "preferredContact",
           title: "Preferred contact method",
+          placeholder: "Select an option...",
           startWithNewLine: false,
           choices: ["Phone", "Email", "Text message"],
         },
