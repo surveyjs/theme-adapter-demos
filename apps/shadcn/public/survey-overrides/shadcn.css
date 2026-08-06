@@ -9,11 +9,6 @@
  */
 
 .sjs-theme-overrides {
-  /* JSON Editor chrome (textarea fallback + Ace host). Default token is
-     palette gray-000 (white); follow the designer surface so dark themes
-     don't leave a white editor pane. */
-  --sjs2-color-utility-surface-json-editor: var(--sjs2-color-utility-surface-designer);
-
   /* Circular step markers — see the stepper section below. */
   --sjs2-radius-component-stepper-item: 100%;
 
