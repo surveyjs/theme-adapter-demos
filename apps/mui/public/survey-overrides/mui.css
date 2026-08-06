@@ -12,10 +12,14 @@
    footer Stack `spacing={1}` + `mt: 3`, titles as Typography h5/h6. */
 .sjs-theme-overrides {
   /* Typography h5 fontWeight={600} — adapter already sets size/weight. */
-  --sjs2-typography-line-height-component-header-title: 1.334;
+  --sjs2-typography-line-height-component-survey-header-title: 1.334;
+  --sjs2-layout-component-survey-header-gap-vertical:  8.4px;
+  --sjs2-layout-component-survey-description-padding-bottom: calc(3 * var(--mui-spacing));
 
+  --sjs2-layout-component-survey-header-padding-top: 16px;
+  --sjs2-layout-component-survey-header-padding-horizontal: 16px;
   /* Outer Box `p: 2`. Top comes from the header; bottom matches the chrome. */
-  --sjs2-layout-component-survey-box-padding-top: 0;
+  --sjs2-layout-component-survey-box-padding-top: 0px;
   --sjs2-layout-component-survey-box-padding-bottom: 16px;
   --sjs2-layout-component-survey-box-gap-vertical: 0;
 
@@ -34,7 +38,7 @@
 
   --sjs2-layout-component-page-header-padding-horizontal: 16px;
   --sjs2-layout-component-page-header-gap-vertical: 0;
-  --sjs2-typography-line-height-component-header-description: 1.6;
+  --sjs2-typography-line-height-component-survey-header-description: 1.6;
   --sjs2-layout-component-page-content-area-padding-horizontal: 16px;
   --sjs2-layout-component-page-box-gap-vertical: 16px;
 
@@ -47,18 +51,6 @@
   --sjs2-radius-component-stepper-item: 100%;
 }
 
-/* ── container padding ────────────────────────────────────────────────────
-   SurveyForm drops the survey into a bordered rectangle with no inner pad, so
-   the survey has to supply the padding the native column gets from Box `p: 2`
-   (16px). That is a consequence of how this app nests the form, not of how
-   any MUI component looks, so it stays out of the adapter. */
-.sv-header__content {
-  padding: 16px;
-}
-.sv-header__title~.sv-header__description {
-  margin-top: 8.4px;
-  margin-bottom: calc(3 * var(--mui-spacing));
-}
 
 /* ── responsive ───────────────────────────────────────────────────────────
    SurveyJS' own mobile mode is off, so the survey follows the same MUI

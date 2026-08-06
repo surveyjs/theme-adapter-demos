@@ -9,13 +9,18 @@
  */
 
 .sjs-theme-overrides {
-  --sjs2-color-component-header-default-description: unset;
+  --sjs2-color-component-survey-header-default-description: unset;
 
-  --sjs2-typography-line-height-component-header-title: 1.2;
+  --sjs2-typography-font-size-component-survey-header-title: 2rem;
+  --sjs2-typography-line-height-component-survey-header-title: 1.2;
 
-  --sjs2-layout-component-survey-box-padding-top: 0;
+  --sjs2-layout-component-survey-header-gap-vertical: 0.25rem;
+
+  --sjs2-layout-component-survey-header-padding-top: 1rem;
+  --sjs2-layout-component-survey-header-padding-horizontal: 1rem;
+  --sjs2-layout-component-survey-box-padding-top: 0px;
   --sjs2-layout-component-survey-box-padding-bottom: 1rem;
-  --sjs2-layout-component-survey-box-gap-vertical: 0;
+  --sjs2-layout-component-survey-box-gap-vertical: 0px;
 
   --sjs2-layout-component-survey-footer-padding-top: 1.5rem;
   --sjs2-layout-component-survey-footer-padding-bottom: 0;
@@ -35,22 +40,13 @@
   /* The survey description mirrors the native column's `<p className="lead">`.
      `.lead` is a utility this app opts into, not part of how a Bootstrap
      component looks by default, so the adapter does not ship it. */
-  --sjs2-typography-font-size-component-header-description: 1.25rem;
-  --sjs2-typography-font-weight-component-header-description: 300;
+  --sjs2-typography-font-size-component-survey-header-description: 1.25rem;
+  --sjs2-typography-font-weight-component-survey-header-description: 300;
 
   --sjs2-typography-line-height-component-page-title: 1.2;
 
   /* Circular step markers — see the stepper section below. */
   --sjs2-radius-component-stepper-item: 100%;
-}
-
-.sv-header__title~.sv-header__description {
-  margin-top: .25rem;
-}
-
-/* header */
-.sv-header__content {
-  padding: 1rem;
 }
 
 /* ── stepper ──────────────────────────────────────────────────────────────
