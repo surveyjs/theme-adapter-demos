@@ -2,8 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { slk } from "survey-core";
+import { AceJsonEditorModel } from "survey-creator-core";
 import { SurveyCreator, SurveyCreatorComponent } from "survey-creator-react";
 import type { SurveyJSON } from "@adapter/schemas";
+
+// Enable Ace in the JSON Editor tab (plain textarea otherwise). Search box +
+// clouds_midnight are required for Find/Replace and dark Creator themes.
+import "ace-builds/src-noconflict/ace";
+import "ace-builds/src-noconflict/ext-searchbox";
+import "ace-builds/src-noconflict/theme-clouds_midnight";
+
+AceJsonEditorModel.aceBasePath = "https://unpkg.com/ace-builds/src-min-noconflict/";
 
 // Layering, bottom → top, mirrors SurveyForm:
 //   1. survey-core base      — the headless library's V3 stylesheet
