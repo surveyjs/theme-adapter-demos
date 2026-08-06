@@ -11,6 +11,11 @@
    outer Box `p: 2`, field Stack `spacing={3}`, row Stack `spacing={2}`,
    footer Stack `spacing={1}` + `mt: 3`, titles as Typography h5/h6. */
 .sjs-theme-overrides {
+  /* JSON Editor chrome (textarea fallback + Ace host). Default token is
+     palette gray-000 (white); follow the designer surface so dark themes
+     don't leave a white editor pane. */
+  --sjs2-color-utility-surface-json-editor: var(--sjs2-color-utility-surface-designer);
+
   /* Typography h5 fontWeight={600} — adapter already sets size/weight. */
   --sjs2-typography-line-height-component-survey-header-title: 1.334;
   --sjs2-layout-component-survey-header-gap-vertical:  8.4px;

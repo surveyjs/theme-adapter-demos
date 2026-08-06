@@ -9,6 +9,11 @@
  */
 
 .sjs-theme-overrides {
+  /* JSON Editor chrome (textarea fallback + Ace host). Default token is
+     palette gray-000 (white); follow the designer surface so dark themes
+     don't leave a white editor pane. */
+  --sjs2-color-utility-surface-json-editor: var(--sjs2-color-utility-surface-designer);
+
   --sjs2-color-component-survey-header-default-description: unset;
 
   --sjs2-typography-font-size-component-survey-header-title: 2rem;

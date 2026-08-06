@@ -2,17 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { slk } from "survey-core";
-import { AceJsonEditorModel } from "survey-creator-core";
 import { SurveyCreator, SurveyCreatorComponent } from "survey-creator-react";
 import type { SurveyJSON } from "@adapter/schemas";
-
-// Enable Ace in the JSON Editor tab (plain textarea otherwise). Search box +
-// clouds_midnight are required for Find/Replace and dark Creator themes.
-import "ace-builds/src-noconflict/ace";
-import "ace-builds/src-noconflict/ext-searchbox";
-import "ace-builds/src-noconflict/theme-clouds_midnight";
-
-AceJsonEditorModel.aceBasePath = "https://unpkg.com/ace-builds/src-min-noconflict/";
+import {
+  observeCreatorAcePalette,
+  syncCreatorAcePalette,
+} from "@/lib/setupAceJsonEditor";
 
 // Layering, bottom → top, mirrors SurveyForm:
 //   1. survey-core base      — the headless library's V3 stylesheet
@@ -48,6 +43,9 @@ slk("ZG9tYWluczpzdXJ2ZXlqcy5pbyxzdXJ2ZXlqc25leHQsbG9jYWxob3N0OzE9MjAzNi0wMy0yNyw
  * `survey-creator-react` component with no renderer/component overrides and no
  * Creator-specific theme code. Re-theming rides entirely on the shared
  * `--sjs2-*` overrides resolving against the active shadcn tokens.
+ *
+ * Ace is wired via `@/lib/setupAceJsonEditor` so the JSON Editor uses Ace with
+ * clouds_midnight when the host app is in a dark color mode.
  */
 export function BuilderCreator({ json }: { json: SurveyJSON }) {
   // The Creator's constructor reaches for the browser DOM `environment`
@@ -67,7 +65,9 @@ export function BuilderCreator({ json }: { json: SurveyJSON }) {
       isAutoSave: false,
     });
     instance.JSON = json;
+    syncCreatorAcePalette(instance);
     setCreator(instance);
+    return observeCreatorAcePalette(instance);
   }, [json]);
 
   if (!creator) {
