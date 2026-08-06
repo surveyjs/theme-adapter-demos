@@ -79,7 +79,7 @@ export const allQuestionsJson: SurveyJSON = {
           type: "file",
           name: "q_file",
           title: "File Upload",
-          storeDataAsText: false,
+          storeDataAsText: true,
           allowMultiple: true,
           maxSize: 10485760,
         },

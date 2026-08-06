@@ -167,7 +167,7 @@ export const insuranceClaimJson: SurveyJSON = {
               name: "attachments",
               title: "Attach receipts / reports",
               allowMultiple: true,
-              storeDataAsText: false,
+              storeDataAsText: true,
               maxSize: 10485760,
               acceptedTypes: ".pdf,.png,.jpg,.jpeg",
             },

@@ -612,7 +612,7 @@ export function NativeControls() {
           {/* ── Consent ───────────────────────────────────────────── */}
           {currentPage === 3 && (
             <>
-              <Form.Group className="mb-2">
+              <Form.Group className="mb-3">
                 <Form.Check
                   type="checkbox"
                   id="nf-consent-treatment"
