@@ -44,7 +44,9 @@ export function FormMetricsFooter() {
   const scope = buildFormMetricsScope(FORM_METRICS);
 
   return (
-    <Box component="details" open sx={{ mt: 1 }}>
+    // `pb` (not `mb`) so the closing caption always keeps clear of the page
+    // bottom — margins here can collapse into the page grid.
+    <Box component="details" open sx={{ mt: 1, pb: 4 }}>
       <Box
         component="summary"
         sx={{
@@ -86,26 +88,21 @@ export function FormMetricsFooter() {
           <TableBody>
             {rows.map((row) => (
               // The final row is a volunteered footnote, not part of the
-              // comparison proper — smaller and dimmer, no icon or background.
-              <TableRow
-                key={row.label}
-                sx={row.muted ? { fontSize: "0.75rem", opacity: 0.7 } : undefined}
-              >
-                <TableCell component="th" scope="row" sx={{ color: "text.secondary", fontSize: "inherit" }}>
+              // comparison proper — dimmer, but the SAME type size as the rows
+              // above. No icon, no coloured background.
+              <TableRow key={row.label} sx={row.muted ? { opacity: 0.6 } : undefined}>
+                <TableCell component="th" scope="row" sx={{ color: "text.secondary" }}>
                   {row.label}
                 </TableCell>
                 <TableCell
                   sx={{
                     bgcolor: "action.hover",
                     color: row.muted ? "text.secondary" : "text.primary",
-                    fontSize: "inherit",
                   }}
                 >
                   {row.surveyjs}
                 </TableCell>
-                <TableCell sx={{ color: "text.secondary", fontSize: "inherit" }}>
-                  {row.native}
-                </TableCell>
+                <TableCell sx={{ color: "text.secondary" }}>{row.native}</TableCell>
               </TableRow>
             ))}
           </TableBody>

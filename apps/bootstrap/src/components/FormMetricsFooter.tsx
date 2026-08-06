@@ -34,7 +34,9 @@ export function FormMetricsFooter() {
   const scope = buildFormMetricsScope(FORM_METRICS);
 
   return (
-    <details className="mt-2" open>
+    // `pb-4` (not a margin) so the closing caption always keeps clear of the
+    // page bottom — margins here can collapse into the page grid.
+    <details className="mt-2 pb-4" open>
       <summary
         className="text-body-secondary small fw-semibold"
         style={{ cursor: "pointer" }}
@@ -74,11 +76,12 @@ export function FormMetricsFooter() {
         <tbody>
           {rows.map((row) => (
             // The final row is a volunteered footnote, not part of the
-            // comparison proper — smaller and dimmer, no icon or background.
+            // comparison proper — dimmer, but the SAME type size as the rows
+            // above. No icon, no coloured background.
             <tr
               key={row.label}
               className={row.muted ? "text-body-secondary" : undefined}
-              style={row.muted ? { fontSize: "0.75rem", opacity: 0.7 } : undefined}
+              style={row.muted ? { opacity: 0.6 } : undefined}
             >
               <th scope="row" className="fw-normal text-body-secondary">
                 {row.label}

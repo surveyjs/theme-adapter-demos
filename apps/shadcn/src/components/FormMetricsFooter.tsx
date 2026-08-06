@@ -42,7 +42,9 @@ export function FormMetricsFooter() {
   const scope = buildFormMetricsScope(FORM_METRICS);
 
   return (
-    <details className="mt-2 rounded-xl border bg-card p-4" open>
+    // `pb-8` (not a margin) so the closing caption always keeps clear of the
+    // page bottom — margins here can collapse into the page grid.
+    <details className="mt-2 rounded-xl border bg-card p-4 pb-8" open>
       <summary className="text-muted-foreground cursor-pointer text-sm font-semibold">
         {buildFormMetricsHeading(FORM_METRICS)}
       </summary>
@@ -79,8 +81,9 @@ export function FormMetricsFooter() {
         <TableBody>
           {rows.map((row) => (
             // The final row is a volunteered footnote, not part of the
-            // comparison proper — smaller and dimmer, no icon or background.
-            <TableRow key={row.label} className={row.muted ? "text-xs opacity-70" : undefined}>
+            // comparison proper — dimmer, but the SAME type size as the rows
+            // above. No icon, no coloured background.
+            <TableRow key={row.label} className={row.muted ? "opacity-60" : undefined}>
               <TableCell className="text-muted-foreground align-top font-medium whitespace-normal">
                 {row.label}
               </TableCell>
