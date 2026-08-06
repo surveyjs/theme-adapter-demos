@@ -61,15 +61,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </div>
       </Navbar>
 
-      <div className="d-flex flex-grow-1" style={{ minHeight: 0 }}>
+      {/* `height: 0` + flex-grow locks this row to the space below the header so
+          Creator / content children can use height: 100% without growing past
+          the viewport (same pattern as the shadcn AdminShell). */}
+      <div className="d-flex flex-grow-1" style={{ minHeight: 0, height: 0 }}>
         {/* Persistent sidebar (large screens) */}
         <aside
-          className="d-none d-lg-block border-end bg-body"
-          style={{ width: 280, flexShrink: 0 }}
+          className="d-none d-lg-block border-end bg-body h-100"
+          style={{ width: 280, flexShrink: 0, overflowY: "auto" }}
         >
-          <div className="position-sticky" style={{ top: "4rem" }}>
-            <Sidebar />
-          </div>
+          <Sidebar />
         </aside>
 
         {/* Drawer sidebar (small screens only; persistent aside handles ≥lg) */}
@@ -84,10 +85,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         <main
           className={isBuilder ? "flex-grow-1" : "flex-grow-1 p-3 p-md-4"}
-          style={{ minWidth: 0, minHeight: 0, overflowY: "auto" }}
+          // Builder hosts Creator's own scroll + responsivity surface. A nested
+          // overflow scroller here breaks that layout: absolute surface tools
+          // stack under a selected page instead of sitting in the reserved
+          // gutter (and hiding when Creator enters compact/mobile width).
+          style={{
+            minWidth: 0,
+            minHeight: 0,
+            overflowY: isBuilder ? "hidden" : "auto",
+          }}
         >
           {isBuilder ? (
-            children
+            <div style={{ height: "100%" }}>{children}</div>
           ) : (
             <Container fluid className="px-0" style={{ height: "100%" }}>
               {children}
