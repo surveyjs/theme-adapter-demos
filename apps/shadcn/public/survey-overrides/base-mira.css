@@ -12,4 +12,5 @@
 .sjs-theme-overrides {
   /* FieldGroup `gap-4` — the gap the native column puts between questions. */
   --sjs2-layout-component-page-content-area-gap-vertical: calc(var(--spacing) * 4);
+  --sjs2-layout-component-survey-footer-action-group-gap: calc(var(--spacing) * 2);
 }
