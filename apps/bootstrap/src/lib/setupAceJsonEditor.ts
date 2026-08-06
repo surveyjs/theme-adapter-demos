@@ -5,16 +5,24 @@
  *
  * Import from BuilderCreator (client-only) before constructing SurveyCreator so
  * `window.ace` exists for TabJsonEditorAcePlugin.hasAceEditor().
+ *
+ * Creator's AceJsonEditorModel only *sets* clouds_midnight for dark and never
+ * clears it for light — so we apply Ace themes ourselves on host mode changes
+ * while the JSON tab is open.
  */
 
 import ace from "ace-builds/src-noconflict/ace";
 import "ace-builds/src-noconflict/ext-searchbox";
 import "ace-builds/src-noconflict/theme-clouds_midnight";
+import "ace-builds/src-noconflict/theme-chrome";
 import "ace-builds/src-noconflict/mode-json";
 import { AceJsonEditorModel } from "survey-creator-core";
 import type { SurveyCreator } from "survey-creator-react";
 
 AceJsonEditorModel.aceBasePath = "https://unpkg.com/ace-builds/src-min-noconflict/";
+
+const ACE_THEME_DARK = "ace/theme/clouds_midnight";
+const ACE_THEME_LIGHT = "ace/theme/chrome";
 
 if (typeof window !== "undefined") {
   (window as unknown as { ace: typeof ace }).ace = ace;
@@ -40,15 +48,26 @@ export function readPreferredColorPalette(): "light" | "dark" {
   return isDarkRgb(getComputedStyle(document.body).backgroundColor) ? "dark" : "light";
 }
 
+function applyAceTheme(palette: "light" | "dark"): void {
+  const host = document.querySelector(".svc-json-editor-tab__ace-editor") as HTMLElement | null;
+  if (!host || typeof window === "undefined" || !(window as unknown as { ace?: typeof ace }).ace) {
+    return;
+  }
+  // ace.edit(el) returns the existing editor instance for a mounted host.
+  const editor = (window as unknown as { ace: typeof ace }).ace.edit(host);
+  editor.setTheme(palette === "dark" ? ACE_THEME_DARK : ACE_THEME_LIGHT);
+}
+
 export function syncCreatorAcePalette(creator: SurveyCreator): void {
   const next = readPreferredColorPalette();
-  if (creator.preferredColorPalette === next) return;
-  creator.preferredColorPalette = next;
-  // Ace applies clouds_midnight only in onPluginActivate — re-run it if the
-  // JSON tab is already open so a live light/dark toggle updates the editor.
+  const changed = creator.preferredColorPalette !== next;
+  if (changed) {
+    creator.preferredColorPalette = next;
+  }
+  // Always push the Ace theme while the JSON tab is visible — Creator only
+  // sets clouds_midnight for dark and never restores a light theme.
   if (creator.activeTab === "json") {
-    const plugin = creator.getPlugin("json", false) as { model?: { onPluginActivate?: () => void } } | undefined;
-    plugin?.model?.onPluginActivate?.();
+    applyAceTheme(next);
   }
 }
 
