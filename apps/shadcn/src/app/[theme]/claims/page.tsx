@@ -1,4 +1,4 @@
-import { medicalFormJson, medicalFormSchema, medicalFormSample } from "@adapter/schemas";
+import { medicalFormSchema, medicalFormSample } from "@adapter/schemas";
 import { SurveyForm } from "@/components/SurveyForm";
 import { NativeControls } from "@/components/NativeControls";
 import { FormMetricsFooter } from "@/components/FormMetricsFooter";
@@ -16,24 +16,8 @@ import { FormMetricsFooter } from "@/components/FormMetricsFooter";
  * block per form.
  */
 
-// Line count of the ONE reusable renderer that draws every SurveyJS form in the
-// app — NOT the schema, and NOT the shared completion screen (that lives in
-// FormCompleted.tsx, excluded from both counts). Recompute with:
-//   wc -l src/components/SurveyForm.tsx
-const SURVEYJS_LINES = 135;
-
-// Line count of the hand-written native form — likewise excluding the shared
-// completion screen. Measured here (a server component) rather than imported
-// from NativeControls.tsx, because a plain value exported from a "use client"
-// module becomes an unreadable client reference on the server. Recompute with:
-//   wc -l src/components/NativeControls.tsx
-const NATIVE_FORM_LINES = 758;
-
-// Byte size of the form's JSON schema, computed live from the imported source so
-// it never drifts from packages/schemas.
-const MEDICAL_FORM_JSON_BYTES = new TextEncoder().encode(
-  JSON.stringify(medicalFormJson),
-).length;
+// The footer's figures live in src/content/formMetrics.ts — the single source
+// of truth this page deliberately does NOT duplicate.
 
 export default function ClaimsPage() {
   return (
@@ -45,11 +29,7 @@ export default function ClaimsPage() {
       />
       <NativeControls />
       <div className="lg:col-span-2">
-        <FormMetricsFooter
-          surveyjsLines={SURVEYJS_LINES}
-          nativeLines={NATIVE_FORM_LINES}
-          jsonBytes={MEDICAL_FORM_JSON_BYTES}
-        />
+        <FormMetricsFooter />
       </div>
     </div>
   );

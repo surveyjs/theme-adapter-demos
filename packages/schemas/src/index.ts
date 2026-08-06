@@ -50,9 +50,13 @@ export {
 // Shared content (renderer-agnostic copy reused across apps)
 export {
   formatKB,
+  fileNameFromUrl,
   buildFormMetricsRows,
-  FORM_METRICS_SUMMARY,
+  buildFormMetricsHeading,
+  buildFormMetricsScope,
+  buildFormMetricsNativeLabel,
   FORM_METRICS_SURVEYJS_LABEL,
+  FORM_METRICS_FILES_LABEL,
   FORM_METRICS_CAPTION,
   type FormMetricsRow,
   type FormMetricsInput,

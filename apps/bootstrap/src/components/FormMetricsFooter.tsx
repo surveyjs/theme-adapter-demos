@@ -8,35 +8,57 @@
  * native column needs a large block of form-specific code a developer rewrites
  * for every form.
  *
- * Rendered as a native <details>/<summary> disclosure — collapsed by default
- * behind its title, expanding to the comparison table — so it needs no client
+ * Rendered as a native <details>/<summary> disclosure — OPEN on first render,
+ * with the summary still working as a collapse control — so it needs no client
  * JS and stays a server component. This is a footer at the bottom of the page,
  * not a per-route page header, so it does not violate the "no page header"
  * invariant.
  *
- * Copy (row text, summary, caption) is shared across all apps via
- * `@adapter/schemas`; this component owns only the Bootstrap markup.
+ * Copy is shared across all apps via `@adapter/schemas`; the numbers come from
+ * `@/content/formMetrics` (this app's single source of truth) and NOTHING here
+ * is hardcoded. This component owns only the Bootstrap markup.
  */
 
 import {
+  buildFormMetricsHeading,
+  buildFormMetricsNativeLabel,
   buildFormMetricsRows,
+  buildFormMetricsScope,
   FORM_METRICS_CAPTION,
-  FORM_METRICS_SUMMARY,
   FORM_METRICS_SURVEYJS_LABEL,
-  type FormMetricsInput,
 } from "@adapter/schemas";
+import { FORM_METRICS } from "@/content/formMetrics";
 
-export function FormMetricsFooter(props: FormMetricsInput) {
-  const rows = buildFormMetricsRows(props);
+export function FormMetricsFooter() {
+  const rows = buildFormMetricsRows(FORM_METRICS);
+  const scope = buildFormMetricsScope(FORM_METRICS);
 
   return (
-    <details className="mt-2">
+    <details className="mt-2" open>
       <summary
-        className="text-body-secondary small fw-semibold mb-2"
+        className="text-body-secondary small fw-semibold"
         style={{ cursor: "pointer" }}
       >
-        {FORM_METRICS_SUMMARY}
+        {buildFormMetricsHeading(FORM_METRICS)}
       </summary>
+
+      <p className="text-body-secondary mt-2 mb-0" style={{ fontSize: "0.75rem" }}>
+        {scope.text} {scope.filesLabel}{" "}
+        {scope.links.map((link, index) => (
+          <span key={link.href}>
+            {index > 0 && " · "}
+            <a
+              className="link-secondary"
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {link.label}
+            </a>
+          </span>
+        ))}
+      </p>
+
       <table className="table table-sm align-middle small mb-2 mt-2">
         <thead>
           <tr>
@@ -46,12 +68,18 @@ export function FormMetricsFooter(props: FormMetricsInput) {
             <th scope="col" className="table-primary">
               {FORM_METRICS_SURVEYJS_LABEL}
             </th>
-            <th scope="col">Native Bootstrap</th>
+            <th scope="col">{buildFormMetricsNativeLabel(FORM_METRICS)}</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.label}>
+            // The final row is a volunteered footnote, not part of the
+            // comparison proper — smaller and dimmer, no icon or background.
+            <tr
+              key={row.label}
+              className={row.muted ? "text-body-secondary" : undefined}
+              style={row.muted ? { fontSize: "0.75rem", opacity: 0.7 } : undefined}
+            >
               <th scope="row" className="fw-normal text-body-secondary">
                 {row.label}
               </th>
@@ -61,6 +89,7 @@ export function FormMetricsFooter(props: FormMetricsInput) {
           ))}
         </tbody>
       </table>
+
       <p className="text-body-secondary small fst-italic mb-0">
         {FORM_METRICS_CAPTION}
       </p>

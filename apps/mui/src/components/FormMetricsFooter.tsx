@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,12 +8,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import {
+  buildFormMetricsHeading,
+  buildFormMetricsNativeLabel,
   buildFormMetricsRows,
+  buildFormMetricsScope,
   FORM_METRICS_CAPTION,
-  FORM_METRICS_SUMMARY,
   FORM_METRICS_SURVEYJS_LABEL,
-  type FormMetricsInput,
 } from "@adapter/schemas";
+import { FORM_METRICS } from "@/content/formMetrics";
 
 /**
  * "Code cost" comparison footer rendered ONCE below both /claims columns.
@@ -25,21 +28,23 @@ import {
  * for every form.
  *
  * Rendered as a native <details>/<summary> disclosure (via `Box component="details"`)
- * — collapsed by default behind its title, expanding to the comparison table — so
- * it needs no client JS and stays a server component (an MUI <Accordion> would
+ * — OPEN on first render, with the summary still working as a collapse control —
+ * so it needs no client JS and stays a server component (an MUI <Accordion> would
  * pull in a "use client" boundary). This is a footer at the bottom of the page,
  * not a per-route page header, so it does not violate the "no page header"
  * invariant.
  *
- * Copy (row text, summary, caption) is shared across all apps via
- * `@adapter/schemas`; this component owns only the MUI markup.
+ * Copy is shared across all apps via `@adapter/schemas`; the numbers come from
+ * `@/content/formMetrics` (this app's single source of truth) and NOTHING here
+ * is hardcoded. This component owns only the MUI markup.
  */
 
-export function FormMetricsFooter(props: FormMetricsInput) {
-  const rows = buildFormMetricsRows(props);
+export function FormMetricsFooter() {
+  const rows = buildFormMetricsRows(FORM_METRICS);
+  const scope = buildFormMetricsScope(FORM_METRICS);
 
   return (
-    <Box component="details" sx={{ mt: 1 }}>
+    <Box component="details" open sx={{ mt: 1 }}>
       <Box
         component="summary"
         sx={{
@@ -47,11 +52,23 @@ export function FormMetricsFooter(props: FormMetricsInput) {
           color: "text.secondary",
           fontSize: "0.875rem",
           fontWeight: 600,
-          mb: 1,
         }}
       >
-        {FORM_METRICS_SUMMARY}
+        {buildFormMetricsHeading(FORM_METRICS)}
       </Box>
+
+      <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>
+        {scope.text}{" "}
+        {scope.filesLabel}{" "}
+        {scope.links.map((link, index) => (
+          <span key={link.href}>
+            {index > 0 && " · "}
+            <Link href={link.href} target="_blank" rel="noopener noreferrer" color="inherit">
+              {link.label}
+            </Link>
+          </span>
+        ))}
+      </Typography>
 
       <TableContainer sx={{ mt: 2, mb: 2 }}>
         <Table size="small" sx={{ color: "text.secondary" }}>
@@ -62,20 +79,33 @@ export function FormMetricsFooter(props: FormMetricsInput) {
                 {FORM_METRICS_SURVEYJS_LABEL}
               </TableCell>
               <TableCell sx={{ color: "text.secondary", fontWeight: 600 }}>
-                Native MUI
+                {buildFormMetricsNativeLabel(FORM_METRICS)}
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <TableRow key={row.label}>
-                <TableCell component="th" scope="row" sx={{ color: "text.secondary" }}>
+              // The final row is a volunteered footnote, not part of the
+              // comparison proper — smaller and dimmer, no icon or background.
+              <TableRow
+                key={row.label}
+                sx={row.muted ? { fontSize: "0.75rem", opacity: 0.7 } : undefined}
+              >
+                <TableCell component="th" scope="row" sx={{ color: "text.secondary", fontSize: "inherit" }}>
                   {row.label}
                 </TableCell>
-                <TableCell sx={{ bgcolor: "action.hover", color: "text.primary" }}>
+                <TableCell
+                  sx={{
+                    bgcolor: "action.hover",
+                    color: row.muted ? "text.secondary" : "text.primary",
+                    fontSize: "inherit",
+                  }}
+                >
                   {row.surveyjs}
                 </TableCell>
-                <TableCell sx={{ color: "text.secondary" }}>{row.native}</TableCell>
+                <TableCell sx={{ color: "text.secondary", fontSize: "inherit" }}>
+                  {row.native}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
