@@ -1,9 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useColorScheme } from "@mui/material/styles";
 import { slk } from "survey-core";
 import { SurveyCreator, SurveyCreatorComponent } from "survey-creator-react";
 import type { SurveyJSON } from "@adapter/schemas";
+
+// Ace JSON Editor (optional). clouds_midnight is used when preferredColorPalette
+// is "dark"; chrome is applied on light so dark→light works while the tab is open.
+import ace from "ace-builds/src-noconflict/ace";
+import "ace-builds/src-noconflict/ext-searchbox";
+import "ace-builds/src-noconflict/theme-clouds_midnight";
+import "ace-builds/src-noconflict/theme-chrome";
+
+if (typeof window !== "undefined") {
+  (window as unknown as { ace: typeof ace }).ace = ace;
+}
 
 // Layering, bottom → top, mirrors SurveyForm:
 //   1. survey-core base      — the headless library's V3 stylesheet
@@ -33,6 +45,12 @@ import "survey-core/themes/adapters/mui.min.css";
 // constructed — and shared verbatim across all adapter apps.
 slk("ZG9tYWluczpzdXJ2ZXlqcy5pbyxzdXJ2ZXlqc25leHQsbG9jYWxob3N0OzE9MjAzNi0wMy0yNywyPTIwMzYtMDMtMjcsND0yMDM2LTAzLTI3LDg9MjAzNi0wMy0yNw==");
 
+function applyAceTheme(isDark: boolean) {
+  const host = document.querySelector(".svc-json-editor-tab__ace-editor");
+  if (!host) return;
+  ace.edit(host as HTMLElement).setTheme(isDark ? "ace/theme/clouds_midnight" : "ace/theme/chrome");
+}
+
 /**
  * Mounts the SurveyJS V3 Creator on the Builder route, seeded with a shared
  * schema from `@adapter/schemas` so the builder edits the very same definition
@@ -44,6 +62,8 @@ slk("ZG9tYWluczpzdXJ2ZXlqcy5pbyxzdXJ2ZXlqc25leHQsbG9jYWxob3N0OzE9MjAzNi0wMy0yNyw
  * `--sjs2-*` overrides resolving against the active MUI scheme/palette.
  */
 export function BuilderCreator({ json }: { json: SurveyJSON }) {
+  const { mode, systemMode } = useColorScheme();
+  const isDark = (mode === "system" ? systemMode : mode) === "dark";
   // The Creator's constructor reaches for the browser DOM `environment`
   // (`navigator`), which is absent during Next's server prerender — so unlike
   // the headless SurveyModel it CANNOT be built at render/SSR time. Construct it
@@ -63,6 +83,12 @@ export function BuilderCreator({ json }: { json: SurveyJSON }) {
     instance.JSON = json;
     setCreator(instance);
   }, [json]);
+
+  useEffect(() => {
+    if (!creator) return;
+    creator.preferredColorPalette = isDark ? "dark" : "light";
+    if (creator.activeTab === "json") applyAceTheme(isDark);
+  }, [creator, isDark]);
 
   if (!creator) {
     return <div aria-busy="true" style={{ height: "100%", minHeight: "40rem" }} />;
