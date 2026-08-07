@@ -54,7 +54,6 @@ export const medicalFormJson: SurveyJSON = {
           name: "sex",
           title: "Sex assigned at birth",
           startWithNewLine: false,
-          colCount: 0,
           choices: [
             { value: "f", text: "Female" },
             { value: "m", text: "Male" },
