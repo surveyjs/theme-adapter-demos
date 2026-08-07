@@ -76,6 +76,8 @@ export function BuilderCreator({ json }: { json: SurveyJSON }) {
       showTranslationTab: true,
       // Persisting is out of scope for the adapter proof — no save handler.
       isAutoSave: false,
+      allowZoom: false,
+      showCreatorThemeSettings: false,
     });
     instance.JSON = json;
     setCreator(instance);
