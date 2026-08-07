@@ -588,11 +588,15 @@ export function NativeControls() {
               </Card>
 
               <Card>
+              <CardHeader>
+                  <FieldLabel>
+                    Allergies
+                  </FieldLabel>
+                </CardHeader>
               <CardContent>
               <Field>
-                <FieldLabel>Allergies</FieldLabel>
                 {allergies.length === 0 && (
-                  <FieldDescription>No allergies added.</FieldDescription>
+                  <p className="text-sm text-muted-foreground">No allergies added.</p>
                 )}
                 {allergies.length > 0 && (
                   <Table>
