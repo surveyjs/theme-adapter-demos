@@ -3,18 +3,21 @@
  *
  * The root package.json pins the survey-* packages to the published `next`
  * dist-tag, so by default `next build` / `next start` consume the npm packages.
- * `next dev` always aliases survey-* imports to the local V3 `build/` folders.
- * `next build` does the same when `SURVEYJS_LIBV3` is set (shell or repo-root
- * `.env` / `.env.local`), so production builds can target your working copy
- * without package.json edits.
+ * `next dev` aliases survey-* imports to the local V3 `build/` folders when
+ * those checkouts are present. `next build` does the same when `SURVEYJS_LIBV3`
+ * is set (shell or repo-root `.env` / `.env.local`), so production builds can
+ * target your working copy without package.json edits.
  *
  * Local build location: the parent folder of this repo by default (the folder
  * that holds the `survey-library` and `survey-creator` checkouts). Override it
  * with the SURVEYJS_LIBV3 env var (absolute, or relative to the repo root).
  * Loaded here directly, since Next only reads per-app .env and Turbo's strict
  * env mode strips undeclared vars before they reach the task process.
- * When local resolution is active, missing builds throw instead of quietly
- * falling back to the npm packages.
+ *
+ * The checkouts are optional: a plain clone has none, so `next dev` falls back
+ * to the published packages. A HALF-built local setup is not a fallback case —
+ * some builds present and others missing throws, as does any missing build once
+ * SURVEYJS_LIBV3 has explicitly opted in.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -78,9 +81,11 @@ export const BUILD_DIRS = {
   "survey-creator-react": resolve(base, "survey-creator/packages/survey-creator-react/build"),
 };
 
-// Watch node_modules only for our linked survey-* builds + @adapter/schemas.
+// Watch node_modules only for our linked survey-* builds. `@adapter/schemas`
+// needs no exception: webpack resolves the workspace link to its realpath under
+// packages/, which is outside node_modules and therefore watched normally.
 const IGNORE_NODE_MODULES_EXCEPT_LINKED =
-  /[\\/]node_modules[\\/](?!(survey-core|survey-react-ui|survey-creator-core|survey-creator-react)([\\/]|$)|@adapter[\\/]schemas([\\/]|$))/;
+  /[\\/]node_modules[\\/](?!(survey-core|survey-react-ui|survey-creator-core|survey-creator-react)([\\/]|$))/;
 
 /** Build dirs from BUILD_DIRS that don't exist on disk. */
 function missingSurveyBuilds() {
@@ -88,18 +93,35 @@ function missingSurveyBuilds() {
 }
 
 /**
+ * True when no local V3 build exists at all — a plain clone with no sibling
+ * survey-library / survey-creator checkouts. Only meaningful without an
+ * explicit SURVEYJS_LIBV3, which opts in and therefore must resolve.
+ */
+function noLocalSurveyBuilds() {
+  return missingSurveyBuilds().length === LIB_NAMES.length;
+}
+
+/**
+ * Whether survey-* resolve to the local V3 builds. Exported so asset scripts
+ * (e.g. apps/*​/scripts/copy-survey-adapters.mjs) copy CSS from the same place
+ * webpack takes the JS from — the two must never disagree.
+ */
+export const useLocalSurveyBuilds = hasSurveyJsLibV3 || !noLocalSurveyBuilds();
+
+/**
  * Alias survey-* to the local builds when `next dev` is running, or when
  * `SURVEYJS_LIBV3` is set (so `next build` can target the same working copy).
  * No-op for production builds without the env var — those use the published
- * npm packages.
+ * npm packages, as does any run with no local checkouts at all.
  *
- * When local resolution is active, missing builds throw rather than silently
- * falling back to npm, so a broken local setup fails loudly.
+ * A partially built local setup throws rather than silently falling back to
+ * npm, so a broken checkout fails loudly instead of shipping mixed versions.
  * @param {import('webpack').Configuration} config
  * @param {{ dev: boolean }} ctx
  */
 export function applyLocalSurveyJs(config, { dev }) {
   if (!dev && !hasSurveyJsLibV3) return config;
+  if (!useLocalSurveyBuilds) return config;
 
   const missing = missingSurveyBuilds();
   if (missing.length > 0) {
@@ -122,19 +144,26 @@ export function applyLocalSurveyJs(config, { dev }) {
   // workspace's single hoisted copy. Adding these dirs as resolve roots keeps
   // one React instance without hard-aliasing `react` (which would break the
   // App Router's `react-server` conditional exports).
+  //
+  // Order matters. Webpack treats an absolute entry as "look only here" and the
+  // relative "node_modules" as "walk up the ancestors, Node-style", trying them
+  // in array order. Listing the roots FIRST makes the hoisted copy win over the
+  // nested one npm deliberately installed for a version conflict — e.g.
+  // prop-types would get react-is 19 instead of the 16 it declares. Keep them
+  // LAST so they only serve the external builds, which have no ancestors here.
   config.resolve.modules = [
+    ...(config.resolve.modules ?? ["node_modules"]),
     resolve(config.context ?? repoRoot, "node_modules"),
     resolve(repoRoot, "node_modules"),
-    ...(config.resolve.modules ?? ["node_modules"]),
   ];
 
   // Hot-reload edits made in the local builds (dev), and avoid stale caches
-  // when switching between local and npm resolution.
+  // when switching between local and npm resolution. The aliased builds live
+  // outside node_modules, so webpack's managed/immutable-path defaults for
+  // node_modules do not apply to them and are left alone.
   config.cache = false;
-  config.snapshot = { ...config.snapshot, immutablePaths: [], managedPaths: [] };
   config.watchOptions = {
     ...config.watchOptions,
-    followSymlinks: true,
     ignored: IGNORE_NODE_MODULES_EXCEPT_LINKED,
   };
 
