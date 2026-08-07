@@ -311,7 +311,6 @@ export function NativeControls() {
                 <Form.Group as={Col} md={6}>
                   <Form.Label className="d-block">Sex assigned at birth</Form.Label>
                   <Form.Check
-                    inline
                     type="radio"
                     name="nf-sex"
                     id="nf-sex-f"
@@ -320,7 +319,6 @@ export function NativeControls() {
                     onChange={() => setSex("f")}
                   />
                   <Form.Check
-                    inline
                     type="radio"
                     name="nf-sex"
                     id="nf-sex-m"

@@ -323,7 +323,6 @@ export function NativeControls() {
                 <FormControl fullWidth>
                   <FormLabel id="nf-sex-label">Sex assigned at birth</FormLabel>
                   <RadioGroup
-                    row
                     name="nf-sex"
                     aria-labelledby="nf-sex-label"
                     value={sex}
