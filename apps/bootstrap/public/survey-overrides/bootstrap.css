@@ -11,6 +11,9 @@
 .sjs-theme-overrides {
   --sjs2-color-component-survey-header-default-description: unset;
 
+  /* Match native `<h2>` — Bootstrap default `$h2-font-size: 2rem`.
+     Themes that diverge (darkly/flatly/litera/lux) override in their
+     `/survey-overrides/<theme>.css`. */
   --sjs2-typography-font-size-component-survey-header-title: 2rem;
   --sjs2-typography-line-height-component-survey-header-title: 1.2;
 

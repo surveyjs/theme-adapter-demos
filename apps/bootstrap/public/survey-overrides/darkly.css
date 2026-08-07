@@ -8,3 +8,8 @@
  * Prefer `--sjs2-*` token overrides on `.sjs-theme-overrides` when possible;
  * use SurveyJS class selectors only when tokens are not enough.
  */
+
+.sjs-theme-overrides {
+  /* Match native `<h2>` — Bootswatch Darkly `$h2-font-size: 2.5rem`. */
+  --sjs2-typography-font-size-component-survey-header-title: 2.5rem;
+}

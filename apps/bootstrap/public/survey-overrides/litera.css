@@ -14,4 +14,9 @@
      column's `<p className="lead">`, an app choice rather than a Bootstrap
      component default, so it is set here instead of in the adapter. */
   --sjs2-color-component-survey-header-default-description: #868e96;
+
+  /* Match native `<h2>` — Bootswatch Litera `$h2-font-size: 2.2rem`
+     (from `$font-size-base: 1.1rem` × 2). */
+  --sjs2-typography-font-size-component-survey-header-title: 2.2rem;
 }
+
