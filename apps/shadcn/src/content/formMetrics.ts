@@ -22,7 +22,7 @@ export const FORM_METRICS: FormMetricsInput = {
   surveyjsLines: 85,
 
   // The hand-written native implementation of the same Patient Intake form.
-  nativeLines: 694,
+  nativeLines: 729,
 
   // Computed live from the imported schema so it never drifts from
   // packages/schemas. Measured here (a server-safe module) rather than inside a

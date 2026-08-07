@@ -4,6 +4,7 @@ import {
   useState,
   type ChangeEvent,
   type FormEvent,
+  type ReactNode,
 } from "react";
 // Comparison column shows the active style's REAL shadcn button (per-style,
 // CLI-generated). Aliased to Button so every form button below picks it up.
@@ -55,6 +56,7 @@ import {
   StepperList,
   StepperSeparator,
 } from "@/components/ui/stepper";
+import { useBorderlessMode } from "./BorderlessMode";
 import { FormCompleted } from "./FormCompleted";
 import { RequiredLabel, RequiredMark } from "./RequiredLabel";
 
@@ -113,6 +115,23 @@ function maskPhone(raw: string): string {
   if (prefix) out += ` ${prefix}`;
   if (line) out += `-${line}`;
   return out;
+}
+
+/**
+ * Native twin of the "Borderless questions" switch (top menu), which maps onto
+ * survey-core's `isCompact` in the SurveyJS column: with it off, a question
+ * standing directly on the page gets its own box. Questions inside a panel
+ * (here: the insurance / history Cards) keep no box either way, so only the
+ * fields NOT already in a Card are wrapped.
+ */
+function QuestionBox({ children }: { children: ReactNode }) {
+  const { borderless } = useBorderlessMode();
+  if (borderless) return <>{children}</>;
+  return (
+    <Card>
+      <CardContent>{children}</CardContent>
+    </Card>
+  );
 }
 
 export function NativeControls() {
@@ -318,101 +337,113 @@ export function NativeControls() {
           {currentPage === 0 && (
             <FieldGroup>
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
-                <Field data-invalid={showErrors && errors.firstName}>
-                  <RequiredLabel htmlFor="nf-first">First name</RequiredLabel>
-                  <Input
-                    id="nf-first"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    aria-invalid={showErrors && errors.firstName}
-                  />
-                  {showErrors && errors.firstName && (
-                    <FieldError>First name is required.</FieldError>
-                  )}
-                </Field>
-                <Field data-invalid={showErrors && errors.lastName}>
-                  <RequiredLabel htmlFor="nf-last">Last name</RequiredLabel>
-                  <Input
-                    id="nf-last"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    aria-invalid={showErrors && errors.lastName}
-                  />
-                  {showErrors && errors.lastName && (
-                    <FieldError>Last name is required.</FieldError>
-                  )}
-                </Field>
-              </FieldGroup>
-
-              <FieldGroup className="grid gap-4 sm:grid-cols-2">
-                <Field data-invalid={showErrors && errors.dob}>
-                  <RequiredLabel htmlFor="nf-dob">Date of birth</RequiredLabel>
-                  <Input
-                    id="nf-dob"
-                    type="date"
-                    value={dob}
-                    onChange={(e) => setDob(e.target.value)}
-                    aria-invalid={showErrors && errors.dob}
-                  />
-                  {showErrors && errors.dob && (
-                    <FieldError>Date of birth is required.</FieldError>
-                  )}
-                </Field>
-                <Field>
-                  <FieldLabel>Sex assigned at birth</FieldLabel>
-                  <RadioGroup
-                    value={sex}
-                    onValueChange={(value: string) => setSex(value as Sex)}
-                  >
-                    <Field orientation="horizontal">
-                      <RadioGroupItem value="f" id="nf-sex-f" />
-                      <Label htmlFor="nf-sex-f">Female</Label>
-                    </Field>
-                    <Field orientation="horizontal">
-                      <RadioGroupItem value="m" id="nf-sex-m" />
-                      <Label htmlFor="nf-sex-m">Male</Label>
-                    </Field>
-                  </RadioGroup>
-                </Field>
-              </FieldGroup>
-
-              <FieldGroup className="grid gap-4 sm:grid-cols-2">
-                <Field>
-                  <FieldLabel htmlFor="nf-phone">Mobile phone</FieldLabel>
-                  <Input
-                    id="nf-phone"
-                    type="tel"
-                    placeholder="+1 (___) ___-____"
-                    value={phone}
-                    onChange={(e) => setPhone(maskPhone(e.target.value))}
-                  />
-                  <FieldDescription>
-                    We&apos;ll send appointment reminders to this number.
-                  </FieldDescription>
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="nf-contact">Preferred contact method</FieldLabel>
-                  <Combobox
-                    items={CONTACT_METHODS}
-                    value={preferredContact || null}
-                    onValueChange={(value: string | null) => setPreferredContact(value ?? "")}
-                  >
-                    <ComboboxInput
-                      id="nf-contact"
-                      placeholder="Select an option…"
+                <QuestionBox>
+                  <Field data-invalid={showErrors && errors.firstName}>
+                    <RequiredLabel htmlFor="nf-first">First name</RequiredLabel>
+                    <Input
+                      id="nf-first"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      aria-invalid={showErrors && errors.firstName}
                     />
-                    <ComboboxContent>
-                      <ComboboxEmpty>No items found.</ComboboxEmpty>
-                      <ComboboxList>
-                        {(item: string) => (
-                          <ComboboxItem key={item} value={item}>
-                            {item}
-                          </ComboboxItem>
-                        )}
-                      </ComboboxList>
-                    </ComboboxContent>
-                  </Combobox>
-                </Field>
+                    {showErrors && errors.firstName && (
+                      <FieldError>First name is required.</FieldError>
+                    )}
+                  </Field>
+                </QuestionBox>
+                <QuestionBox>
+                  <Field data-invalid={showErrors && errors.lastName}>
+                    <RequiredLabel htmlFor="nf-last">Last name</RequiredLabel>
+                    <Input
+                      id="nf-last"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      aria-invalid={showErrors && errors.lastName}
+                    />
+                    {showErrors && errors.lastName && (
+                      <FieldError>Last name is required.</FieldError>
+                    )}
+                  </Field>
+                </QuestionBox>
+              </FieldGroup>
+
+              <FieldGroup className="grid gap-4 sm:grid-cols-2">
+                <QuestionBox>
+                  <Field data-invalid={showErrors && errors.dob}>
+                    <RequiredLabel htmlFor="nf-dob">Date of birth</RequiredLabel>
+                    <Input
+                      id="nf-dob"
+                      type="date"
+                      value={dob}
+                      onChange={(e) => setDob(e.target.value)}
+                      aria-invalid={showErrors && errors.dob}
+                    />
+                    {showErrors && errors.dob && (
+                      <FieldError>Date of birth is required.</FieldError>
+                    )}
+                  </Field>
+                </QuestionBox>
+                <QuestionBox>
+                  <Field>
+                    <FieldLabel>Sex assigned at birth</FieldLabel>
+                    <RadioGroup
+                      value={sex}
+                      onValueChange={(value: string) => setSex(value as Sex)}
+                    >
+                      <Field orientation="horizontal">
+                        <RadioGroupItem value="f" id="nf-sex-f" />
+                        <Label htmlFor="nf-sex-f">Female</Label>
+                      </Field>
+                      <Field orientation="horizontal">
+                        <RadioGroupItem value="m" id="nf-sex-m" />
+                        <Label htmlFor="nf-sex-m">Male</Label>
+                      </Field>
+                    </RadioGroup>
+                  </Field>
+                </QuestionBox>
+              </FieldGroup>
+
+              <FieldGroup className="grid gap-4 sm:grid-cols-2">
+                <QuestionBox>
+                  <Field>
+                    <FieldLabel htmlFor="nf-phone">Mobile phone</FieldLabel>
+                    <Input
+                      id="nf-phone"
+                      type="tel"
+                      placeholder="+1 (___) ___-____"
+                      value={phone}
+                      onChange={(e) => setPhone(maskPhone(e.target.value))}
+                    />
+                    <FieldDescription>
+                      We&apos;ll send appointment reminders to this number.
+                    </FieldDescription>
+                  </Field>
+                </QuestionBox>
+                <QuestionBox>
+                  <Field>
+                    <FieldLabel htmlFor="nf-contact">Preferred contact method</FieldLabel>
+                    <Combobox
+                      items={CONTACT_METHODS}
+                      value={preferredContact || null}
+                      onValueChange={(value: string | null) => setPreferredContact(value ?? "")}
+                    >
+                      <ComboboxInput
+                        id="nf-contact"
+                        placeholder="Select an option…"
+                      />
+                      <ComboboxContent>
+                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(item: string) => (
+                            <ComboboxItem key={item} value={item}>
+                              {item}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                  </Field>
+                </QuestionBox>
               </FieldGroup>
             </FieldGroup>
           )}
@@ -488,16 +519,18 @@ export function NativeControls() {
                 </CardContent>
               </Card>
 
-              <Field orientation="horizontal">
-                <Switch
-                  id="nf-secondary"
-                  checked={hasSecondary}
-                  onCheckedChange={setHasSecondary}
-                />
-                <FieldLabel htmlFor="nf-secondary">
-                  Do you have secondary insurance?
-                </FieldLabel>
-              </Field>
+              <QuestionBox>
+                <Field orientation="horizontal">
+                  <Switch
+                    id="nf-secondary"
+                    checked={hasSecondary}
+                    onCheckedChange={setHasSecondary}
+                  />
+                  <FieldLabel htmlFor="nf-secondary">
+                    Do you have secondary insurance?
+                  </FieldLabel>
+                </Field>
+              </QuestionBox>
 
               {hasSecondary && (
                 <Card>
@@ -685,79 +718,89 @@ export function NativeControls() {
               </CardContent>
               </Card>
 
-              <Field>
-                <FieldLabel htmlFor="nf-meds">Current medications</FieldLabel>
-                <Textarea
-                  id="nf-meds"
-                  rows={3}
-                  value={currentMedications}
-                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setCurrentMedications(e.target.value)}
-                />
-              </Field>
+              <QuestionBox>
+                <Field>
+                  <FieldLabel htmlFor="nf-meds">Current medications</FieldLabel>
+                  <Textarea
+                    id="nf-meds"
+                    rows={3}
+                    value={currentMedications}
+                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setCurrentMedications(e.target.value)}
+                  />
+                </Field>
+              </QuestionBox>
             </FieldGroup>
           )}
 
           {/* ── Consent ───────────────────────────────────────────── */}
           {currentPage === 3 && (
             <FieldGroup>
-              <Field
-                orientation="horizontal"
-                data-invalid={showErrors && errors.consentTreatment}
-              >
-                <Checkbox
-                  id="nf-consent-treatment"
-                  checked={consentTreatment}
-                  onCheckedChange={(checked: boolean | "indeterminate") => setConsentTreatment(checked === true)}
-                />
-                <FieldContent>
-                  <RequiredLabel htmlFor="nf-consent-treatment">
-                    I consent to treatment
-                  </RequiredLabel>
-                  {showErrors && errors.consentTreatment && (
-                    <FieldError>Consent to treatment is required.</FieldError>
-                  )}
-                </FieldContent>
-              </Field>
+              <QuestionBox>
+                <Field
+                  orientation="horizontal"
+                  data-invalid={showErrors && errors.consentTreatment}
+                >
+                  <Checkbox
+                    id="nf-consent-treatment"
+                    checked={consentTreatment}
+                    onCheckedChange={(checked: boolean | "indeterminate") => setConsentTreatment(checked === true)}
+                  />
+                  <FieldContent>
+                    <RequiredLabel htmlFor="nf-consent-treatment">
+                      I consent to treatment
+                    </RequiredLabel>
+                    {showErrors && errors.consentTreatment && (
+                      <FieldError>Consent to treatment is required.</FieldError>
+                    )}
+                  </FieldContent>
+                </Field>
+              </QuestionBox>
 
-              <Field
-                orientation="horizontal"
-                data-invalid={showErrors && errors.consentPrivacy}
-              >
-                <Checkbox
-                  id="nf-consent-privacy"
-                  checked={consentPrivacy}
-                  onCheckedChange={(checked: boolean | "indeterminate") => setConsentPrivacy(checked === true)}
-                />
-                <FieldContent>
-                  <RequiredLabel htmlFor="nf-consent-privacy">
-                    I acknowledge the privacy practices (HIPAA)
-                  </RequiredLabel>
-                  {showErrors && errors.consentPrivacy && (
-                    <FieldError>Acknowledgement is required.</FieldError>
-                  )}
-                </FieldContent>
-              </Field>
+              <QuestionBox>
+                <Field
+                  orientation="horizontal"
+                  data-invalid={showErrors && errors.consentPrivacy}
+                >
+                  <Checkbox
+                    id="nf-consent-privacy"
+                    checked={consentPrivacy}
+                    onCheckedChange={(checked: boolean | "indeterminate") => setConsentPrivacy(checked === true)}
+                  />
+                  <FieldContent>
+                    <RequiredLabel htmlFor="nf-consent-privacy">
+                      I acknowledge the privacy practices (HIPAA)
+                    </RequiredLabel>
+                    {showErrors && errors.consentPrivacy && (
+                      <FieldError>Acknowledgement is required.</FieldError>
+                    )}
+                  </FieldContent>
+                </Field>
+              </QuestionBox>
 
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
-              <Field>
-                <FieldLabel htmlFor="nf-signature">Signature</FieldLabel>
-                <Input
-                  id="nf-signature"
-                  type="text"
-                  value={signature}
-                  onChange={(e) => setSignature(e.target.value)}
-                />
-              </Field>
+              <QuestionBox>
+                <Field>
+                  <FieldLabel htmlFor="nf-signature">Signature</FieldLabel>
+                  <Input
+                    id="nf-signature"
+                    type="text"
+                    value={signature}
+                    onChange={(e) => setSignature(e.target.value)}
+                  />
+                </Field>
+              </QuestionBox>
 
-              <Field>
-                <FieldLabel htmlFor="nf-signed">Date</FieldLabel>
-                <Input
-                  id="nf-signed"
-                  type="date"
-                  value={signedDate}
-                  onChange={(e) => setSignedDate(e.target.value)}
-                />
-              </Field>
+              <QuestionBox>
+                <Field>
+                  <FieldLabel htmlFor="nf-signed">Date</FieldLabel>
+                  <Input
+                    id="nf-signed"
+                    type="date"
+                    value={signedDate}
+                    onChange={(e) => setSignedDate(e.target.value)}
+                  />
+                </Field>
+              </QuestionBox>
               </FieldGroup>
             </FieldGroup>
           )}

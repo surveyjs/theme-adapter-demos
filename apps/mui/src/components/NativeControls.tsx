@@ -3,6 +3,7 @@
 import {
   useState,
   type FormEvent,
+  type ReactNode,
 } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -33,6 +34,7 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { medicalFormJson, medicalFormSample } from "@adapter/schemas";
+import { useBorderlessMode } from "./BorderlessMode";
 import { FormCompleted } from "./FormCompleted";
 import { RequiredMark } from "./RequiredLabel";
 
@@ -88,6 +90,26 @@ function maskPhone(raw: string): string {
   if (prefix) out += ` ${prefix}`;
   if (line) out += `-${line}`;
   return out;
+}
+
+/**
+ * Native twin of the "Borderless questions" switch (top menu), which maps onto
+ * survey-core's `isCompact` in the SurveyJS column: with it off, a question
+ * standing directly on the page gets its own box. Questions inside a panel
+ * (here: the insurance / history Cards) keep no box either way, so only the
+ * fields NOT already in a Card are wrapped.
+ *
+ * `flex: 1` keeps the wrapped field filling its slot in the two-column rows,
+ * the same width it has when it sits in the row unwrapped.
+ */
+function QuestionBox({ children }: { children: ReactNode }) {
+  const { borderless } = useBorderlessMode();
+  if (borderless) return <>{children}</>;
+  return (
+    <Card variant="outlined" sx={{ flex: 1, minWidth: 0, alignSelf: "stretch" }}>
+      <CardContent>{children}</CardContent>
+    </Card>
+  );
 }
 
 export function NativeControls() {
@@ -285,79 +307,91 @@ export function NativeControls() {
           {currentPage === 0 && (
             <Stack spacing={3}>
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                <TextField
-                  id="nf-first-name"
-                  label="First name"
-                  fullWidth
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  error={showErrors && errors.firstName}
-                  helperText={showErrors && errors.firstName ? "First name is required." : undefined}
-                  required
-                />
-                <TextField
-                  id="nf-last-name"
-                  label="Last name"
-                  fullWidth
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  error={showErrors && errors.lastName}
-                  helperText={showErrors && errors.lastName ? "Last name is required." : undefined}
-                  required
-                />
+                <QuestionBox>
+                  <TextField
+                    id="nf-first-name"
+                    label="First name"
+                    fullWidth
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    error={showErrors && errors.firstName}
+                    helperText={showErrors && errors.firstName ? "First name is required." : undefined}
+                    required
+                  />
+                </QuestionBox>
+                <QuestionBox>
+                  <TextField
+                    id="nf-last-name"
+                    label="Last name"
+                    fullWidth
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    error={showErrors && errors.lastName}
+                    helperText={showErrors && errors.lastName ? "Last name is required." : undefined}
+                    required
+                  />
+                </QuestionBox>
               </Stack>
 
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="flex-start">
-                <TextField
-                  id="nf-dob"
-                  label="Date of birth"
-                  type="date"
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
-                  value={dob}
-                  onChange={(e) => setDob(e.target.value)}
-                  error={showErrors && errors.dob}
-                  helperText={showErrors && errors.dob ? "Date of birth is required." : undefined}
-                  required
-                />
-                <FormControl fullWidth>
-                  <FormLabel id="nf-sex-label">Sex assigned at birth</FormLabel>
-                  <RadioGroup
-                    name="nf-sex"
-                    aria-labelledby="nf-sex-label"
-                    value={sex}
-                    onChange={(e) => setSex(e.target.value as Sex)}
-                  >
-                    <FormControlLabel value="f" control={<Radio />} label="Female" />
-                    <FormControlLabel value="m" control={<Radio />} label="Male" />
-                  </RadioGroup>
-                </FormControl>
+                <QuestionBox>
+                  <TextField
+                    id="nf-dob"
+                    label="Date of birth"
+                    type="date"
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    value={dob}
+                    onChange={(e) => setDob(e.target.value)}
+                    error={showErrors && errors.dob}
+                    helperText={showErrors && errors.dob ? "Date of birth is required." : undefined}
+                    required
+                  />
+                </QuestionBox>
+                <QuestionBox>
+                  <FormControl fullWidth>
+                    <FormLabel id="nf-sex-label">Sex assigned at birth</FormLabel>
+                    <RadioGroup
+                      name="nf-sex"
+                      aria-labelledby="nf-sex-label"
+                      value={sex}
+                      onChange={(e) => setSex(e.target.value as Sex)}
+                    >
+                      <FormControlLabel value="f" control={<Radio />} label="Female" />
+                      <FormControlLabel value="m" control={<Radio />} label="Male" />
+                    </RadioGroup>
+                  </FormControl>
+                </QuestionBox>
               </Stack>
 
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                <TextField
-                  id="nf-phone"
-                  label="Mobile phone"
-                  type="tel"
-                  fullWidth
-                  placeholder="+1 (___) ___-____"
-                  value={phone}
-                  onChange={(e) => setPhone(maskPhone(e.target.value))}
-                  helperText="We'll send appointment reminders to this number."
-                />
-                <FormControl fullWidth>
-                  <InputLabel id="nf-contact-label">Preferred contact method</InputLabel>
-                  <Select
-                    labelId="nf-contact-label"
-                    label="Preferred contact method"
-                    value={preferredContact}
-                    onChange={(e) => setPreferredContact(e.target.value)}
-                  >
-                    <MenuItem value="Phone">Phone</MenuItem>
-                    <MenuItem value="Email">Email</MenuItem>
-                    <MenuItem value="Text message">Text message</MenuItem>
-                  </Select>
-                </FormControl>
+                <QuestionBox>
+                  <TextField
+                    id="nf-phone"
+                    label="Mobile phone"
+                    type="tel"
+                    fullWidth
+                    placeholder="+1 (___) ___-____"
+                    value={phone}
+                    onChange={(e) => setPhone(maskPhone(e.target.value))}
+                    helperText="We'll send appointment reminders to this number."
+                  />
+                </QuestionBox>
+                <QuestionBox>
+                  <FormControl fullWidth>
+                    <InputLabel id="nf-contact-label">Preferred contact method</InputLabel>
+                    <Select
+                      labelId="nf-contact-label"
+                      label="Preferred contact method"
+                      value={preferredContact}
+                      onChange={(e) => setPreferredContact(e.target.value)}
+                    >
+                      <MenuItem value="Phone">Phone</MenuItem>
+                      <MenuItem value="Email">Email</MenuItem>
+                      <MenuItem value="Text message">Text message</MenuItem>
+                    </Select>
+                  </FormControl>
+                </QuestionBox>
               </Stack>
             </Stack>
           )}
@@ -416,15 +450,17 @@ export function NativeControls() {
                 </CardContent>
               </Card>
 
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={hasSecondary}
-                    onChange={(e) => setHasSecondary(e.target.checked)}
-                  />
-                }
-                label="Do you have secondary insurance?"
-              />
+              <QuestionBox>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={hasSecondary}
+                      onChange={(e) => setHasSecondary(e.target.checked)}
+                    />
+                  }
+                  label="Do you have secondary insurance?"
+                />
+              </QuestionBox>
 
               {hasSecondary && (
                 <Card variant="outlined">
@@ -588,67 +624,77 @@ export function NativeControls() {
               </CardContent>
               </Card>
 
-              <TextField
-                label="Current medications"
-                fullWidth
-                multiline
-                minRows={3}
-                value={currentMedications}
-                onChange={(e) => setCurrentMedications(e.target.value)}
-              />
+              <QuestionBox>
+                <TextField
+                  label="Current medications"
+                  fullWidth
+                  multiline
+                  minRows={3}
+                  value={currentMedications}
+                  onChange={(e) => setCurrentMedications(e.target.value)}
+                />
+              </QuestionBox>
             </Stack>
           )}
 
           {/* ── Consent ───────────────────────────────────────────── */}
           {currentPage === 3 && (
             <Stack spacing={2}>
-              <FormControl error={showErrors && errors.consentTreatment}>
-                <FormControlLabel
-                  required
-                  control={
-                    <Checkbox
-                      checked={consentTreatment}
-                      onChange={(e) => setConsentTreatment(e.target.checked)}
-                    />
-                  }
-                  label="I consent to treatment"
-                />
-                {showErrors && errors.consentTreatment && (
-                  <FormHelperText>Consent to treatment is required.</FormHelperText>
-                )}
-              </FormControl>
+              <QuestionBox>
+                <FormControl error={showErrors && errors.consentTreatment}>
+                  <FormControlLabel
+                    required
+                    control={
+                      <Checkbox
+                        checked={consentTreatment}
+                        onChange={(e) => setConsentTreatment(e.target.checked)}
+                      />
+                    }
+                    label="I consent to treatment"
+                  />
+                  {showErrors && errors.consentTreatment && (
+                    <FormHelperText>Consent to treatment is required.</FormHelperText>
+                  )}
+                </FormControl>
+              </QuestionBox>
 
-              <FormControl error={showErrors && errors.consentPrivacy}>
-                <FormControlLabel
-                  required
-                  control={
-                    <Checkbox
-                      checked={consentPrivacy}
-                      onChange={(e) => setConsentPrivacy(e.target.checked)}
-                    />
-                  }
-                  label="I acknowledge the privacy practices (HIPAA)"
-                />
-                {showErrors && errors.consentPrivacy && (
-                  <FormHelperText>Acknowledgement is required.</FormHelperText>
-                )}
-              </FormControl>
+              <QuestionBox>
+                <FormControl error={showErrors && errors.consentPrivacy}>
+                  <FormControlLabel
+                    required
+                    control={
+                      <Checkbox
+                        checked={consentPrivacy}
+                        onChange={(e) => setConsentPrivacy(e.target.checked)}
+                      />
+                    }
+                    label="I acknowledge the privacy practices (HIPAA)"
+                  />
+                  {showErrors && errors.consentPrivacy && (
+                    <FormHelperText>Acknowledgement is required.</FormHelperText>
+                  )}
+                </FormControl>
+              </QuestionBox>
 
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                <TextField
-                  label="Signature"
-                  fullWidth
-                  value={signature}
-                  onChange={(e) => setSignature(e.target.value)}
-                />
-                <TextField
-                  label="Date"
-                  type="date"
-                  InputLabelProps={{ shrink: true }}
-                  value={signedDate}
-                  onChange={(e) => setSignedDate(e.target.value)}
-                  sx={{ maxWidth: { sm: "calc(50% - 8px)" } }}
-                />
+                <QuestionBox>
+                  <TextField
+                    label="Signature"
+                    fullWidth
+                    value={signature}
+                    onChange={(e) => setSignature(e.target.value)}
+                  />
+                </QuestionBox>
+                <QuestionBox>
+                  <TextField
+                    label="Date"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    value={signedDate}
+                    onChange={(e) => setSignedDate(e.target.value)}
+                    sx={{ maxWidth: { sm: "calc(50% - 8px)" } }}
+                  />
+                </QuestionBox>
               </Stack>
             </Stack>
           )}

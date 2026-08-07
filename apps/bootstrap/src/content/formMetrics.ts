@@ -24,7 +24,7 @@ export const FORM_METRICS: FormMetricsInput = {
   // The hand-written native implementation of the same Patient Intake form.
   // NativeControls.css (65 further lines) is NOT counted, so the native column
   // is if anything understated.
-  nativeLines: 598,
+  nativeLines: 629,
 
   // Computed live from the imported schema so it never drifts from
   // packages/schemas. Measured here (a server-safe module) rather than inside a
