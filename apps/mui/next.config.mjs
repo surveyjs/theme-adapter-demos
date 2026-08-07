@@ -7,11 +7,10 @@ const nextConfig = {
   experimental: {
     externalDir: true,
   },
-  // survey-* ship ESM/source that Next must transpile. `@adapter/schemas` is
-  // listed too so Next compiles it into the app's watch graph instead of
-  // treating it as an external node_module — otherwise a running `next dev`
-  // keeps serving the `dist/` it loaded at startup and never picks up schema
-  // rebuilds.
+  // survey-* ship ESM/source that Next must transpile. `@adapter/schemas` is a
+  // workspace package that resolves to its realpath under packages/, which
+  // `experimental.externalDir` above already pulls into the compilation; it is
+  // listed here so the entry survives if that flag ever goes away.
   transpilePackages: [
     "survey-core",
     "survey-react-ui",
@@ -20,9 +19,6 @@ const nextConfig = {
     "@adapter/schemas",
   ],
   webpack: (config, { dev }) => {
-    // Keep resolving the workspace-linked @adapter/schemas through this app's
-    // node_modules rather than its realpath.
-    config.resolve.symlinks = false;
     // Alias survey-* to local builds in `next dev`, or in `next build` when
     // SURVEYJS_LIBV3 is set; otherwise use the published npm packages.
     return applyLocalSurveyJs(config, { dev });

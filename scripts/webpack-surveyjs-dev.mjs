@@ -78,9 +78,11 @@ export const BUILD_DIRS = {
   "survey-creator-react": resolve(base, "survey-creator/packages/survey-creator-react/build"),
 };
 
-// Watch node_modules only for our linked survey-* builds + @adapter/schemas.
+// Watch node_modules only for our linked survey-* builds. `@adapter/schemas`
+// needs no exception: webpack resolves the workspace link to its realpath under
+// packages/, which is outside node_modules and therefore watched normally.
 const IGNORE_NODE_MODULES_EXCEPT_LINKED =
-  /[\\/]node_modules[\\/](?!(survey-core|survey-react-ui|survey-creator-core|survey-creator-react)([\\/]|$)|@adapter[\\/]schemas([\\/]|$))/;
+  /[\\/]node_modules[\\/](?!(survey-core|survey-react-ui|survey-creator-core|survey-creator-react)([\\/]|$))/;
 
 /** Build dirs from BUILD_DIRS that don't exist on disk. */
 function missingSurveyBuilds() {
@@ -122,19 +124,26 @@ export function applyLocalSurveyJs(config, { dev }) {
   // workspace's single hoisted copy. Adding these dirs as resolve roots keeps
   // one React instance without hard-aliasing `react` (which would break the
   // App Router's `react-server` conditional exports).
+  //
+  // Order matters. Webpack treats an absolute entry as "look only here" and the
+  // relative "node_modules" as "walk up the ancestors, Node-style", trying them
+  // in array order. Listing the roots FIRST makes the hoisted copy win over the
+  // nested one npm deliberately installed for a version conflict — e.g.
+  // prop-types would get react-is 19 instead of the 16 it declares. Keep them
+  // LAST so they only serve the external builds, which have no ancestors here.
   config.resolve.modules = [
+    ...(config.resolve.modules ?? ["node_modules"]),
     resolve(config.context ?? repoRoot, "node_modules"),
     resolve(repoRoot, "node_modules"),
-    ...(config.resolve.modules ?? ["node_modules"]),
   ];
 
   // Hot-reload edits made in the local builds (dev), and avoid stale caches
-  // when switching between local and npm resolution.
+  // when switching between local and npm resolution. The aliased builds live
+  // outside node_modules, so webpack's managed/immutable-path defaults for
+  // node_modules do not apply to them and are left alone.
   config.cache = false;
-  config.snapshot = { ...config.snapshot, immutablePaths: [], managedPaths: [] };
   config.watchOptions = {
     ...config.watchOptions,
-    followSymlinks: true,
     ignored: IGNORE_NODE_MODULES_EXCEPT_LINKED,
   };
 

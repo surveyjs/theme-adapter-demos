@@ -9,7 +9,6 @@
     "apps/*"
   ],
   "scripts": {
-    "postinstall": "npm run install:ui --workspace @adapter/shadcn",
     "install:all": "npm install --workspaces --include-workspace-root",
     "install:bootstrap": "npm install --workspace @adapter/bootstrap",
     "install:shadcn": "npm install --workspace @adapter/shadcn",
