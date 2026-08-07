@@ -464,9 +464,11 @@ export function NativeControls() {
             <Stack spacing={3}>
               <Card variant="outlined">
                 <CardContent>
-                <FormLabel sx={{ mb: 1 }}>
-                  Have you ever been diagnosed with any of the following?
-                </FormLabel>
+                <Box sx={{ mb: 2 }}>
+                  <FormLabel>
+                    Have you ever been diagnosed with any of the following?
+                  </FormLabel>
+                </Box>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -503,11 +505,13 @@ export function NativeControls() {
 
               <Card variant="outlined">
               <CardContent>
-                <FormLabel sx={{ display: "block", mb: 1 }}>Allergies</FormLabel>
+                <FormLabel sx={{ display: "block", mb: 2 }}>Allergies</FormLabel>
                 {allergies.length === 0 && (
-                  <Typography color="text.secondary" sx={{ mb: 1 }}>
-                    No allergies added.
-                  </Typography>
+                  <Box sx={{ mb: 2 }}>
+                    <Typography color="text.secondary">
+                      No allergies added.
+                    </Typography>
+                  </Box>
                 )}
                 {allergies.length > 0 && (
                   <Table sx={{ mb: 1 }}>
