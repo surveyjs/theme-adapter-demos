@@ -12,9 +12,10 @@
  *
  * Run automatically via the `predev` / `prebuild` npm scripts. Pass `--dev`, or
  * set `SURVEYJS_LIBV3` (shell / repo-root `.env`), to source the bundles from
- * the local V3 build (what webpack aliases survey-* to). Otherwise they come
- * from the published `survey-core` package. Pass `--watch` (local only) to keep
- * re-copying as you edit the adapters in the library checkout.
+ * the local V3 build (what webpack aliases survey-* to). Otherwise — and on a
+ * plain clone with no sibling survey-library checkout, where `--dev` has nothing
+ * to point at — they come from the published `survey-core` package. Pass
+ * `--watch` (local only) to keep re-copying as you edit the library's adapters.
  */
 import { createRequire } from "node:module";
 import { mkdirSync, copyFileSync, existsSync, watch } from "node:fs";
@@ -23,13 +24,19 @@ import { fileURLToPath } from "node:url";
 import {
   BUILD_DIRS,
   hasSurveyJsLibV3,
+  useLocalSurveyBuilds,
 } from "../../../scripts/webpack-surveyjs-dev.mjs";
 
 const require = createRequire(import.meta.url);
 const here = dirname(fileURLToPath(import.meta.url));
 const outDir = resolve(here, "..", "public", "survey-adapters");
 
-const useLocal = process.argv.includes("--dev") || hasSurveyJsLibV3;
+// `useLocalSurveyBuilds` is the same switch next.config.mjs resolves the JS
+// with, so the copied CSS can never come from a different survey-core than the
+// bundle. It gates `--dev` too: predev passes it unconditionally, but a clone
+// without the sibling checkouts has no local build to read.
+const useLocal =
+  useLocalSurveyBuilds && (process.argv.includes("--dev") || hasSurveyJsLibV3);
 const watchMode = useLocal && process.argv.includes("--watch");
 
 // Keep in sync with VISUAL_STYLES in src/lib/styles.ts (a .mjs script can't

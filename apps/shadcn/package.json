@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "postinstall": "npm run install:ui",
+    "postinstall": "node scripts/install-ui.mjs --if-stale",
     "install:ui": "node scripts/install-ui.mjs",
     "copy-survey-adapters": "node scripts/copy-survey-adapters.mjs --dev",
     "watch-survey-adapters": "node scripts/copy-survey-adapters.mjs --dev --watch",

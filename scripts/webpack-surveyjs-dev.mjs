@@ -3,18 +3,21 @@
  *
  * The root package.json pins the survey-* packages to the published `next`
  * dist-tag, so by default `next build` / `next start` consume the npm packages.
- * `next dev` always aliases survey-* imports to the local V3 `build/` folders.
- * `next build` does the same when `SURVEYJS_LIBV3` is set (shell or repo-root
- * `.env` / `.env.local`), so production builds can target your working copy
- * without package.json edits.
+ * `next dev` aliases survey-* imports to the local V3 `build/` folders when
+ * those checkouts are present. `next build` does the same when `SURVEYJS_LIBV3`
+ * is set (shell or repo-root `.env` / `.env.local`), so production builds can
+ * target your working copy without package.json edits.
  *
  * Local build location: the parent folder of this repo by default (the folder
  * that holds the `survey-library` and `survey-creator` checkouts). Override it
  * with the SURVEYJS_LIBV3 env var (absolute, or relative to the repo root).
  * Loaded here directly, since Next only reads per-app .env and Turbo's strict
  * env mode strips undeclared vars before they reach the task process.
- * When local resolution is active, missing builds throw instead of quietly
- * falling back to the npm packages.
+ *
+ * The checkouts are optional: a plain clone has none, so `next dev` falls back
+ * to the published packages. A HALF-built local setup is not a fallback case —
+ * some builds present and others missing throws, as does any missing build once
+ * SURVEYJS_LIBV3 has explicitly opted in.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -90,18 +93,35 @@ function missingSurveyBuilds() {
 }
 
 /**
+ * True when no local V3 build exists at all — a plain clone with no sibling
+ * survey-library / survey-creator checkouts. Only meaningful without an
+ * explicit SURVEYJS_LIBV3, which opts in and therefore must resolve.
+ */
+function noLocalSurveyBuilds() {
+  return missingSurveyBuilds().length === LIB_NAMES.length;
+}
+
+/**
+ * Whether survey-* resolve to the local V3 builds. Exported so asset scripts
+ * (e.g. apps/*​/scripts/copy-survey-adapters.mjs) copy CSS from the same place
+ * webpack takes the JS from — the two must never disagree.
+ */
+export const useLocalSurveyBuilds = hasSurveyJsLibV3 || !noLocalSurveyBuilds();
+
+/**
  * Alias survey-* to the local builds when `next dev` is running, or when
  * `SURVEYJS_LIBV3` is set (so `next build` can target the same working copy).
  * No-op for production builds without the env var — those use the published
- * npm packages.
+ * npm packages, as does any run with no local checkouts at all.
  *
- * When local resolution is active, missing builds throw rather than silently
- * falling back to npm, so a broken local setup fails loudly.
+ * A partially built local setup throws rather than silently falling back to
+ * npm, so a broken checkout fails loudly instead of shipping mixed versions.
  * @param {import('webpack').Configuration} config
  * @param {{ dev: boolean }} ctx
  */
 export function applyLocalSurveyJs(config, { dev }) {
   if (!dev && !hasSurveyJsLibV3) return config;
+  if (!useLocalSurveyBuilds) return config;
 
   const missing = missingSurveyBuilds();
   if (missing.length > 0) {
