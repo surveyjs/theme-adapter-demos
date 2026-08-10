@@ -617,7 +617,7 @@ export function NativeControls() {
               <Button
                 variant="light"
                 size="sm"
-                className="mt-2"
+                className="mt-3"
                 onClick={addAllergy}
               >
                 Add allergy

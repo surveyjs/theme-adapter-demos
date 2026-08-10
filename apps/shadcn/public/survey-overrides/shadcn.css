@@ -54,6 +54,11 @@
   padding: 0 calc(var(--spacing) * 6) calc(var(--spacing) * 2);
 }
 
+.sd-progress-buttons--titles-bottom .sd-progress-buttons__button {
+  margin-bottom: calc(var(--spacing) * 1);
+  margin-top: 0;
+}
+
 .sd-progress-buttons__page-title {
   font-size: var(--text-sm);
   font-weight: var(--font-weight-medium);
