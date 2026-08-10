@@ -3,6 +3,12 @@
  *
  *   node scripts/install-ui.mjs             → full install (CLI + glue)
  *   node scripts/install-ui.mjs --glue-only → regenerate glue from existing files
+ *   node scripts/install-ui.mjs --if-stale  → full install only if the registry moved
+ *
+ * --if-stale runs on postinstall: it hashes every registry item the install would
+ * request (plus the resolved CLI version) and compares that against registry.lock.json,
+ * so a normal `npm i` pays ~1s instead of a ~90s reinstall that would rewrite committed
+ * files for nothing. When the hash does move, the reinstall is exactly what you want.
  *
  * Per-style shadcn configs live in scripts/ui-configs/<id>/components.json (committed).
  * Per-style registry components live in src/components/ui/styles/<id>/ (committed).
@@ -25,6 +31,7 @@ import {
   mkdirSync,
 } from "node:fs";
 import { execSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -33,6 +40,10 @@ const ROOT = join(here, "..");
 const UI = join(ROOT, "src/components/ui");
 const CONFIGS_DIR = join(here, "ui-configs");
 const ROOT_CONFIG = join(ROOT, "components.json");
+const LOCK = join(here, "registry.lock.json");
+
+/** Read-only mirror of what the CLI fetches — used for staleness checks, never to install. */
+const REGISTRY = "https://ui.shadcn.com/r/styles";
 
 /** Installed per visual style; internal-only deps (separator, input-group) included. */
 const STYLE_COMPONENTS = [
@@ -59,6 +70,9 @@ const COMBOBOX_FALLBACK_STYLE = "base-nova";
 
 const CHROME_COMPONENTS = ["button", "sheet", "dialog", "dropdown-menu", "badge"];
 
+/** Chrome components are always new-york, matching scripts/ui-configs/chrome. */
+const CHROME_STYLE = "new-york";
+
 /** Components that get a runtime style dispatcher at src/components/ui/<name>.tsx */
 const DISPATCH_COMPONENTS = [
   "alert",
@@ -76,6 +90,7 @@ const DISPATCH_COMPONENTS = [
 ];
 
 const glueOnly = process.argv.includes("--glue-only");
+const ifStale = process.argv.includes("--if-stale");
 
 function styleIds() {
   return readdirSync(CONFIGS_DIR, { withFileTypes: true })
@@ -329,12 +344,94 @@ function installRegistry() {
   withConfig("chrome", () => shadcnAdd(CHROME_COMPONENTS));
 }
 
+function sha(text) {
+  return createHash("sha256").update(text).digest("hex").slice(0, 16);
+}
+
+/** Every registry item `installRegistry` would request, sorted for a stable hash. */
+function registryUrls() {
+  const urls = [];
+  for (const id of styleIds()) {
+    for (const comp of componentsForStyle(id)) {
+      urls.push(`${REGISTRY}/${id}/${comp}.json`);
+    }
+  }
+  for (const comp of CHROME_COMPONENTS) {
+    urls.push(`${REGISTRY}/${CHROME_STYLE}/${comp}.json`);
+  }
+  return urls.sort();
+}
+
+/**
+ * Hash of the upstream surface: every requested item plus the CLI version that would
+ * transform it. Transitive registry dependencies are covered only when they are
+ * themselves in STYLE_COMPONENTS — an upstream change to a dep outside that list
+ * slips through until the next explicit `npm run install:ui`.
+ */
+async function registryFingerprint() {
+  const parts = await Promise.all(
+    registryUrls().map(async (url) => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`${res.status} for ${url}`);
+      return `${url} ${sha(await res.text())}`;
+    }),
+  );
+  const cli = await fetch("https://registry.npmjs.org/shadcn/latest");
+  if (!cli.ok) throw new Error(`${cli.status} for the shadcn npm packument`);
+  parts.push(`shadcn ${(await cli.json()).version}`);
+  return sha(parts.join("\n"));
+}
+
+function writeLock(fingerprint) {
+  writeFileSync(
+    LOCK,
+    `${JSON.stringify({ fingerprint }, null, 2)}\n`,
+  );
+}
+
+function readLock() {
+  if (!existsSync(LOCK)) return null;
+  try {
+    return JSON.parse(readFileSync(LOCK, "utf8")).fingerprint ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function installIfStale() {
+  let current;
+  try {
+    current = await registryFingerprint();
+  } catch (err) {
+    // Offline or the registry is down: never fail `npm i` over a freshness check.
+    console.warn(`Skipping shadcn freshness check — ${err.message}`);
+    return;
+  }
+
+  const locked = readLock();
+  if (locked === current && stylesInstalled()) {
+    console.log(`shadcn registry unchanged (${current}).`);
+    return;
+  }
+
+  console.log(
+    locked
+      ? `shadcn registry moved: ${locked} → ${current}. Reinstalling…`
+      : `No registry lock yet (${current}). Installing…`,
+  );
+  installRegistry();
+  writeLock(current);
+  generateGlue();
+}
+
 function stylesInstalled() {
   const marker = join(UI, "styles", styleIds()[0], "button.tsx");
   return existsSync(marker);
 }
 
-if (glueOnly) {
+if (ifStale) {
+  await installIfStale();
+} else if (glueOnly) {
   if (!stylesInstalled()) {
     console.log("Per-style shadcn components missing — running full install…");
     installRegistry();
@@ -346,6 +443,7 @@ if (glueOnly) {
   generateGlue();
 } else {
   installRegistry();
+  writeLock(await registryFingerprint());
   generateGlue();
 }
 
