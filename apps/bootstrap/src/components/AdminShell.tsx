@@ -37,21 +37,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
           onClick={() => setNavOpen(true)}
         />
         <Navbar.Brand
-          className="fw-bold d-flex align-items-center gap-2"
-          style={{ color: "var(--bs-body-color)" }}
+          href="https://surveyjs.io/documentation/theme-adapters"
+          target="_blank"
+          rel="noreferrer"
+          className="fw-bold d-flex align-items-center gap-2 me-2 link-body-emphasis link-underline link-underline-opacity-0 link-underline-opacity-100-hover"
         >
-          <a
-            href="https://surveyjs.io/themes/theme-adapters"
-            target="_blank"
-            rel="noreferrer"
-            className="d-flex align-items-center gap-2 text-decoration-none"
-            style={{ color: "inherit" }}
-          >
-            <span aria-hidden>🧩</span>
-            SurveyJS Theme Adapter
-          </a>
-          <span className="badge text-bg-primary fw-normal">Bootstrap</span>
+          <span aria-hidden>🧩</span>
+          SurveyJS Theme Adapters
         </Navbar.Brand>
+        <span className="badge text-bg-primary fw-normal">Bootstrap</span>
         <div className="ms-auto d-flex align-items-center gap-3">
           {/* Renders only on survey routes — hidden on /, /builder and /records. */}
           <BorderlessToggle />
