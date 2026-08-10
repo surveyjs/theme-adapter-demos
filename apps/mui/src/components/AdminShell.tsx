@@ -17,7 +17,6 @@ import Typography from "@mui/material/Typography";
 import { Sidebar } from "./Sidebar";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { AllQuestionsToggle } from "./AllQuestionsToggle";
-import { BorderlessToggle } from "./BorderlessToggle";
 
 const DRAWER_WIDTH = 280;
 const ADAPTER_URL = "https://surveyjs.io/themes/theme-adapters";
@@ -96,8 +95,6 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </Link>
           <Chip label="MUI" color="primary" size="small" sx={{ ml: 1 }} />
           <Box sx={{ flexGrow: 1 }} />
-          {/* Renders only on survey routes — hidden on /, /builder and /records. */}
-          <BorderlessToggle />
           {/* Route-scoped: only renders on /all-questions. */}
           <AllQuestionsToggle />
           <ThemeSwitcher />

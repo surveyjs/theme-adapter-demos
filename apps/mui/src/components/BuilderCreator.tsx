@@ -85,6 +85,7 @@ export function BuilderCreator({ json }: { json: SurveyJSON }) {
       showCreatorThemeSettings: false,
     });
     instance.JSON = json;
+    instance.applyTheme({ isPanelless: true, cssVariables: {} });
     setCreator(instance);
   }, [json]);
 
