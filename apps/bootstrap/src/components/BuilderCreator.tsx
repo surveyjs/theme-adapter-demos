@@ -8,7 +8,9 @@ import { useTheme } from "@/components/ThemeProvider";
 
 // Ace JSON Editor (optional). clouds_midnight is used when preferredColorPalette
 // is "dark"; chrome is applied on light so dark→light works while the tab is open.
-import ace from "ace-builds/src-noconflict/ace";
+// The package root resolves to the same `src-noconflict/ace.js` build, but is
+// the only specifier ace-builds ships typings for.
+import ace from "ace-builds";
 import "ace-builds/src-noconflict/ext-searchbox";
 import "ace-builds/src-noconflict/theme-clouds_midnight";
 import "ace-builds/src-noconflict/theme-chrome";
