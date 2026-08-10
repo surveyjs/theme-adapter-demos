@@ -37,13 +37,17 @@ export function AdminShell({ children }: { children: ReactNode }) {
           onClick={() => setNavOpen(true)}
         />
         <Navbar.Brand
+        className="fw-bold d-flex align-items-center gap-2 me-2"
+        >
+          <span aria-hidden>🧩</span>
+          <a
           href="https://surveyjs.io/documentation/theme-adapters"
           target="_blank"
           rel="noreferrer"
-          className="fw-bold d-flex align-items-center gap-2 me-2 link-body-emphasis link-underline link-underline-opacity-0 link-underline-opacity-100-hover"
-        >
-          <span aria-hidden>🧩</span>
+          className="link-body-emphasis link-underline link-underline-opacity-0 link-underline-opacity-100-hover"
+          >
           SurveyJS Theme Adapters
+          </a>
         </Navbar.Brand>
         <span className="badge text-bg-primary fw-normal">Bootstrap</span>
         <div className="ms-auto d-flex align-items-center gap-3">
