@@ -20,7 +20,7 @@ import { AllQuestionsToggle } from "./AllQuestionsToggle";
 import { BorderlessToggle } from "./BorderlessToggle";
 
 const DRAWER_WIDTH = 280;
-const ADAPTER_URL = "https://surveyjs.io/themes/theme-adapters";
+const ADAPTER_URL = "https://surveyjs.io/documentation/theme-adapters";
 
 /**
  * Classic MUI admin layout, native chrome only — no SurveyJS yet.
@@ -46,13 +46,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
         href={ADAPTER_URL}
         target="_blank"
         rel="noreferrer"
-        underline="none"
+        underline="hover"
         color="inherit"
         sx={{ display: "flex", alignItems: "center", gap: 1, flexGrow: 1 }}
       >
         <WidgetsIcon color="primary" />
         <Typography variant="h6" noWrap sx={{ fontWeight: 700 }}>
-          SurveyJS Theme Adapter
+          SurveyJS Theme Adapters
         </Typography>
       </Link>
     </Toolbar>
@@ -85,13 +85,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
             href={ADAPTER_URL}
             target="_blank"
             rel="noreferrer"
-            underline="none"
+            underline="hover"
             color="inherit"
             sx={{ display: "flex", alignItems: "center", gap: 1 }}
           >
             <WidgetsIcon color="primary" sx={{ display: { xs: "none", md: "block" } }} />
             <Typography variant="h6" noWrap sx={{ fontWeight: 700 }}>
-              SurveyJS Theme Adapter
+              SurveyJS Theme Adapters
             </Typography>
           </Link>
           <Chip label="MUI" color="primary" size="small" sx={{ ml: 1 }} />
