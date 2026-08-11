@@ -57,7 +57,7 @@ export function ThemeSwitcher() {
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
-    return <div className="h-9 w-[140px]" aria-hidden />;
+    return <div className="h-9 w-[420px]" aria-hidden />;
   }
 
   const isDark = resolvedTheme === "dark";
@@ -177,11 +177,13 @@ export function ThemeSwitcher() {
 
       <Button
         variant="outline"
-        size="icon"
+        size="sm"
+        className="gap-2"
         aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
         onClick={() => setTheme(isDark ? "light" : "dark")}
       >
-        {isDark ? <SunIcon /> : <MoonIcon />}
+        {isDark ? <MoonIcon /> : <SunIcon />}
+        <span className="hidden sm:inline">{isDark ? "Dark" : "Light"}</span>
       </Button>
     </div>
   );

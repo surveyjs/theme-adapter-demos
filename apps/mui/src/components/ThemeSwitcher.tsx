@@ -6,7 +6,6 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import PaletteIcon from "@mui/icons-material/Palette";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import IconButton from "@mui/material/IconButton";
 import ListItemText from "@mui/material/ListItemText";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -30,7 +29,7 @@ export function ThemeSwitcher() {
 
   // Avoid hydration mismatch: useColorScheme is unresolved on the server.
   if (!mode) {
-    return <Box sx={{ width: 88, height: 40 }} aria-hidden />;
+    return <Box sx={{ width: 200, height: 40 }} aria-hidden />;
   }
 
   const resolved = mode === "system" ? systemMode : mode;
@@ -39,22 +38,23 @@ export function ThemeSwitcher() {
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-      <Tooltip title={`Switch to ${isDark ? "light" : "dark"} mode`}>
-        <IconButton
-          color="inherit"
-          onClick={() => setMode(isDark ? "light" : "dark")}
-          aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
-        >
-          {isDark ? <LightModeIcon /> : <DarkModeIcon />}
-        </IconButton>
-      </Tooltip>
-
       <Tooltip title="Color palette">
         <Chip
           icon={<PaletteIcon />}
           label={activePalette.label}
           variant="outlined"
           onClick={(e: MouseEvent<HTMLElement>) => setAnchor(e.currentTarget)}
+          sx={{ color: "inherit", borderColor: "currentColor" }}
+        />
+      </Tooltip>
+
+      <Tooltip title={`Switch to ${isDark ? "light" : "dark"} mode`}>
+        <Chip
+          icon={isDark ? <DarkModeIcon /> : <LightModeIcon />}
+          label={isDark ? "Dark" : "Light"}
+          variant="outlined"
+          onClick={() => setMode(isDark ? "light" : "dark")}
+          aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
           sx={{ color: "inherit", borderColor: "currentColor" }}
         />
       </Tooltip>

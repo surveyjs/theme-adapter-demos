@@ -39,15 +39,6 @@ export function ThemeSwitcher() {
 
   return (
     <ButtonGroup className="theme-switcher">
-      <Button
-        variant="outline-secondary"
-        onClick={toggleMode}
-        title={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
-        aria-label={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
-      >
-        {mode === "dark" ? "☀️ Light" : "🌙 Dark"}
-      </Button>
-
       <Dropdown as={ButtonGroup} align="end">
         <Dropdown.Toggle variant="outline-secondary" id="theme-dropdown">
           <span className="me-1">🎨</span>
@@ -67,6 +58,15 @@ export function ThemeSwitcher() {
           ))}
         </Dropdown.Menu>
       </Dropdown>
+
+      <Button
+        variant="outline-secondary"
+        onClick={toggleMode}
+        title={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
+        aria-label={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
+      >
+        {mode === "dark" ? "🌙 Dark" : "☀️ Light"}
+      </Button>
     </ButtonGroup>
   );
 }
