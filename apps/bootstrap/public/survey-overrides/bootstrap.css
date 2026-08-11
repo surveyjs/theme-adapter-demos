@@ -114,15 +114,15 @@
 }
 
 /* ── responsive ───────────────────────────────────────────────────────────
-   SurveyJS' own mobile mode is off (`--sd-mobile-width: 0px`), so the survey
-   follows the same Bootstrap breakpoints as the rest of this app. The native
-   column lays its fields out with `<Form.Group as={Col} md={6}>`, i.e. two
-   columns down to `md`; these rules make the SurveyJS rows collapse at the
-   same point. Which breakpoint to pick is an app decision, so it is not part
-   of the adapter. */
-.sd-root-modern {
-  --sd-mobile-width: 0px;
-}
+   SurveyJS' own mobile mode is off, so the survey follows the same Bootstrap
+   breakpoints as the rest of this app. The native column lays its fields out
+   with `<Form.Group as={Col} md={6}>`, i.e. two columns down to `md`; these
+   rules make the SurveyJS rows collapse at the same point. Which breakpoint
+   to pick is an app decision, so it is not part of the adapter.
+
+   The `--sd-mobile-width: 0px` that switches the mobile mode off is NOT here:
+   survey-core reads it at mount, before this sheet is guaranteed to be
+   applied, so it lives in src/components/SurveyForm.css. */
 
 /* ── Creator surface tools ────────────────────────────────────────────────
    Creator reserves side padding for the page navigator / surface toolbar as

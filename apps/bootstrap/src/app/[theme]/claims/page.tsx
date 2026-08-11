@@ -22,7 +22,7 @@ import { FormMetricsFooter } from "@/components/FormMetricsFooter";
 export default function ClaimsPage() {
   return (
     <div className="row g-4">
-      <div className="col-lg-6" style={{ "--sd-mobile-width": "0px" } as React.CSSProperties}>
+      <div className="col-lg-6">
         <SurveyForm
           schema={medicalFormSchema}
           completedMessage="Thank you. Your intake form has been submitted."

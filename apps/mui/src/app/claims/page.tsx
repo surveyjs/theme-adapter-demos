@@ -24,7 +24,6 @@ export default function ClaimsPage() {
   return (
     <Box
       sx={{
-        "--sd-mobile-width": "0px",
         display: "grid",
         gap: 4,
         alignItems: "start",

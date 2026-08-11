@@ -28,6 +28,7 @@ import { FormCompleted } from "./FormCompleted";
 // SurveyJS tweaks the adapter cannot cover.
 import "survey-core/survey-core.min.css";
 import "survey-core/themes/adapters/mui.min.css";
+import "./SurveyForm.css";
 
 /**
  * Renders a SurveyJS V3 model with the MUI theme adapter applied.
