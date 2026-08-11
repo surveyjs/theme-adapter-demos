@@ -8,9 +8,9 @@ Each demo shows how to integrate a specific theme adapter into a SurveyJS applic
 
 This repository includes theme adapter demos for the following CSS frameworks:
 
-- [Bootstrap](https://bootstrap-theme-adapter.demos.surveyjs.io/default/claims)
-- [Material UI (MUI)](https://mui-theme-adapter.demos.surveyjs.io/default/claims)
-- [shadcn/ui](https://shadcn-theme-adapter.demos.surveyjs.io/default/claims)
+- [Bootstrap](https://bootstrap-theme-adapter.demos.surveyjs.io/claims)
+- [Material UI (MUI)](https://mui-theme-adapter.demos.surveyjs.io/claims)
+- [shadcn/ui](https://shadcn-theme-adapter.demos.surveyjs.io/claims)
 
 Additional adapters may be added over time.
 
