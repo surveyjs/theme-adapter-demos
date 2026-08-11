@@ -120,7 +120,7 @@ export default function RecordsPage() {
         {/* Native Bootstrap data table — SurveyJS is NOT involved here. */}
         <div className="col-12 col-xl-7">
           <Card>
-            <Card.Body className="p-0">
+            <Card.Body>
               <Table hover responsive className="mb-0 align-middle">
                 <thead>
                   <tr>
