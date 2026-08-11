@@ -21,10 +21,10 @@
   /* Outer Box `p: 2`. Top comes from the header; bottom matches the chrome. */
   --sjs2-layout-component-survey-box-padding-top: 0px;
   --sjs2-layout-component-survey-box-padding-bottom: 16px;
-  --sjs2-layout-component-survey-box-gap-vertical: 0;
+  --sjs2-layout-component-survey-box-gap-vertical: 16px;
 
   /* Footer Stack `spacing={1}` `sx={{ mt: 3 }}`. */
-  --sjs2-layout-component-survey-footer-padding-top: 24px;
+  --sjs2-layout-component-survey-footer-padding-top: 8px;
   --sjs2-layout-component-survey-footer-padding-bottom: 0;
   --sjs2-layout-component-survey-footer-padding-horizontal: 16px;
   --sjs2-layout-component-survey-footer-action-group-gap: 8px;
@@ -63,7 +63,7 @@
 }
 
 .sd-progress-buttons {
-  padding: 0 16px 32px;
+  padding: 0 16px 16px;
 }
 
 

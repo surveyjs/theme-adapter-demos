@@ -23,9 +23,9 @@
   --sjs2-layout-component-survey-header-padding-horizontal: 1rem;
   --sjs2-layout-component-survey-box-padding-top: 0px;
   --sjs2-layout-component-survey-box-padding-bottom: 1rem;
-  --sjs2-layout-component-survey-box-gap-vertical: 0px;
+  --sjs2-layout-component-survey-box-gap-vertical: 1rem;
 
-  --sjs2-layout-component-survey-footer-padding-top: 1.5rem;
+  --sjs2-layout-component-survey-footer-padding-top: 0.5rem;
   --sjs2-layout-component-survey-footer-padding-bottom: 0;
   --sjs2-layout-component-survey-footer-padding-horizontal: 1rem;
   --sjs2-layout-component-survey-footer-action-group-gap: 0.5rem;
@@ -62,7 +62,7 @@
    which is why it lives with the app rather than in the adapter. */
 .sd-progress-buttons {
   padding-top: 1rem;
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
   padding-inline: 1rem;
 }
 
