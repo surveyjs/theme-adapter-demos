@@ -135,7 +135,7 @@ export default function RecordsPage() {
   }, [editor]);
 
   return (
-    <div>
+    <div className="records-page">
       <div className="mb-4 flex justify-end">
         <Button onClick={() => open("create", null)}>
           <PlusIcon /> New claim

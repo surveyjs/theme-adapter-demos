@@ -276,7 +276,7 @@ export function NativeControls() {
   }
 
   return (
-    <Box sx={{ border: 1, borderColor: "divider", p: 2 }}>
+    <Box className="native-controls" sx={{ border: 1, borderColor: "divider", p: 2 }}>
         {/* Survey title + description — mirrors the SurveyJS column's header,
             sharing the schema's exact description so only the "(…)" suffix
             differs between the two forms. */}

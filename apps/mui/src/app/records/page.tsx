@@ -127,7 +127,7 @@ export default function RecordsPage() {
   }, [editor]);
 
   return (
-    <Box>
+    <Box className="records-page">
       <Box sx={{ mb: 4, display: "flex", justifyContent: "flex-end" }}>
         <Button
           variant="contained"

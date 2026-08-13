@@ -109,7 +109,7 @@ export default function RecordsPage() {
   }, [editor]);
 
   return (
-    <>
+    <div className="records-page">
       <div className="d-flex justify-content-end mb-4">
         <Button variant="primary" onClick={() => open("create", null)}>
           + New claim
@@ -267,6 +267,6 @@ export default function RecordsPage() {
           </Button>
         </Modal.Footer>
       </Modal>
-    </>
+    </div>
   );
 }

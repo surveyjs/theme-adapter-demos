@@ -240,7 +240,7 @@ export function NativeControls() {
   }
 
   return (
-    <div className="border p-3">
+    <div className="native-controls border p-3">
         {/* Survey title + description — mirrors the SurveyJS column's header,
             sharing the schema's exact description so only the "(…)" suffix
             differs between the two forms. */}
