@@ -57,7 +57,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               className={cn(
                 "mt-0.5 size-4 shrink-0",
                 active
-                  ? "text-sidebar-primary"
+                  ? "text-sidebar-accent-foreground"
                   : "text-sidebar-foreground/60 group-hover:text-sidebar-accent-foreground",
               )}
             />
