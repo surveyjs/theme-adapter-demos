@@ -1,4 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
+import type { ColorMode } from "../apps.config";
 
 /**
  * Deterministic conditions for screenshots: fixed light-mode storage, no
@@ -78,6 +79,22 @@ export async function preparePage(page: Page): Promise<void> {
 
 export async function openRoute(page: Page, url: string): Promise<void> {
   await page.goto(url, { waitUntil: "domcontentloaded" });
+  await waitForStableUI(page);
+}
+
+/**
+ * Switch the page to `mode`, app-agnostically.
+ *
+ * Every demo labels its toggle with the mode it switches *to*, so the button
+ * only exists while the page is in the opposite mode — finding none means we
+ * are already there. Needed after every navigation: `preparePage` re-seeds
+ * light defaults into storage on each load.
+ */
+export async function ensureColorMode(page: Page, mode: ColorMode): Promise<void> {
+  const toggle = page.getByRole("button", { name: `Switch to ${mode} mode` });
+  if ((await toggle.count()) === 0) return;
+
+  await toggle.first().click();
   await waitForStableUI(page);
 }
 

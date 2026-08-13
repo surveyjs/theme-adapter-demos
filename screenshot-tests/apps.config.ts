@@ -19,6 +19,11 @@ export const PAGES = [
 
 export type PageId = (typeof PAGES)[number];
 
+/** Light/dark axis, orthogonal to the theme axis in every app. */
+export const COLOR_MODES = ["light", "dark"] as const;
+
+export type ColorMode = (typeof COLOR_MODES)[number];
+
 export interface AppConfig {
   readonly id: string;
   readonly port: number;

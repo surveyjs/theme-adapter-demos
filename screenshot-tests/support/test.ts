@@ -1,29 +1,37 @@
 import { test as base, expect } from "@playwright/test";
 import {
   baseUrl,
+  COLOR_MODES,
   getApp,
   routeFor,
   themeMatrix,
+  type ColorMode,
   type PageId,
 } from "../apps.config";
 import {
   compareScreenshot,
+  ensureColorMode,
   openRoute,
   preparePage,
   waitForStableUI as waitForStableUIOnPage,
   type CompareScreenshotOptions,
 } from "./capture";
 
-/** Time budget granted per theme when a test walks the whole matrix. */
+/** Time budget granted per theme×mode cell when a test walks the whole matrix. */
 const DEFAULT_THEME_TIMEOUT_MS = 45_000;
 
-/** One iteration of the theme matrix. */
+/** One cell of the theme × color-mode matrix. */
 export type ThemeRun = {
   /** Theme slug, or null for apps without a `[theme]` route (mui). */
   theme: string | null;
-  /** Open a demo route in this theme and wait until it settles. */
+  /** Light or dark. */
+  mode: ColorMode;
+  /** Open a demo route in this theme/mode and wait until it settles. */
   open: (pageId: PageId) => Promise<void>;
-  /** Baseline name for this theme: "claims-1" → "flatly-claims-1.png". */
+  /**
+   * Baseline name for this cell: "claims-1" → "flatly-claims-1.png" in light,
+   * "flatly-dark-claims-1.png" in dark. Light keeps its historical names.
+   */
   name: (basename: string) => string;
 };
 
@@ -31,8 +39,8 @@ type DemoFixtures = {
   /** App id from the current Playwright project (`bootstrap` / `shadcn` / `mui`). */
   appId: string;
   /**
-   * Run `body` once per theme of the current app, each as its own reporter step.
-   * Raises the test timeout to `timeoutPerTheme` × number of themes.
+   * Run `body` once per theme × color mode of the current app, each as its own
+   * reporter step. Raises the test timeout to `timeoutPerTheme` × cell count.
    */
   forEachTheme: (
     body: (run: ThemeRun) => Promise<void>,
@@ -71,18 +79,28 @@ export const test = base.extend<DemoFixtures>({
 
     await use(async (body, options = {}) => {
       const perTheme = options.timeoutPerTheme ?? DEFAULT_THEME_TIMEOUT_MS;
-      testInfo.setTimeout(themes.length * perTheme);
+      testInfo.setTimeout(themes.length * COLOR_MODES.length * perTheme);
 
-      for (const theme of themes) {
-        await base.step(theme ?? "default", async () => {
-          await body({
-            theme,
-            open: (pageId) =>
-              openRoute(page, `${baseUrl(app)}${routeFor(theme, pageId)}`),
-            name: (basename) =>
-              theme ? `${theme}-${basename}.png` : `${basename}.png`,
+      for (const mode of COLOR_MODES) {
+        // Keeps `prefers-color-scheme` in step with the in-app toggle.
+        await page.emulateMedia({ colorScheme: mode });
+
+        for (const theme of themes) {
+          await base.step(`${mode} › ${theme ?? "default"}`, async () => {
+            await body({
+              theme,
+              mode,
+              open: async (pageId) => {
+                await openRoute(page, `${baseUrl(app)}${routeFor(theme, pageId)}`);
+                await ensureColorMode(page, mode);
+              },
+              name: (basename) =>
+                [theme, mode === "dark" ? "dark" : null, basename]
+                  .filter(Boolean)
+                  .join("-") + ".png",
+            });
           });
-        });
+        }
       }
     });
   },

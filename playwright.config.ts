@@ -4,14 +4,14 @@ import { baseUrl, selectedApps } from "./screenshot-tests/apps.config";
 /**
  * Visual regression across the three demo apps.
  *
- * One project per app. Themes are walked at runtime by the `forEachTheme`
- * fixture (support/test.ts), which also builds the baseline name, so specs stay
- * classic per-page tests.
+ * One project per app. Themes and color modes are walked at runtime by the
+ * `forEachTheme` fixture (support/test.ts), which also builds the baseline
+ * name, so specs stay classic per-page tests.
  *
  * `E2E_APPS` (set via cross-env in the npm scripts) picks which apps run, so
  * only their dev servers get started.
  *
- * Baselines: `screenshot-tests/screenshots/<app>/<theme>-<name>.png`
+ * Baselines: `screenshot-tests/screenshots/<app>/<theme>-[dark-]<name>.png`
  * (no theme prefix for mui, which has no `[theme]` route).
  */
 const apps = selectedApps();
