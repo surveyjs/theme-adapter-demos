@@ -44,7 +44,22 @@ export default defineConfig({
     viewport: { width: 1440, height: 1000 },
     deviceScaleFactor: 1,
     colorScheme: "light",
+    // Otherwise the runner's machine leaks into the baselines. Note `locale`
+    // alone is not enough for the native date input's placeholder
+    // (`mm/dd/yyyy` vs `dd.mm.yyyy`) — that follows Chromium's *UI* language,
+    // which only `--lang` below sets.
+    locale: "en-US",
+    timezoneId: "UTC",
     trace: "retain-on-failure",
+    launchOptions: {
+      // `--disable-lcd-text` pins text to grayscale antialiasing. Chromium
+      // otherwise switches between grayscale and subpixel depending on
+      // compositing state (a freshly opened popup renders grayscale until its
+      // layer is released ~1-2s later), which made survey-creator's screenshot
+      // tests flaky — this mirrors their config. Baselines must be re-recorded
+      // once with both flags; after that, removing either invalidates them.
+      args: ["--disable-lcd-text", "--lang=en-US"],
+    },
   },
 
   projects: apps.map((app) => ({

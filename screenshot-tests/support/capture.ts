@@ -4,6 +4,12 @@ import type { ColorMode } from "../apps.config";
 /**
  * Deterministic conditions for screenshots: fixed light-mode storage, no
  * animations, no Next dev chrome, fonts loaded, network quiet.
+ *
+ * The font part is the fiddly one — see `waitForFonts`. Bootswatch reaches its
+ * Google font through an `@import` *inside* the theme stylesheet, so the
+ * `@font-face` rules land a whole network hop after the theme itself, and
+ * `&display=swap` paints the fallback meanwhile. Capturing in that window bakes
+ * fallback metrics into the baseline with the real glyphs drawn on top.
  */
 
 /**
@@ -32,6 +38,9 @@ const HIDE_DEV_CHROME = `
 `;
 
 export const DEFAULT_STABLE_UI_MS = 600;
+
+/** Budget for the `@import` chain that pulls a theme's font sheet. */
+const FONT_IMPORT_TIMEOUT_MS = 15_000;
 
 export type CompareScreenshotOptions = {
   animations?: "disabled" | "allow";
@@ -98,13 +107,70 @@ export async function ensureColorMode(page: Page, mode: ColorMode): Promise<void
   await waitForStableUI(page);
 }
 
+/**
+ * Block until every webfont the page declares has really loaded.
+ *
+ * Two steps, because they close different gaps:
+ *
+ *  A. Wait out pending `@import`s. `CSSImportRule.styleSheet` is null until the
+ *     imported sheet has been fetched and parsed, and until then a Bootswatch
+ *     theme has contributed no `@font-face` at all — `document.fonts` is empty
+ *     and step B would sail through on nothing.
+ *  B. Start every declared face and await it, as survey-creator does in
+ *     `e2e/helper.ts`. Note `document.fonts.status` is deliberately unused: it
+ *     reads "loaded" whenever no load is *currently* in flight, so it is
+ *     trivially true in the gap before a lazily-used weight has even started.
+ *     Upstream shipped that check and then reverted it (commit e1171a9af).
+ *
+ * A font that never arrives times out here, which fails the test — better than
+ * quietly recording a fallback-font baseline.
+ */
+export async function waitForFonts(page: Page): Promise<void> {
+  await page.waitForFunction(
+    () => {
+      const hasPendingImport = (sheet: CSSStyleSheet): boolean => {
+        let rules: CSSRuleList;
+        try {
+          rules = sheet.cssRules;
+        } catch {
+          // Cross-origin sheet (the Google Fonts one) — opaque to CSSOM, and it
+          // declares faces directly rather than importing further sheets.
+          return false;
+        }
+        for (let i = 0; i < rules.length; i += 1) {
+          const rule = rules.item(i);
+          if (!(rule instanceof CSSImportRule)) continue;
+          if (!rule.styleSheet || hasPendingImport(rule.styleSheet)) return true;
+        }
+        return false;
+      };
+
+      const sheets = document.styleSheets;
+      for (let i = 0; i < sheets.length; i += 1) {
+        if (hasPendingImport(sheets.item(i)!)) return false;
+      }
+      return true;
+    },
+    undefined,
+    { timeout: FONT_IMPORT_TIMEOUT_MS, polling: 250 }
+  );
+
+  await page.evaluate(async () => {
+    const pending: Array<Promise<unknown>> = [];
+    // Per-face catch: `unicode-range` subsets can fail one at a time.
+    document.fonts.forEach((face) => pending.push(face.load().catch(() => undefined)));
+    await Promise.all(pending);
+    await document.fonts.ready;
+  });
+}
+
 /** Network quiet, fonts loaded, then a short pause for the final repaint. */
 export async function waitForStableUI(
   page: Page,
   ms: number = DEFAULT_STABLE_UI_MS
 ): Promise<void> {
   await page.waitForLoadState("networkidle");
-  await page.evaluate(() => document.fonts.ready);
+  await waitForFonts(page);
   await page.waitForTimeout(ms);
 }
 
@@ -124,6 +190,10 @@ export async function compareScreenshot(
     maskColor: "#000000",
     ...options,
   };
+
+  // Last line of defence: specs call this directly after arbitrary interactions,
+  // which can pull in a weight nothing had needed until now.
+  await waitForFonts(page);
 
   if (locator) {
     const element = locator.filter({ visible: true });
