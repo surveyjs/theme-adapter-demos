@@ -29,27 +29,31 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean",
-    "test:scr:bootstrap": "cross-env E2E_APPS=bootstrap playwright test",
-    "test:scr:ui:bootstrap": "cross-env E2E_APPS=bootstrap playwright test --ui",
-    "test:scr:update:bootstrap": "cross-env E2E_APPS=bootstrap playwright test --update-snapshots",
-    "test:scr:shadcn": "cross-env E2E_APPS=shadcn playwright test",
-    "test:scr:ui:shadcn": "cross-env E2E_APPS=shadcn playwright test --ui",
-    "test:scr:update:shadcn": "cross-env E2E_APPS=shadcn playwright test --update-snapshots",
-    "test:scr:mui": "cross-env E2E_APPS=mui playwright test",
-    "test:scr:ui:mui": "cross-env E2E_APPS=mui playwright test --ui",
-    "test:scr:update:mui": "cross-env E2E_APPS=mui playwright test --update-snapshots",
-    "test:scr": "playwright test",
-    "test:scr:update": "playwright test --update-snapshots"
+
+    "test:scr": "npm run build && playwright test",
+    "test:scr:update": "npm run test:scr -- --update-snapshots",
+
+    "test:scr:bootstrap": "npm run build:bootstrap && cross-env E2E_APPS=bootstrap playwright test",
+    "test:scr:mui": "npm run build:mui && cross-env E2E_APPS=mui playwright test",
+    "test:scr:shadcn": "npm run build:shadcn && cross-env E2E_APPS=shadcn playwright test",
+
+    "test:scr:bootstrap:ui": "npm run test:scr:bootstrap -- --ui",
+    "test:scr:mui:ui": "npm run test:scr:mui -- --ui",
+    "test:scr:shadcn:ui": "npm run test:scr:shadcn -- --ui",
+
+    "test:scr:bootstrap:update": "npm run test:scr:bootstrap -- --update-snapshots",
+    "test:scr:mui:update": "npm run test:scr:mui -- --update-snapshots",
+    "test:scr:shadcn:update": "npm run test:scr:shadcn -- --update-snapshots"
   },
   "dependencies": {
     "ace-builds": "^1.44.0",
     "next": "^15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "survey-core": "next",
-    "survey-creator-core": "next",
-    "survey-creator-react": "next",
-    "survey-react-ui": "next"
+    "survey-core": "^3.0.0",
+    "survey-creator-core": "^3.0.0",
+    "survey-creator-react": "^3.0.0",
+    "survey-react-ui": "^3.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
