@@ -37,9 +37,21 @@ test("builder designer", async ({ page, forEachTheme, waitForStableUI }) => {
   );
 });
 
+/**
+ * `maxDiffPixels` covers a long-standing 2-pixel flake on this page (seen on
+ * mui in dark mode, ~2 runs in 3): a one-pixel edge shift, not antialiasing
+ * noise, so the global `threshold` — which is a per-pixel *colour* tolerance —
+ * never absorbs it. Unrelated to fonts, and it reproduces with the config's
+ * rendering flags stripped and baselines re-recorded. The ceiling is two orders
+ * of magnitude below any real regression on a ~970k-pixel capture.
+ */
+const ALL_QUESTIONS_FLAKE_BUDGET = 10;
+
 test("all-questions overview", async ({ page, forEachTheme }) => {
   await forEachTheme(async ({ open, name }) => {
     await open("all-questions");
-    await compareScreenshot(page, SURVEYJS, name("all-questions-1"));
+    await compareScreenshot(page, SURVEYJS, name("all-questions-1"), {
+      maxDiffPixels: ALL_QUESTIONS_FLAKE_BUDGET,
+    });
   });
 });
