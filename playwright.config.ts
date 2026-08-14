@@ -9,7 +9,7 @@ import { baseUrl, selectedApps } from "./screenshot-tests/apps.config";
  * name, so specs stay classic per-page tests.
  *
  * `E2E_APPS` (set via cross-env in the npm scripts) picks which apps run, so
- * only their dev servers get started.
+ * only their production servers get started.
  *
  * Baselines: `screenshot-tests/screenshots/<app>/<theme>-[dark-]<name>.png`
  * (no theme prefix for mui, which has no `[theme]` route).
@@ -21,9 +21,7 @@ export default defineConfig({
   snapshotPathTemplate: "screenshot-tests/screenshots/{projectName}/{arg}{ext}",
   outputDir: "./test-results",
 
-  // Next compiles each route on first visit in dev mode, so the first hit on a
-  // page can take a while. Tests that walk the theme matrix raise this
-  // themselves via forEachTheme.
+  // Tests that walk the theme matrix raise this themselves via forEachTheme.
   timeout: 120_000,
   expect: {
     timeout: 30_000,
@@ -36,7 +34,7 @@ export default defineConfig({
   },
 
   fullyParallel: false,
-  workers: 2,
+
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: [["list"], ["html", { outputFolder: "screenshot-tests/.report", open: "never" }]],
@@ -56,9 +54,9 @@ export default defineConfig({
   })),
 
   webServer: apps.map((app) => ({
-    command: `npm run dev --workspace ${app.workspace}`,
+    command: `npm run start --workspace ${app.workspace}`,
     url: baseUrl(app),
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 180_000,
     stdout: "ignore",
     stderr: "pipe",
