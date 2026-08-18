@@ -26,6 +26,7 @@ export {
 } from "./data/insurance-claim-seed";
 export { medicalFormSample } from "./data/medical-form-seed";
 export { checkoutSample } from "./data/checkout-seed";
+export { allQuestionsSample } from "./data/all-questions-seed";
 
 // Model factory
 export {

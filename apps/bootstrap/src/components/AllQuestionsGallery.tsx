@@ -3,7 +3,12 @@
 import "@/lib/survey-ssr-environment";
 import { useEffect, useMemo, useRef } from "react";
 import { Survey } from "survey-react-ui";
-import { allQuestionsSchema, createSurveyModel } from "@adapter/schemas";
+import type { Question } from "survey-core";
+import {
+  allQuestionsSample,
+  allQuestionsSchema,
+  createSurveyModel,
+} from "@adapter/schemas";
 import { useAllQuestionsMode } from "./AllQuestionsMode";
 import { useBorderlessMode } from "./BorderlessMode";
 
@@ -52,6 +57,29 @@ export function AllQuestionsGallery() {
   useEffect(() => {
     model.isCompact = borderless;
   }, [model, borderless]);
+
+  // "Prefill demo data" custom button — same host-level `addNavigationItem`
+  // pattern as SurveyForm on claims/checkout. One click fills the CURRENT
+  // toolbox page only; `mergeData` keeps anything already entered.
+  useEffect(() => {
+    const id = "sv-prefill-demo";
+    model.addNavigationItem({
+      id,
+      title: "Prefill demo data",
+      action: () => {
+        const names = new Set(
+          model.currentPage.questions.map((q: Question) => q.getValueName()),
+        );
+        const pageData = Object.fromEntries(
+          Object.entries(allQuestionsSample).filter(([key]) => names.has(key)),
+        );
+        model.mergeData(pageData);
+      },
+    });
+    return () => {
+      model.navigationBar.removeActionById(id);
+    };
+  }, [model]);
 
   // Server-rendered and hydrated — no mount gate. `@/lib/survey-ssr-environment`
   // stubs `settings.environment` for SSR; survey-core guards other DOM access.

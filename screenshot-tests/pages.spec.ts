@@ -128,10 +128,39 @@ test("builder designer", async ({ page, forEachTheme, waitForStableUI }) => {
 const ALL_QUESTIONS_FLAKE_BUDGET = 10;
 
 test("all-questions overview", async ({ page, forEachTheme }) => {
+  await page.setViewportSize({ width: 1440, height: 2000 });
+
   await forEachTheme(async ({ open, name }) => {
+    const nextButton = page.getByRole('button', { name: 'Next' }).nth(0);
+    const prefillDemoDataButton = page.getByRole('button', { name: 'Prefill demo data' }).nth(0);
+
     await open("all-questions");
     await compareScreenshot(page, SURVEYJS, name("all-questions-1"), {
       maxDiffPixels: ALL_QUESTIONS_FLAKE_BUDGET,
     });
+
+    await prefillDemoDataButton.click();
+    await compareScreenshot(page, SURVEYJS, name("all-questions-1-prefilled"));
+
+    await nextButton.click();
+    await compareScreenshot(page, SURVEYJS, name("all-questions-2"));
+
+    await prefillDemoDataButton.click();
+    await compareScreenshot(page, SURVEYJS, name("all-questions-2-prefilled"));
+
+    await nextButton.click();
+    await compareScreenshot(page, SURVEYJS, name("all-questions-3"));
+
+    await prefillDemoDataButton.click();
+    await compareScreenshot(page, SURVEYJS, name("all-questions-3-prefilled"));
+
+    await nextButton.click();
+    await compareScreenshot(page, SURVEYJS, name("all-questions-4"));
+
+    await prefillDemoDataButton.click();
+    await compareScreenshot(page, SURVEYJS, name("all-questions-4-prefilled"));
+
+    await nextButton.click();
+    await compareScreenshot(page, SURVEYJS, name("all-questions-5"));
   });
 });
