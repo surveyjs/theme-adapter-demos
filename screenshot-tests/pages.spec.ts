@@ -7,7 +7,7 @@ test("claims overview", async ({ page, forEachTheme }) => {
   await forEachTheme(async ({ open, name }) => {
     const nextButton = page.getByRole('button', { name: 'Next' });
     const prefillDemoDataButton = page.getByRole('button', { name: 'Prefill demo data' });
-    const completeButton = page.getByRole('button', { name: 'Complete' })
+    const completeButton = page.getByRole('button', { name: 'Complete' });
 
     await open("claims");
     await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-1"));
@@ -58,8 +58,43 @@ test("claims overview", async ({ page, forEachTheme }) => {
 
 test("checkout overview", async ({ page, forEachTheme }) => {
   await forEachTheme(async ({ open, name }) => {
+    const nextButton = page.getByRole('button', { name: 'Next' }).nth(0);
+    const prefillDemoDataButton = page.getByRole('button', { name: 'Prefill demo data' }).nth(0);
+    const completeButton = page.getByRole('button', { name: 'Complete' }).nth(0);
+
     await open("checkout");
     await compareScreenshot(page, SURVEYJS, name("checkout-1"));
+
+    await nextButton.click();
+    await compareScreenshot(page, SURVEYJS, name("checkout-1-error"));
+
+    await prefillDemoDataButton.click();
+    await compareScreenshot(page, SURVEYJS, name("checkout-1-prefilled"));
+
+    await nextButton.click();
+    await compareScreenshot(page, SURVEYJS, name("checkout-2"));
+
+    await nextButton.click();
+    await compareScreenshot(page, SURVEYJS, name("checkout-2-error"));
+
+    await prefillDemoDataButton.click();
+    await compareScreenshot(page, SURVEYJS, name("checkout-2-prefilled"));
+
+    await nextButton.click();
+    await compareScreenshot(page, SURVEYJS, name("checkout-3"));
+
+    await nextButton.click();
+    await compareScreenshot(page, SURVEYJS, name("checkout-3-error"));
+
+    await prefillDemoDataButton.click();
+    await compareScreenshot(page, SURVEYJS, name("checkout-3-prefilled"));
+
+    await nextButton.click();
+    await completeButton.click();
+    await compareScreenshot(page, SURVEYJS, name("checkout-4-error"));
+
+    await prefillDemoDataButton.click();
+    await compareScreenshot(page, SURVEYJS, name("checkout-4-prefilled"));
   });
 });
 
