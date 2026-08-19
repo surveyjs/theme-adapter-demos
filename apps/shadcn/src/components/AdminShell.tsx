@@ -30,7 +30,7 @@ const SIDEBAR_WIDTH = "17rem";
 
 function Brand() {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-4">
       <a
         href="https://surveyjs.io/documentation/theme-adapters"
         target="_blank"
@@ -45,6 +45,16 @@ function Brand() {
       <span className="bg-secondary text-secondary-foreground rounded-full px-2 py-0.5 text-xs font-medium">
         shadcn
       </span>
+      <span className="bg-border inline-block h-5 w-px" />
+      <a
+        href="https://surveyjs.io/documentation/theme-adapters#shadcnui"
+        target="_blank"
+        rel="noreferrer"
+        className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs"
+      >
+        Documentation
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7" /><path d="M7 7h10v10" /></svg>
+      </a>
     </div>
   );
 }

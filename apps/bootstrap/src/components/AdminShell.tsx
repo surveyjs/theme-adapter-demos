@@ -28,7 +28,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <Navbar
         as="header"
         sticky="top"
-        className="bg-body border-bottom shadow-sm px-3"
+        className="bg-body border-bottom shadow-sm px-3 gap-3"
         expand
       >
         <Navbar.Toggle
@@ -50,6 +50,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </a>
         </Navbar.Brand>
         <span className="badge text-bg-primary fw-normal">Bootstrap</span>
+        <span className="vr align-self-center h-50"/>
+        <a
+          href="https://surveyjs.io/documentation/theme-adapters#bootstrap"
+          target="_blank"
+          rel="noreferrer"
+          className="link-body-emphasis link-underline link-underline-opacity-0 link-underline-opacity-100-hover d-flex align-items-center gap-1 small"
+        >
+          Documentation
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7" /><path d="M7 7h10v10" /></svg>
+        </a>
         <div className="ms-auto d-flex align-items-center gap-3">
           {/* Renders only on survey routes — hidden on /, /builder and /records. */}
           <BorderlessToggle />
