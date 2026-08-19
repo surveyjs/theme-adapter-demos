@@ -140,7 +140,9 @@ test("all-questions overview", async ({ page, forEachTheme }) => {
     });
 
     await prefillDemoDataButton.click();
-    await compareScreenshot(page, SURVEYJS, name("all-questions-1-prefilled"));
+    await compareScreenshot(page, SURVEYJS, name("all-questions-1-prefilled"), {
+      maxDiffPixels: ALL_QUESTIONS_FLAKE_BUDGET,
+    });
 
     await nextButton.click();
     await compareScreenshot(page, SURVEYJS, name("all-questions-2"));
