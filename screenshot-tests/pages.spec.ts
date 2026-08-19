@@ -128,7 +128,7 @@ test("builder designer", async ({ page, forEachTheme, waitForStableUI }) => {
 const ALL_QUESTIONS_FLAKE_BUDGET = 10;
 
 test("all-questions overview", async ({ page, forEachTheme }) => {
-  await page.setViewportSize({ width: 1440, height: 2000 });
+  await page.setViewportSize({ width: 1440, height: 2200 });
 
   await forEachTheme(async ({ open, name }) => {
     const nextButton = page.getByRole('button', { name: 'Next' }).nth(0);
