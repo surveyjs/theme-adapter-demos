@@ -4,6 +4,8 @@ const CREATOR = ".svc-creator, .svc-full-container, .svc-tab-designer";
 const SURVEYJS = ".sd-theme-root";
 
 test("claims overview", async ({ page, forEachTheme }) => {
+  await page.setViewportSize({ width: 1440, height: 1200 });
+
   await forEachTheme(async ({ open, name }) => {
     const nextButton = page.getByRole('button', { name: 'Next' });
     const prefillDemoDataButton = page.getByRole('button', { name: 'Prefill demo data' });
@@ -57,6 +59,8 @@ test("claims overview", async ({ page, forEachTheme }) => {
 });
 
 test("checkout overview", async ({ page, forEachTheme }) => {
+  await page.setViewportSize({ width: 1440, height: 1200 });
+
   await forEachTheme(async ({ open, name }) => {
     const nextButton = page.getByRole('button', { name: 'Next' }).nth(0);
     const prefillDemoDataButton = page.getByRole('button', { name: 'Prefill demo data' }).nth(0);
