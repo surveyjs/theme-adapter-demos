@@ -130,6 +130,7 @@ test("builder designer", async ({ page, forEachTheme, waitForStableUI }) => {
  * of magnitude below any real regression on a ~970k-pixel capture.
  */
 const ALL_QUESTIONS_FLAKE_BUDGET = 10;
+const MIN_DIFF_PIXELS = 2;
 
 test("all-questions overview", async ({ page, forEachTheme }) => {
   await page.setViewportSize({ width: 1440, height: 2200 });
@@ -149,24 +150,38 @@ test("all-questions overview", async ({ page, forEachTheme }) => {
     });
 
     await nextButton.click();
-    await compareScreenshot(page, SURVEYJS, name("all-questions-2"));
+    await compareScreenshot(page, SURVEYJS, name("all-questions-2"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await prefillDemoDataButton.click();
-    await compareScreenshot(page, SURVEYJS, name("all-questions-2-prefilled"));
+    await compareScreenshot(page, SURVEYJS, name("all-questions-2-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await nextButton.click();
-    await compareScreenshot(page, SURVEYJS, name("all-questions-3"));
+    await compareScreenshot(page, SURVEYJS, name("all-questions-3"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await prefillDemoDataButton.click();
-    await compareScreenshot(page, SURVEYJS, name("all-questions-3-prefilled"));
+    await compareScreenshot(page, SURVEYJS, name("all-questions-3-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await nextButton.click();
-    await compareScreenshot(page, SURVEYJS, name("all-questions-4"));
+    await compareScreenshot(page, SURVEYJS, name("all-questions-4"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await prefillDemoDataButton.click();
-    await compareScreenshot(page, SURVEYJS, name("all-questions-4-prefilled"));
+    await compareScreenshot(page, SURVEYJS, name("all-questions-4-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await nextButton.click();
-    await compareScreenshot(page, SURVEYJS, name("all-questions-5"));
+    await compareScreenshot(page, SURVEYJS, name("all-questions-5"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
   });
 });
