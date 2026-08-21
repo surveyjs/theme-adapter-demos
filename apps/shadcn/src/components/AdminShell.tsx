@@ -5,13 +5,7 @@ import { usePathname } from "next/navigation";
 import { isActiveRoute, routes } from "@adapter/schemas";
 import { MenuIcon, LayersIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { NavDrawer } from "./NavDrawer";
 import { Sidebar } from "./Sidebar";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { AllQuestionsToggle } from "./AllQuestionsToggle";
@@ -97,8 +91,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <div className="bg-background text-foreground flex h-svh min-h-svh flex-col">
       <header className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b px-3 backdrop-blur sm:gap-3 sm:px-4">
         {/* Mobile nav trigger */}
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger asChild>
+        <NavDrawer
+          open={mobileOpen}
+          onOpenChange={setMobileOpen}
+          trigger={
             <Button
               variant="ghost"
               size="icon"
@@ -107,32 +103,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
             >
               <MenuIcon />
             </Button>
-          </SheetTrigger>
-          {/* Both the panel and the scrim start below the `h-14` header, so it
-              stays visible and undimmed while the drawer is open — the MUI
-              shell gets the same result by keeping its AppBar above the
-              Drawer's z-index. Edges are spelled out rather than relying on
-              the base `inset-*` classes: tailwind-merge drops an earlier
-              `inset-0` as soon as a later `top-14` conflicts with it. */}
-          <SheetContent
-            side="left"
-            className="top-14 bottom-0 left-0 h-auto w-72 p-0"
-            overlayClassName="top-14 right-0 bottom-0 left-0"
-            // Nav only, like the Bootstrap drawer: the brand stays in the
-            // header at every width, and the close button would land on the
-            // first nav row now that there is no header block to anchor it.
-            // The burger toggles (Radix trigger), so it also closes the panel.
-            showCloseButton={false}
-          >
-            {/* Visually hidden, but still in the markup: Radix warns when a
-                Dialog has no Title, and this is the panel's accessible name —
-                the same job Bootstrap's `aria-label="Navigation"` does. */}
-            <SheetHeader className="sr-only">
-              <SheetTitle>Navigation</SheetTitle>
-            </SheetHeader>
-            <Sidebar onNavigate={() => setMobileOpen(false)} />
-          </SheetContent>
-        </Sheet>
+          }
+        >
+          <Sidebar onNavigate={() => setMobileOpen(false)} />
+        </NavDrawer>
 
         <Brand />
 
