@@ -1,0 +1,122 @@
+/*
+ * Bootstrap's stock navbar toggler is a 56x40 bordered box around a 30px
+ * glyph — noticeably bulkier than the plain icon button the MUI and shadcn
+ * shells use for the same job (40x40 hit area, 24px glyph, no border).
+ * Retune Bootstrap's own toggler variables to that geometry rather than
+ * overriding the painted rules, so every theme keeps driving the colors.
+ *
+ * The descendant selector is load-order insurance: the theme stylesheets are
+ * plain `<link>`s from `[theme]/layout.tsx` and land after this bundle, so a
+ * bare `.navbar-toggler` would tie on specificity and lose (same reason
+ * ThemeSwitcher.css qualifies its selectors).
+ */
+.navbar .navbar-toggler {
+  /* The icon is sized in em (1.5em), so the font size drives the glyph: 24px. */
+  --bs-navbar-toggler-font-size: 1rem;
+  --bs-navbar-toggler-padding-x: 0.5rem;
+  --bs-navbar-toggler-padding-y: 0.5rem;
+  /* Bootstrap's default focus ring is a 4px currentColor halo — far heavier
+     than anything else in this header, and MUI's IconButton draws no ring at
+     all. Zero it out; the keyboard-only marker below replaces it. */
+  --bs-navbar-toggler-focus-width: 0;
+  border-width: 0;
+  border-radius: 50%;
+}
+
+/* Stands in for the border that just went away — the same cue MUI's
+   IconButton gives on hover.
+ *
+ * Both cues key off `--bs-focus-ring-color`, not `--bs-emphasis-color-rgb`:
+ * that variable is `0,0,0` in every Bootswatch theme we ship, including
+ * Darkly and Morph whose navbars are dark, so a black tint would be invisible
+ * there. The focus-ring color is per-theme and readable on all of them.
+ */
+.navbar .navbar-toggler:hover {
+  background-color: color-mix(in srgb, var(--bs-focus-ring-color) 60%, transparent);
+}
+
+/* Keyboard-only marker, now that the halo is gone: 2px, and a mouse click
+   leaves nothing behind — same as MUI, which draws no ring at all. */
+.navbar .navbar-toggler:focus-visible {
+  outline: 2px solid var(--bs-focus-ring-color);
+  outline-offset: 2px;
+}
+
+/*
+ * Park the mobile drawer and its scrim below the header, the way the MUI shell
+ * does (its AppBar sits at `zIndex.drawer + 1`, so the Drawer slides under it
+ * and the header never dims). Bootstrap's offcanvas is `position: fixed;
+ * top: 0`, so it needs the header's height — published as `--app-header-h` by
+ * AdminShell, since Bootswatch themes vary it from 57px to 73px.
+ *
+ * The extra class names are for specificity: the theme stylesheets are
+ * `<link>`s that land after this bundle, so anything that merely ties loses on
+ * source order. The panel has to out-rank Bootstrap's own two-class
+ * `.offcanvas.offcanvas-start { top: 0 }`; the scrim only faces a single
+ * `.offcanvas-backdrop`.
+ */
+.offcanvas.offcanvas-start.app-drawer,
+.offcanvas-backdrop.app-drawer-backdrop {
+  top: var(--app-header-h, 0px);
+  height: calc(100% - var(--app-header-h, 0px));
+}
+
+/*
+ * `.sticky-top` parks the header at z-index 1020, below the drawer scrim
+ * (1040) and the drawer itself (1045). The header strip is safe — the scrim
+ * starts under it — but a menu opened from the header overflows into the
+ * scrim's band and gets dimmed there, as the theme dropdown did. Lift the
+ * whole header above the drawer layer so its popups paint over the scrim;
+ * Bootstrap's modal (1055) and tooltips still win over it.
+ */
+.navbar.app-header {
+  z-index: 1046;
+  /* One row at every width — the shape the shadcn (`h-14` header) and MUI
+     (`Toolbar`) shells have too. Below lg the base `.navbar` would otherwise
+     wrap the row and spread it edge to edge with `space-between`; keep it packed
+     left and let the controls hold the right end with their own `ms-auto`. From
+     lg up this is what `.navbar-expand-lg` sets anyway. */
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
+/*
+ * With no wrapping, something has to yield when the row runs out of room. The
+ * brand is the only elastic item — it truncates with an ellipsis — while the
+ * toggle, badge, divider, docs link and theme controls keep their size.
+ * `min-width: 0` is what lets a flex item shrink past its text at all.
+ */
+.navbar.app-header > * {
+  flex-shrink: 0;
+}
+
+.navbar.app-header > .navbar-brand {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+@media (width < 992px) {
+  /* The brand is the item being squeezed, so drop it to body size — the same
+     width then fits noticeably more of the name before the ellipsis. */
+  .navbar.app-header > .navbar-brand {
+    --bs-navbar-brand-font-size: 1rem;
+  }
+
+  /* Header buttons go small below lg. This is `.btn-sm` expressed through the
+     button's own variables, which matters because the theme sets them: the
+     switcher is 107px on Bootstrap but 153px on Morph and Lux, and at those
+     widths the row no longer fits a 390px phone on /all-questions. */
+  .navbar.app-header .theme-switcher .btn {
+    --bs-btn-padding-y: 0.25rem;
+    --bs-btn-padding-x: 0.5rem;
+    --bs-btn-font-size: 0.875rem;
+  }
+
+  /* And the switch captions come down with them, to the same 0.875rem the docs
+     link already uses below lg. At body size the pair is 16px wider than a
+     390px phone can give a row of its own; at this size it fits with room to
+     spare, and both captions still read as full names. */
+  .navbar.app-header .form-check-label {
+    font-size: 0.875rem;
+  }
+}

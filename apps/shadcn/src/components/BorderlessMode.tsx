@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 /**
- * Shared "Borderless questions" state for every survey in the app.
+ * Shared "Borderless" state for every survey in the app.
  *
  * The switch that flips this lives in the top menu (BorderlessToggle), but the
  * live SurveyModels it drives live in the pages (SurveyForm / AllQuestionsGallery).

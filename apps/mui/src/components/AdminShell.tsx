@@ -75,7 +75,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
             color="inherit"
             edge="start"
             aria-label="Toggle navigation"
-            onClick={() => setMobileOpen(true)}
+            // Toggles, not opens: the AppBar outranks the Drawer's z-index, so
+            // the button stays clickable while the drawer is open and has to
+            // close it.
+            onClick={() => setMobileOpen((open) => !open)}
             sx={{ display: { md: "none" } }}
           >
             <MenuIcon />

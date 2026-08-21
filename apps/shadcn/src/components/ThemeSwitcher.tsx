@@ -43,6 +43,12 @@ import { RADII } from "@/lib/radii";
 /**
  * Header theme controls. Visual style navigates to `/<style>/<page>`;
  * other axes stay client-side (localStorage / next-themes).
+ *
+ * Five labelled dropdowns are 499px wide — more than the header can spare next
+ * to the brand cluster (title + badge + docs link) and the two switches until
+ * `xl`. So the labels are `xl`-only and the row collapses to 224px of icons
+ * below that; each button keeps its meaning through its icon and its menu
+ * heading, the same way the switches fall back to `title` / `aria-label`.
  */
 export function ThemeSwitcher() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -57,7 +63,11 @@ export function ThemeSwitcher() {
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
-    return <div className="h-9 w-[420px]" aria-hidden />;
+    // Space reservation for the five controls, so the header does not reflow on
+    // mount. Below `xl` the labels are hidden and the row collapses to icons —
+    // the header's brand now shares that row and would otherwise be squeezed to
+    // nothing on first paint, then jump.
+    return <div className="h-9 w-[224px] xl:w-[420px]" aria-hidden />;
   }
 
   const isDark = resolvedTheme === "dark";
@@ -79,7 +89,7 @@ export function ThemeSwitcher() {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
             <PaletteIcon />
-            <span className="hidden sm:inline">
+            <span className="hidden xl:inline">
               {VISUAL_STYLES.find((s) => s.id === activeStyle)?.label ?? "Style"}
             </span>
           </Button>
@@ -104,7 +114,7 @@ export function ThemeSwitcher() {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
             <DropletIcon />
-            <span className="hidden sm:inline">
+            <span className="hidden xl:inline">
               {BASE_COLORS.find((c) => c.id === baseColor)?.label ?? "Base color"}
             </span>
           </Button>
@@ -129,7 +139,7 @@ export function ThemeSwitcher() {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
             <PaintbrushIcon />
-            <span className="hidden sm:inline">
+            <span className="hidden xl:inline">
               {THEMES.find((t) => t.id === accent)?.label ?? "Theme"}
             </span>
           </Button>
@@ -154,7 +164,7 @@ export function ThemeSwitcher() {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
             <RadiusIcon />
-            <span className="hidden sm:inline">
+            <span className="hidden xl:inline">
               {RADII.find((r) => r.id === radius)?.label ?? "Radius"}
             </span>
           </Button>
@@ -183,7 +193,7 @@ export function ThemeSwitcher() {
         onClick={() => setTheme(isDark ? "light" : "dark")}
       >
         {isDark ? <MoonIcon /> : <SunIcon />}
-        <span className="hidden sm:inline">{isDark ? "Dark" : "Light"}</span>
+        <span className="hidden xl:inline">{isDark ? "Dark" : "Light"}</span>
       </Button>
     </div>
   );

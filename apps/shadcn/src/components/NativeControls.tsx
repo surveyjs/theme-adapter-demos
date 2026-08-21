@@ -118,7 +118,7 @@ function maskPhone(raw: string): string {
 }
 
 /**
- * Native twin of the "Borderless questions" switch (top menu), which maps onto
+ * Native twin of the "Borderless" switch (top menu), which maps onto
  * survey-core's `isCompact` in the SurveyJS column: with it off, a question
  * standing directly on the page gets its own box. Questions inside a panel
  * (here: the insurance / history Cards) keep no box either way, so only the

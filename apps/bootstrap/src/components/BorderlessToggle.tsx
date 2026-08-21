@@ -26,10 +26,10 @@ export function BorderlessToggle() {
     <Form.Check
       type="switch"
       id="borderless-questions"
-      className="mb-0"
+      className="mb-0 text-nowrap"
       checked={borderless}
       onChange={(e) => setBorderless(e.target.checked)}
-      label="Borderless questions"
+      label="Borderless"
     />
   );
 }

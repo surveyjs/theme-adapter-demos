@@ -19,7 +19,7 @@ export function AllQuestionsToggle() {
     <Form.Check
       type="switch"
       id="all-questions-readonly"
-      className="mb-0"
+      className="mb-0 text-nowrap"
       checked={readOnly}
       onChange={(e) => setReadOnly(e.target.checked)}
       label="Read-only"
