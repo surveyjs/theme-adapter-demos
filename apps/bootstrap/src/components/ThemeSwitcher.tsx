@@ -40,9 +40,15 @@ export function ThemeSwitcher() {
   return (
     <ButtonGroup className="theme-switcher">
       <Dropdown as={ButtonGroup} align="end">
-        <Dropdown.Toggle variant="outline-secondary" id="theme-dropdown">
-          <span className="me-1">🎨</span>
-          {activeLabel}
+        {/* Below lg the button texts drop out so the header fits on one row
+            next to the nav toggle; the emoji plus aria-label carry the meaning. */}
+        <Dropdown.Toggle
+          variant="outline-secondary"
+          id="theme-dropdown"
+          aria-label={`Color theme: ${activeLabel}`}
+        >
+          <span aria-hidden>🎨</span>
+          <span className="d-none d-lg-inline ms-1">{activeLabel}</span>
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Header>Color theme</Dropdown.Header>
@@ -65,7 +71,10 @@ export function ThemeSwitcher() {
         title={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
         aria-label={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
       >
-        {mode === "dark" ? "🌙 Dark" : "☀️ Light"}
+        <span aria-hidden>{mode === "dark" ? "🌙" : "☀️"}</span>
+        <span className="d-none d-lg-inline ms-1">
+          {mode === "dark" ? "Dark" : "Light"}
+        </span>
       </Button>
     </ButtonGroup>
   );

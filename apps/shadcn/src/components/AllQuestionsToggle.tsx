@@ -18,8 +18,12 @@ export function AllQuestionsToggle() {
         id="all-questions-readonly"
         checked={readOnly}
         onCheckedChange={setReadOnly}
+        // Same as BorderlessToggle: label hidden below `md`, name kept on the
+        // switch itself.
+        aria-label="Read-only"
+        title="Read-only"
       />
-      <span className="hidden sm:inline">Read-only</span>
+      <span className="hidden md:inline">Read-only</span>
     </Label>
   );
 }
