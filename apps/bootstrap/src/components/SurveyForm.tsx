@@ -20,6 +20,7 @@ import { FormCompleted } from "./FormCompleted";
 // live on `.sjs-theme-overrides`; host overrides load AFTER the adapter for
 // custom app chrome the adapter cannot cover.
 import "survey-core/survey-core.min.css";
+import "./SurveyForm.css";
 
 /**
  * Renders a SurveyJS V3 model with the Bootstrap theme adapter applied.
