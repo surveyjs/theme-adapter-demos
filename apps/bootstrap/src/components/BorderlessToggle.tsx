@@ -29,7 +29,7 @@ export function BorderlessToggle() {
       className="mb-0 text-nowrap"
       checked={borderless}
       onChange={(e) => setBorderless(e.target.checked)}
-      label="Borderless"
+      label="Borderless questions"
     />
   );
 }

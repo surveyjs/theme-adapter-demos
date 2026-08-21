@@ -25,14 +25,14 @@ export function BorderlessToggle() {
         id="borderless-questions"
         checked={borderless}
         onCheckedChange={setBorderless}
-        // The label drops out below `md` so the header stays a single row — it
-        // is 106px, which below that width is the brand title's ellipsis. The
+        // The label drops out below `md` so the header stays a single row —
+        // below that width its width is the brand title's ellipsis instead. The
         // switch keeps its name through aria-label, and title surfaces it on
         // hover — same pair the Bootstrap shell puts on its Form.Check.
-        aria-label="Borderless"
-        title="Borderless"
+        aria-label="Borderless questions"
+        title="Borderless questions"
       />
-      <span className="hidden md:inline">Borderless</span>
+      <span className="hidden md:inline">Borderless questions</span>
     </Label>
   );
 }

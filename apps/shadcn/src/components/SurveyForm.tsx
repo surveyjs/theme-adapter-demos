@@ -55,7 +55,7 @@ export function SurveyForm({
   /** Label for the prefill button (see `prefillData`). */
   prefillLabel?: string;
 }) {
-  // "Borderless" switch (top menu) → survey-core's `isCompact`. It is
+  // "Borderless questions" switch (top menu) → survey-core's `isCompact`. It is
   // a non-serializable runtime flag, so it's set on the LIVE model rather than
   // baked into the schema. The ref seeds it at CONSTRUCTION (below) so the first
   // render — SSR included — already carries the compact classes; applying it only
