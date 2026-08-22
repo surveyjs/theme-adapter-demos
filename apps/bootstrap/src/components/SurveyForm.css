@@ -1,16 +1,27 @@
 /* ──────────────────────────────────────────────────────────────────────────
-   SurveyJS' own mobile mode OFF (the survey follows this app's Bootstrap
-   breakpoints instead — see public/survey-overrides/bootstrap.css).
+   survey-core switches to mobile mode by the SURVEY CONTAINER's width, not the
+   device's, and the threshold is `--sd-mobile-width` (600px in the base CSS).
+   On claims the form shares the grid with the native column from `lg` up
+   (Bootstrap's 992px), so its container drops under 600px while the window is
+   plainly a desktop. Zero the threshold for that page only, above that
+   breakpoint — everywhere else the stock behaviour stands, so a real phone
+   still gets the mobile layout.
 
-   survey-core reads --sd-mobile-width off the survey root ONCE, in its mount
-   effect, and keeps that value for the model's lifetime; a falsy value means
-   "no ResizeObserver". Base survey CSS declares 600px on `.sd-root-modern`
-   itself, so an inherited value from a wrapper can never reach it and the 0
-   must already be in effect at mount. Hence it is bundled with SurveyForm —
-   a render-blocking sheet in <head> — instead of living in the asynchronously
-   loaded /survey-overrides/*.css <link>s. The doubled class out-specifies the
-   base rule so source order cannot matter either.
+   survey-core reads the variable off the survey root ONCE, in its mount effect
+   (a falsy value means "no ResizeObserver"), so the value must already be in
+   effect by then. Hence this bundled render-blocking sheet and not the
+   asynchronously loaded /survey-overrides/*.css <link>s. `.claims-page
+   .sd-root-modern` (0,2,0) out-specifies the base rule on `.sd-root-modern`
+   (0,1,0), so source order cannot matter either.
+
+   Known limitation of that read-once: a tablet loaded in portrait and then
+   rotated into landscape across `lg` keeps the 600px it sampled at mount, so
+   the two-column layout (~570px per column) turns mobile even though a fresh
+   landscape load would not. Fixing it needs a remount of <Survey> per
+   breakpoint, or dropping the media query for a single low threshold.
    ────────────────────────────────────────────────────────────────────────── */
-.sd-root-modern.sd-root-modern {
-  --sd-mobile-width: 0px;
+@media (width >= 992px) {
+  .claims-page .sd-root-modern {
+    --sd-mobile-width: 0px;
+  }
 }

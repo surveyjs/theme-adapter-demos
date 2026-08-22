@@ -21,7 +21,7 @@ import { FormMetricsFooter } from "@/components/FormMetricsFooter";
 
 export default function ClaimsPage() {
   return (
-    <div className="row g-4">
+    <div className="claims-page row g-4">
       <div className="col-lg-6">
         <SurveyForm
           schema={medicalFormSchema}

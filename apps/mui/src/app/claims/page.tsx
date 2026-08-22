@@ -23,6 +23,7 @@ import { FormMetricsFooter } from "@/components/FormMetricsFooter";
 export default function ClaimsPage() {
   return (
     <Box
+      className="claims-page"
       sx={{
         display: "grid",
         gap: 4,
