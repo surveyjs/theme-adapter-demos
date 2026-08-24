@@ -113,13 +113,6 @@
   right: calc(50% + 0.75rem);
 }
 
-/* ── responsive ───────────────────────────────────────────────────────────
-   Align SurveyJS multi-column rows with this app's Bootstrap breakpoints.
-   The native column lays its fields out with `<Form.Group as={Col} md={6}>`,
-   i.e. two columns down to `md`; these rules make the SurveyJS rows collapse
-   at the same point. Which breakpoint to pick is an app decision, so it is
-   not part of the adapter. */
-
 /* ── Creator surface tools ────────────────────────────────────────────────
    Creator reserves side padding for the page navigator / surface toolbar as
    `spacing * 9.25`. The Bootstrap adapter sets `--sjs2-base-unit-spacing` to
@@ -131,27 +124,4 @@
 .svc-tab-designer--with-surface-tools .svc-tab-designer_content {
   padding-inline-start: calc(var(--sjs2-base-unit-size, 8px) * 9.25);
   padding-inline-end: calc(var(--sjs2-base-unit-size, 8px) * 9.25);
-}
-
-/* xs — phones */
-@media (width < 576px) {
-}
-
-/* sm and down */
-@media (width < 768px) {
-  .sd-row.sd-row--multiple {
-    flex-direction: column;
-  }
-}
-
-/* md and down */
-@media (width < 992px) {
-}
-
-/* lg and down */
-@media (width < 1200px) {
-}
-
-/* xxl and up */
-@media (width >= 1400px) {
 }
