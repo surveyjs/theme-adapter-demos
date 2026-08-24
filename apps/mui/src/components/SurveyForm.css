@@ -23,5 +23,6 @@
 @media (width >= 1200px) {
   .claims-page .sd-root-modern {
     --sd-mobile-width: 0px;
+    --sjs-element-min-width: 0px;
   }
 }
