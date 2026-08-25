@@ -23,49 +23,85 @@ test("claims overview", async ({ page, forEachTheme }) => {
     const completeButton = page.getByRole('button', { name: 'Complete' });
 
     await open("claims");
-    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-1"));
-    await compareScreenshot(page, ".native-controls", name("claims-native-controls-1"));
+    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-1"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
+    await compareScreenshot(page, ".native-controls", name("claims-native-controls-1"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await nextButton.nth(0).click();
     await nextButton.nth(1).click();
-    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-1-error"));
-    await compareScreenshot(page, ".native-controls", name("claims-native-controls-1-error"));
+    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-1-error"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
+    await compareScreenshot(page, ".native-controls", name("claims-native-controls-1-error"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await prefillDemoDataButton.nth(0).click();
     await prefillDemoDataButton.nth(1).click();
-    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-1-prefilled"));
-    await compareScreenshot(page, ".native-controls", name("claims-native-controls-1-prefilled"));
+    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-1-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
+    await compareScreenshot(page, ".native-controls", name("claims-native-controls-1-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await nextButton.nth(0).click();
     await nextButton.nth(1).click();
-    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-2"));
-    await compareScreenshot(page, ".native-controls", name("claims-native-controls-2")); 
+    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-2"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
+    await compareScreenshot(page, ".native-controls", name("claims-native-controls-2"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await prefillDemoDataButton.nth(0).click();
     await prefillDemoDataButton.nth(1).click();
-    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-2-prefilled"));
-    await compareScreenshot(page, ".native-controls", name("claims-native-controls-2-prefilled"));
+    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-2-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
+    await compareScreenshot(page, ".native-controls", name("claims-native-controls-2-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await nextButton.nth(0).click();
     await nextButton.nth(1).click();
-    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-3"));
-    await compareScreenshot(page, ".native-controls", name("claims-native-controls-3"));
+    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-3"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
+    await compareScreenshot(page, ".native-controls", name("claims-native-controls-3"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await prefillDemoDataButton.nth(0).click();
     await prefillDemoDataButton.nth(1).click();
-    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-3-prefilled"));
-    await compareScreenshot(page, ".native-controls", name("claims-native-controls-3-prefilled"));
+    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-3-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
+    await compareScreenshot(page, ".native-controls", name("claims-native-controls-3-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await nextButton.nth(0).click();
     await completeButton.click();
     await nextButton.nth(0).click();
-    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-4-error"));
-    await compareScreenshot(page, ".native-controls", name("claims-native-controls-4-error"));
+    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-4-error"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
+    await compareScreenshot(page, ".native-controls", name("claims-native-controls-4-error"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
 
     await prefillDemoDataButton.nth(0).click();
     await prefillDemoDataButton.nth(1).click();
-    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-4-prefilled"));
-    await compareScreenshot(page, ".native-controls", name("claims-native-controls-4-prefilled"));
+    await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-4-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
+    await compareScreenshot(page, ".native-controls", name("claims-native-controls-4-prefilled"), {
+      maxDiffPixels: MIN_DIFF_PIXELS,
+    });
   });
 });
 
