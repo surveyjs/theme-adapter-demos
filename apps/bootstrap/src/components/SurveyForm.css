@@ -26,3 +26,9 @@
     --sjs-element-min-width: 0px;
   }
 }
+
+@media (width < 992px) {
+  .claims-page .sd-root-modern {
+    --sjs-element-min-width: 347.5px;
+  }
+}
