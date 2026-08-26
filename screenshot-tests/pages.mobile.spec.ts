@@ -41,7 +41,7 @@ test("mobile records", async ({ page, forEachTheme }) => {
 });
 
 test("mobile builder", async ({ page, forEachTheme, waitForStableUI }) => {
-  await page.setViewportSize({ width: 400, height: 2000 });
+  await page.setViewportSize({ width: 400, height: 900 });
 
   await forEachTheme(
     async ({ open, name }) => {
