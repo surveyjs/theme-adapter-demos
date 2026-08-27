@@ -28,23 +28,38 @@ export function ThemeSwitcher() {
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
 
   // Avoid hydration mismatch: useColorScheme is unresolved on the server.
+  // Below lg the chips collapse to icons only (~88px); with labels they need ~200px.
   if (!mode) {
-    return <Box sx={{ width: 200, height: 40 }} aria-hidden />;
+    return (
+      <Box
+        sx={{ width: { xs: 88, lg: 200 }, height: 40 }}
+        aria-hidden
+      />
+    );
   }
 
   const resolved = mode === "system" ? systemMode : mode;
   const isDark = resolved === "dark";
   const activePalette = paletteForLightScheme(lightColorScheme);
+  // Labels are lg-only so the header still fits a phone; icons + tooltips carry
+  // the meaning (same pattern as Bootstrap / shadcn ThemeSwitcher).
+  const chipSx = {
+    color: "inherit",
+    borderColor: "currentColor",
+    "& .MuiChip-label": { display: { xs: "none", lg: "block" } },
+    "& .MuiChip-icon": { marginRight: { xs: 0, lg: "-2px" }, marginLeft: { xs: "4px", lg: "5px" } },
+  } as const;
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flexShrink: 0 }}>
       <Tooltip title="Color palette">
         <Chip
           icon={<PaletteIcon />}
           label={activePalette.label}
           variant="outlined"
           onClick={(e: MouseEvent<HTMLElement>) => setAnchor(e.currentTarget)}
-          sx={{ color: "inherit", borderColor: "currentColor" }}
+          aria-label={`Color palette: ${activePalette.label}`}
+          sx={chipSx}
         />
       </Tooltip>
 
@@ -55,7 +70,7 @@ export function ThemeSwitcher() {
           variant="outlined"
           onClick={() => setMode(isDark ? "light" : "dark")}
           aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
-          sx={{ color: "inherit", borderColor: "currentColor" }}
+          sx={chipSx}
         />
       </Tooltip>
 

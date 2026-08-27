@@ -70,7 +70,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           bgcolor: "background.paper",
         }}
       >
-        <Toolbar sx={{ gap: 2 }}>
+        <Toolbar sx={{ gap: { xs: 1, md: 2 }, minWidth: 0 }}>
           <IconButton
             color="inherit"
             edge="start"
@@ -79,40 +79,76 @@ export function AdminShell({ children }: { children: ReactNode }) {
             // the button stays clickable while the drawer is open and has to
             // close it.
             onClick={() => setMobileOpen((open) => !open)}
-            sx={{ display: { md: "none" } }}
+            sx={{ display: { md: "none" }, flexShrink: 0 }}
           >
             <MenuIcon />
           </IconButton>
+          {/* Brand is the only cluster allowed to shrink — title truncates so
+              theme controls stay reachable on a phone. */}
           <Link
             href={ADAPTER_URL}
             target="_blank"
             rel="noreferrer"
             underline="hover"
             color="inherit"
-            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              minWidth: 0,
+              overflow: "hidden",
+            }}
           >
-            <WidgetsIcon color="primary" sx={{ display: { xs: "none", md: "block" } }} />
-            <Typography variant="h6" noWrap sx={{ fontWeight: 700 }}>
+            <WidgetsIcon color="primary" sx={{ display: { xs: "none", md: "block" }, flexShrink: 0 }} />
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{ fontWeight: 700, fontSize: { xs: "0.95rem", md: "1.25rem" } }}
+            >
               SurveyJS Theme Adapters
             </Typography>
           </Link>
-          <Chip label="MUI" color="primary" size="small" />
-          <Box component="span" sx={{ height: 20, width: "1px", bgcolor: "divider", alignSelf: "center" }} />
+          <Chip label="MUI" color="primary" size="small" sx={{ flexShrink: 0 }} />
+          {/* Divider + "Documentation" text are lg-only; below that only the
+              external-link arrow remains (same budget as Bootstrap / shadcn). */}
+          <Box
+            component="span"
+            sx={{
+              height: 20,
+              width: "1px",
+              bgcolor: "divider",
+              alignSelf: "center",
+              display: { xs: "none", lg: "block" },
+              flexShrink: 0,
+            }}
+          />
           <Link
             href="https://surveyjs.io/documentation/theme-adapters#material-ui-mui"
             target="_blank"
             rel="noreferrer"
             underline="hover"
             color="text.secondary"
-            sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: 12 }}
+            aria-label="Documentation"
+            title="Documentation"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              fontSize: 12,
+              flexShrink: 0,
+            }}
           >
-            Documentation
+            <Box component="span" sx={{ display: { xs: "none", lg: "inline" } }}>
+              Documentation
+            </Box>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7" /><path d="M7 7h10v10" /></svg>
           </Link>
-          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ flexGrow: 1, minWidth: 0 }} />
           {/* Route-scoped: only renders on /all-questions. */}
-          <AllQuestionsToggle />
-          <ThemeSwitcher />
+          <Box sx={{ flexShrink: 0, display: "flex", alignItems: "center", gap: 1 }}>
+            <AllQuestionsToggle />
+            <ThemeSwitcher />
+          </Box>
         </Toolbar>
       </AppBar>
 
