@@ -109,11 +109,15 @@ test("checkout overview", async ({ page, forEachTheme }) => {
   await page.setViewportSize({ width: 1440, height: 1300 });
 
   await forEachTheme(async ({ open, name }) => {
+    const previousButton = page.getByRole('button', { name: 'Previous' }).nth(0);
     const nextButton = page.getByRole('button', { name: 'Next' }).nth(0);
     const prefillDemoDataButton = page.getByRole('button', { name: 'Prefill demo data' }).nth(0);
     const completeButton = page.getByRole('button', { name: 'Complete' }).nth(0);
 
     await open("checkout");
+    await nextButton.click();
+    await previousButton.click();
+
     await compareScreenshot(page, SURVEYJS, name("checkout-1"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
     });
