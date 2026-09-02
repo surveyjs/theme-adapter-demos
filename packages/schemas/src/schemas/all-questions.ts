@@ -108,6 +108,8 @@ export const allQuestionsJson: SurveyJSON = {
                 "https://surveyjs.io/Content/Images/examples/image-picker/panda.jpg",
             },
           ],
+          imageHeight: 175,
+          imageWidth: 264,
         },
         {
           type: "ranking",
