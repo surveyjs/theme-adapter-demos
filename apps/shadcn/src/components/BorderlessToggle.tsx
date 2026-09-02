@@ -29,10 +29,10 @@ export function BorderlessToggle() {
         // below that width its width is the brand title's ellipsis instead. The
         // switch keeps its name through aria-label, and title surfaces it on
         // hover — same pair the Bootstrap shell puts on its Form.Check.
-        aria-label="Borderless questions"
-        title="Borderless questions"
+        aria-label="Cardless questions"
+        title="Cardless questions"
       />
-      <span className="hidden md:inline">Borderless questions</span>
+      <span className="hidden md:inline">Cardless questions</span>
     </Label>
   );
 }

@@ -6,7 +6,7 @@ import { isActiveRoute, pagePathFromPathname, routes } from "@adapter/schemas";
 import { useBorderlessMode } from "./BorderlessMode";
 
 /**
- * Header control for the "Borderless questions" mode (survey-core `isCompact`).
+ * Header control for the "Cardless questions" mode (survey-core `isCompact`).
  * Hidden on home, builder, and records (theme-agnostic page path).
  */
 export function BorderlessToggle() {
@@ -29,7 +29,7 @@ export function BorderlessToggle() {
       className="mb-0 text-nowrap"
       checked={borderless}
       onChange={(e) => setBorderless(e.target.checked)}
-      label="Borderless questions"
+      label="Cardless questions"
     />
   );
 }
