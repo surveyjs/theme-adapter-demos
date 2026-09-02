@@ -154,17 +154,20 @@ test("checkout overview", async ({ page, forEachTheme }) => {
     });
 
     await prefillDemoDataButton.click();
+    await page.waitForTimeout(500);
     await compareScreenshot(page, SURVEYJS, name("checkout-3-prefilled"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
     });
 
     await nextButton.click();
     await completeButton.click();
+    await page.waitForTimeout(500);
     await compareScreenshot(page, SURVEYJS, name("checkout-4-error"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
     });
 
     await prefillDemoDataButton.click();
+    await page.waitForTimeout(500);
     await compareScreenshot(page, SURVEYJS, name("checkout-4-prefilled"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
     });
