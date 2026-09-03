@@ -5,6 +5,11 @@
    attribute="class"). The custom variant mirrors the canonical shadcn demo. */
 @custom-variant dark (&:is(.dark *));
 
+/* Embedded iframe mode: `data-embedded` is set on <html> before paint
+   (see lib/embedded). The variant lets AdminShell hide the sidebar and
+   burger with `embedded:hidden` — CSS, not an effect, so no flash. */
+@custom-variant embedded (&:is(html[data-embedded] *));
+
 /* Map the shadcn design tokens onto Tailwind color/radius utilities. Because
    these reference the runtime CSS variables (not literals), every utility
    (`bg-background`, `text-foreground`, `rounded-lg`, …) re-resolves instantly

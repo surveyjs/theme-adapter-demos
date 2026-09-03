@@ -79,7 +79,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
             // the button stays clickable while the drawer is open and has to
             // close it.
             onClick={() => setMobileOpen((open) => !open)}
-            sx={{ display: { md: "none" }, flexShrink: 0 }}
+            sx={{
+              display: { md: "none" },
+              flexShrink: 0,
+              // It opens the nav that is gone when framed, so it goes with it.
+              "html[data-embedded] &": { display: "none" },
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -153,8 +158,19 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </AppBar>
 
       {/* Navigation drawers. The persistent variant owns md+; the temporary one
-          owns smaller screens and closes on navigation. */}
-      <Box component="nav" sx={{ width: { md: DRAWER_WIDTH }, flexShrink: { md: 0 } }}>
+          owns smaller screens and closes on navigation. Both go away when the
+          demo is framed (`data-embedded` on <html>, see lib/embedded): the page
+          hosting the iframe carries the navigation. Emotion inlines these rules
+          into the SSR <head>, so they hold from the first paint; `main` keeps
+          its flexGrow, so it reclaims the freed drawer width on its own. */}
+      <Box
+        component="nav"
+        sx={{
+          width: { md: DRAWER_WIDTH },
+          flexShrink: { md: 0 },
+          "html[data-embedded] &": { display: "none" },
+        }}
+      >
         <Drawer
           variant="temporary"
           open={mobileOpen}
