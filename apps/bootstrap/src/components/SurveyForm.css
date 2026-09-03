@@ -22,7 +22,7 @@
    ────────────────────────────────────────────────────────────────────────── */
 @media (width >= 992px) {
   .claims-page .sd-root-modern {
-    --sd-mobile-width: 0px;
+    --sd-mobile-width: 1px;
     --sjs-element-min-width: 0px;
   }
 }

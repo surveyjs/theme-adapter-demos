@@ -9,6 +9,21 @@ import { test, compareScreenshot } from "./support/test";
  * of magnitude below any real regression on a ~970k-pixel capture.
  */
 const ALL_QUESTIONS_FLAKE_BUDGET = 10;
+
+/**
+ * The first claims capture carries the same kind of budget for the bottom arc of
+ * the radio decorators (4 pixels over the colour tolerance, 35 pixels touched at
+ * all, top arc untouched). It is a raster artefact, not a layout change: on the
+ * V3 build the difference appears only once the page has navigated at least once
+ * before landing here — a cold load of the very same build reproduces the
+ * baseline byte for byte — and no repaint clears it afterwards. Ruled out by
+ * measurement, comparing that build against the one the baselines were recorded
+ * with: font metrics (`fontBoundingBoxAscent/Descent`, and `1lh`, which drives
+ * the decorator's `margin-top`), every custom property visible on the decorator,
+ * its computed `box-shadow` and rect, and how the base theme variables reach the
+ * root — all identical.
+ */
+const RADIO_ARC_BUDGET = 10;
 const MIN_DIFF_PIXELS = 2;
 
 const CREATOR = ".svc-creator, .svc-full-container, .svc-tab-designer";
@@ -24,7 +39,7 @@ test("claims overview", async ({ page, forEachTheme }) => {
 
     await open("claims");
     await compareScreenshot(page, SURVEYJS, name("claims-surveyjs-1"), {
-      maxDiffPixels: MIN_DIFF_PIXELS,
+      maxDiffPixels: RADIO_ARC_BUDGET,
     });
     await compareScreenshot(page, ".native-controls", name("claims-native-controls-1"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
