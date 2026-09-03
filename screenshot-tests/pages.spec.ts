@@ -169,17 +169,20 @@ test("checkout overview", async ({ page, forEachTheme }) => {
     });
 
     await prefillDemoDataButton.click();
+    await page.waitForTimeout(500);
     await compareScreenshot(page, SURVEYJS, name("checkout-3-prefilled"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
     });
 
     await nextButton.click();
     await completeButton.click();
+    await page.waitForTimeout(500);
     await compareScreenshot(page, SURVEYJS, name("checkout-4-error"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
     });
 
     await prefillDemoDataButton.click();
+    await page.waitForTimeout(500);
     await compareScreenshot(page, SURVEYJS, name("checkout-4-prefilled"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
     });
@@ -209,10 +212,14 @@ test("all-questions overview", async ({ page, forEachTheme }) => {
   await page.setViewportSize({ width: 1440, height: 2200 });
 
   await forEachTheme(async ({ open, name }) => {
+    const previousButton = page.getByRole('button', { name: 'Previous' }).nth(0);
     const nextButton = page.getByRole('button', { name: 'Next' }).nth(0);
     const prefillDemoDataButton = page.getByRole('button', { name: 'Prefill demo data' }).nth(0);
 
     await open("all-questions");
+    await nextButton.click();
+    await previousButton.click();
+
     await compareScreenshot(page, SURVEYJS, name("all-questions-1"), {
       maxDiffPixels: ALL_QUESTIONS_FLAKE_BUDGET,
     });
