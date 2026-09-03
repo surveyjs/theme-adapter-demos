@@ -61,6 +61,12 @@ test("mobile all-questions", async ({ page, forEachTheme }) => {
 
   await forEachTheme(async ({ open, name }) => {
     await open("all-questions");
+
+    const previousButton = page.getByRole('button', { name: 'Previous' }).nth(0);
+    const nextButton = page.getByRole('button', { name: 'Next' }).nth(0);
+    await nextButton.click();
+    await previousButton.click();
+
     await compareScreenshot(page, SURVEYJS, name("mobile-all-questions-1"), {
       maxDiffPixels: ALL_QUESTIONS_FLAKE_BUDGET,
     });
