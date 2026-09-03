@@ -1,6 +1,8 @@
 import { test, compareScreenshot } from "./support/test";
 
 const ALL_QUESTIONS_FLAKE_BUDGET = 10;
+/** The radio-decorator arc artefact, same capture as desktop — see pages.spec.ts. */
+const RADIO_ARC_BUDGET = 10;
 const MIN_DIFF_PIXELS = 2;
 
 const CREATOR = ".svc-creator, .svc-full-container, .svc-tab-designer";
@@ -12,7 +14,7 @@ test("mobile claims", async ({ page, forEachTheme }) => {
   await forEachTheme(async ({ open, name }) => {
     await open("claims");
     await compareScreenshot(page, SURVEYJS, name("mobile-claims-surveyjs-1"), {
-      maxDiffPixels: MIN_DIFF_PIXELS,
+      maxDiffPixels: RADIO_ARC_BUDGET,
     });
     await compareScreenshot(page, ".native-controls", name("mobile-claims-native-controls-1"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
