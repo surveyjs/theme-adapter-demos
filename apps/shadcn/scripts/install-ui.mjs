@@ -6,9 +6,12 @@
  *   node scripts/install-ui.mjs --if-stale  → full install only if the registry moved
  *
  * --if-stale runs on postinstall: it hashes every registry item the install would
- * request (plus the resolved CLI version) and compares that against registry.lock.json,
- * so a normal `npm i` pays ~1s instead of a ~90s reinstall that would rewrite committed
- * files for nothing. When the hash does move, the reinstall is exactly what you want.
+ * request (plus the pinned CLI version) and compares that against registry.lock.json.
+ * It never writes. When the hash moves it prints one line asking for an explicit
+ * `npm run install:ui`, because reinstalling from a postinstall would delete ~150
+ * committed files and — since the CLI installs registry dependencies with
+ * `npm install` — restart the very workspace install that spawned it. Missing style
+ * folders are the one case it still installs on its own.
  *
  * Per-style shadcn configs live in scripts/ui-configs/<id>/components.json (committed).
  * Per-style registry components live in src/components/ui/styles/<id>/ (committed).
@@ -42,6 +45,28 @@ const CONFIGS_DIR = join(here, "ui-configs");
 const ROOT_CONFIG = join(ROOT, "components.json");
 const LOCK = join(here, "registry.lock.json");
 
+/** Pinned: a shadcn release must not silently move the fingerprint or the output. */
+const CLI_VERSION = "4.16.2";
+const CLI = `shadcn@${CLI_VERSION}`;
+
+/**
+ * `shadcn add` installs registry dependencies with `npm install`, which inside a
+ * workspace re-runs the root install and this postinstall. The guard makes that
+ * nested pass a no-op instead of an infinite reinstall loop.
+ */
+const REENTRY = "SHADCN_INSTALL_UI_ACTIVE";
+
+/** Tailwind-v4 registry items import the `cn` npm package; we keep the local helper. */
+const CN_IMPORT = 'from "cn"';
+const LOCAL_CN_IMPORT = 'from "@/lib/utils"';
+
+/** Rewritten by the CLI's dependency install; restored so the repo sees no churn. */
+const MANIFESTS = [
+  join(ROOT, "package.json"),
+  join(ROOT, "../../package.json"),
+  join(ROOT, "../../package-lock.json"),
+];
+
 /** Read-only mirror of what the CLI fetches — used for staleness checks, never to install. */
 const REGISTRY = "https://ui.shadcn.com/r/styles";
 
@@ -73,6 +98,15 @@ const CHROME_COMPONENTS = ["button", "sheet", "dialog", "dropdown-menu", "badge"
 /** Chrome components are always new-york, matching scripts/ui-configs/chrome. */
 const CHROME_STYLE = "new-york";
 
+/**
+ * On a Tailwind v4 project the CLI silently serves the v4 payload for the new-york
+ * style, so that is the item to hash — /r/styles/new-york/… is the v3 one nothing
+ * installs. Every other style id is passed through as written.
+ */
+function registryStyle(styleId) {
+  return styleId === "new-york" ? "new-york-v4" : styleId;
+}
+
 /** Components that get a runtime style dispatcher at src/components/ui/<name>.tsx */
 const DISPATCH_COMPONENTS = [
   "alert",
@@ -91,6 +125,11 @@ const DISPATCH_COMPONENTS = [
 
 const glueOnly = process.argv.includes("--glue-only");
 const ifStale = process.argv.includes("--if-stale");
+
+if (process.env[REENTRY]) {
+  console.log("install-ui: nested npm install — nothing to do.");
+  process.exit(0);
+}
 
 function styleIds() {
   return readdirSync(CONFIGS_DIR, { withFileTypes: true })
@@ -127,11 +166,25 @@ function withConfig(configName, fn) {
   }
 }
 
+function withPreservedManifests(fn) {
+  const saved = MANIFESTS.filter(existsSync).map((f) => [
+    f,
+    readFileSync(f, "utf8"),
+  ]);
+  try {
+    fn();
+  } finally {
+    for (const [file, content] of saved) {
+      if (readFileSync(file, "utf8") !== content) writeFileSync(file, content);
+    }
+  }
+}
+
 function shadcnAdd(components, path) {
   const pathArg = path ? ` --path ${path}` : "";
   execSync(
-    `npx --yes shadcn@latest add ${components.join(" ")}${pathArg} --overwrite --yes --silent`,
-    { cwd: ROOT, stdio: "inherit" },
+    `npx --yes ${CLI} add ${components.join(" ")}${pathArg} --overwrite --yes --silent`,
+    { cwd: ROOT, stdio: "inherit", env: { ...process.env, [REENTRY]: "1" } },
   );
 }
 
@@ -148,7 +201,17 @@ function rewriteStyleImports(styleDir) {
         `./${comp}`,
       );
     }
+    content = content.replaceAll(CN_IMPORT, LOCAL_CN_IMPORT);
     writeFileSync(join(styleDir, file), content);
+  }
+}
+
+function rewriteChromeImports() {
+  for (const comp of CHROME_COMPONENTS) {
+    const file = join(UI, `${comp}.tsx`);
+    const content = readFileSync(file, "utf8");
+    const next = content.replaceAll(CN_IMPORT, LOCAL_CN_IMPORT);
+    if (next !== content) writeFileSync(file, next);
   }
 }
 
@@ -325,23 +388,86 @@ function cleanRegistry() {
 function installRegistry() {
   cleanRegistry();
 
-  console.log("Installing per-style shadcn components…");
-  for (const id of styleIds()) {
-    console.log(`  ${id}`);
-    const styleDir = join(UI, "styles", id);
-    withConfig(id, () =>
-      shadcnAdd(componentsForStyle(id), `src/components/ui/styles/${id}`),
+  withPreservedManifests(() => {
+    console.log("Installing per-style shadcn components…");
+    for (const id of styleIds()) {
+      console.log(`  ${id}`);
+      const styleDir = join(UI, "styles", id);
+      withConfig(id, () =>
+        shadcnAdd(componentsForStyle(id), `src/components/ui/styles/${id}`),
+      );
+      rewriteStyleImports(styleDir);
+    }
+
+    for (const radixId of RADIX_STYLES) {
+      const stray = join(UI, "styles", radixId, "combobox.tsx");
+      if (existsSync(stray)) unlinkSync(stray);
+    }
+
+    console.log("Installing chrome components…");
+    withConfig("chrome", () => shadcnAdd(CHROME_COMPONENTS));
+    rewriteChromeImports();
+  });
+
+  validateInstalled();
+}
+
+/** True when `@/x` names a file under src/ — the alias every components.json sets. */
+function resolvesInApp(spec) {
+  const base = join(ROOT, "src", spec.slice(2));
+  return ["", ".ts", ".tsx", "/index.ts", "/index.tsx"].some((ext) =>
+    existsSync(base + ext),
+  );
+}
+
+/** Everything the app or the workspace root declares, hoisted into one set. */
+function declaredPackages() {
+  const names = new Set();
+  for (const manifest of MANIFESTS.filter((f) => f.endsWith("package.json"))) {
+    const pkg = JSON.parse(readFileSync(manifest, "utf8"));
+    for (const field of ["dependencies", "devDependencies"]) {
+      for (const name of Object.keys(pkg[field] ?? {})) names.add(name);
+    }
+  }
+  return names;
+}
+
+function packageName(spec) {
+  const parts = spec.split("/");
+  return spec.startsWith("@") ? parts.slice(0, 2).join("/") : parts[0];
+}
+
+/**
+ * The CLI installs registry dependencies itself and withPreservedManifests undoes
+ * that, so anything the registry pulled in — the `cn` package the Tailwind-v4 items
+ * import, say — has to be mapped by the rewrites above or the app stops building.
+ * Same for @/ paths upstream authored against its own repo. Fail here, naming them,
+ * instead of at `next build` half an hour later.
+ */
+function validateInstalled() {
+  const declared = declaredPackages();
+  const dirs = [UI, ...styleIds().map((id) => join(UI, "styles", id))];
+  const bad = [];
+  for (const dir of dirs.filter(existsSync)) {
+    for (const file of readdirSync(dir).filter((f) => f.endsWith(".tsx"))) {
+      const full = join(dir, file);
+      for (const [, spec] of readFileSync(full, "utf8").matchAll(
+        /from "([^"]+)"/g,
+      )) {
+        if (spec.startsWith(".")) continue;
+        const ok = spec.startsWith("@/")
+          ? resolvesInApp(spec)
+          : declared.has(packageName(spec));
+        if (!ok) bad.push(`${full}: ${spec}`);
+      }
+    }
+  }
+  if (bad.length) {
+    throw new Error(
+      `Registry output imports what this app does not have:\n  ${bad.join("\n  ")}\n` +
+        "Map them in the rewrites above, or declare them in package.json.",
     );
-    rewriteStyleImports(styleDir);
   }
-
-  for (const radixId of RADIX_STYLES) {
-    const stray = join(UI, "styles", radixId, "combobox.tsx");
-    if (existsSync(stray)) unlinkSync(stray);
-  }
-
-  console.log("Installing chrome components…");
-  withConfig("chrome", () => shadcnAdd(CHROME_COMPONENTS));
 }
 
 function sha(text) {
@@ -353,18 +479,18 @@ function registryUrls() {
   const urls = [];
   for (const id of styleIds()) {
     for (const comp of componentsForStyle(id)) {
-      urls.push(`${REGISTRY}/${id}/${comp}.json`);
+      urls.push(`${REGISTRY}/${registryStyle(id)}/${comp}.json`);
     }
   }
   for (const comp of CHROME_COMPONENTS) {
-    urls.push(`${REGISTRY}/${CHROME_STYLE}/${comp}.json`);
+    urls.push(`${REGISTRY}/${registryStyle(CHROME_STYLE)}/${comp}.json`);
   }
   return urls.sort();
 }
 
 /**
- * Hash of the upstream surface: every requested item plus the CLI version that would
- * transform it. Transitive registry dependencies are covered only when they are
+ * Hash of the upstream surface: every requested item plus the pinned CLI version that
+ * transforms it. Transitive registry dependencies are covered only when they are
  * themselves in STYLE_COMPONENTS — an upstream change to a dep outside that list
  * slips through until the next explicit `npm run install:ui`.
  */
@@ -376,9 +502,7 @@ async function registryFingerprint() {
       return `${url} ${sha(await res.text())}`;
     }),
   );
-  const cli = await fetch("https://registry.npmjs.org/shadcn/latest");
-  if (!cli.ok) throw new Error(`${cli.status} for the shadcn npm packument`);
-  parts.push(`shadcn ${(await cli.json()).version}`);
+  parts.push(`shadcn ${CLI_VERSION}`);
   return sha(parts.join("\n"));
 }
 
@@ -399,29 +523,37 @@ function readLock() {
 }
 
 async function installIfStale() {
-  let current;
+  let current = null;
   try {
     current = await registryFingerprint();
   } catch (err) {
     // Offline or the registry is down: never fail `npm i` over a freshness check.
     console.warn(`Skipping shadcn freshness check — ${err.message}`);
+  }
+
+  // Nothing installed locally — a postinstall is the only chance to get components.
+  if (!stylesInstalled()) {
+    console.log("Per-style shadcn components missing — running full install…");
+    installRegistry();
+    if (current) writeLock(current);
+    generateGlue();
     return;
   }
 
+  if (!current) return;
+
   const locked = readLock();
-  if (locked === current && stylesInstalled()) {
+  if (locked === current) {
     console.log(`shadcn registry unchanged (${current}).`);
     return;
   }
 
-  console.log(
-    locked
-      ? `shadcn registry moved: ${locked} → ${current}. Reinstalling…`
-      : `No registry lock yet (${current}). Installing…`,
+  // Reinstalling here would delete ~150 committed files behind the user's back and
+  // re-enter this very install through the CLI's dependency install. Ask instead.
+  console.warn(
+    `shadcn registry moved: ${locked ?? "no lock"} → ${current}. ` +
+      "Run `npm run install:ui` to adopt it — files left untouched.",
   );
-  installRegistry();
-  writeLock(current);
-  generateGlue();
 }
 
 function stylesInstalled() {
