@@ -109,6 +109,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
           className="d-lg-none me-2"
           // Toggles, not opens: the drawer now starts below the header, so the
           // button stays clickable while it is open and has to close it.
+          // Hidden with the sidebar when framed (`data-embedded`, see
+          // AdminShell.css) — it opens the nav that is gone there.
           onClick={() => setNavOpen((open) => !open)}
         />
         {/* Deliberately not wrapped in a container: as direct navbar children
@@ -133,9 +135,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
           Creator / content children can use height: 100% without growing past
           the viewport (same pattern as the shadcn AdminShell). */}
       <div className="d-flex flex-grow-1" style={{ minHeight: 0, height: 0 }}>
-        {/* Persistent sidebar (large screens) */}
+        {/* Persistent sidebar (large screens). Both this and the burger go
+            away when the demo is framed (`data-embedded` on <html>, see
+            lib/embedded + AdminShell.css): the page hosting the iframe
+            carries the navigation. */}
         <aside
-          className="d-none d-lg-block border-end bg-body h-100"
+          className="app-sidebar d-none d-lg-block border-end bg-body h-100"
           style={{ width: 280, flexShrink: 0, overflowY: "auto" }}
         >
           <Sidebar />

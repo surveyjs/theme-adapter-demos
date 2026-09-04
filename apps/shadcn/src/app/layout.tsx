@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { AdminShell } from "@/components/AdminShell";
 import { AllQuestionsModeProvider } from "@/components/AllQuestionsMode";
 import { BorderlessModeProvider } from "@/components/BorderlessMode";
+import { embeddedBootstrapScript } from "@/lib/embedded";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,6 +20,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/*
+          Marks <html> when the demo runs inside an iframe, so the shell can
+          drop its navigation before the first paint.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: embeddedBootstrapScript() }} />
         <script dangerouslySetInnerHTML={{ __html: STYLE_BOOTSTRAP }} />
       </head>
       <body>
