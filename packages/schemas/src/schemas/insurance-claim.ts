@@ -10,6 +10,7 @@ import type { SchemaDefinition, SurveyJSON } from "../types";
  * Representative V3 JSON — drop-in replaceable with a real CMS-1500 schema.
  */
 export const insuranceClaimJson: SurveyJSON = {
+  headerView: "basic",
   title: "Insurance Claim",
   description: "Create or edit a claim record.",
   showQuestionNumbers: "off",

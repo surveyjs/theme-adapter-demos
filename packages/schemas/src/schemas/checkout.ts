@@ -107,6 +107,7 @@ function addressPanel({
  * Representative V3 JSON — drop-in replaceable with a real checkout schema.
  */
 export const checkoutJson: SurveyJSON = {
+  headerView: "basic",
   title: "Checkout",
   description: "Complete your order in a few quick steps.",
   showTOC: true,

@@ -16,6 +16,7 @@ import type { SchemaDefinition, SurveyJSON } from "../types";
  * hand so the shipped package keeps its survey-core-only runtime dependency.
  */
 export const allQuestionsJson: SurveyJSON = {
+  headerView: "basic",
   title: "All Questions Gallery",
   description:
     "One of every SurveyJS V3 question type, grouped into pages that mirror the Creator toolbox categories one-for-one.",
