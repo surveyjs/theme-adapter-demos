@@ -90,7 +90,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
   return (
     <div className="bg-background text-foreground flex h-svh min-h-svh flex-col">
       <header className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b px-3 backdrop-blur sm:gap-3 sm:px-4">
-        {/* Mobile nav trigger */}
+        {/* Mobile nav trigger. It opens the nav that is gone when framed,
+            so it goes with it (`embedded:hidden`, see lib/embedded). */}
         <NavDrawer
           open={mobileOpen}
           onOpenChange={setMobileOpen}
@@ -98,7 +99,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <Button
               variant="ghost"
               size="icon"
-              className="shrink-0 lg:hidden"
+              className="shrink-0 lg:hidden embedded:hidden"
               aria-label="Open navigation"
             >
               <MenuIcon />
@@ -124,9 +125,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
           survey / content children can use height: 100% without growing past
           the viewport (same pattern as the Bootstrap AdminShell). */}
       <div className="flex min-h-0 flex-1" style={{ height: 0 }}>
-        {/* Permanent sidebar (lg+) */}
+        {/* Permanent sidebar (lg+). Goes away when the demo is framed
+            (`data-embedded` on <html>, see lib/embedded): the page hosting
+            the iframe carries the navigation. `main` keeps its flex-1 and
+            reclaims the freed width on its own. */}
         <aside
-          className="bg-sidebar text-sidebar-foreground hidden h-full shrink-0 overflow-y-auto border-r lg:block"
+          className="bg-sidebar text-sidebar-foreground hidden h-full shrink-0 overflow-y-auto border-r lg:block embedded:hidden"
           style={{ width: SIDEBAR_WIDTH }}
         >
           <Sidebar />

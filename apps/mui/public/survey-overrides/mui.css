@@ -53,4 +53,12 @@
 
 .sd-progress-buttons {
   padding: 0 16px 16px;
+
+  .sd-root-modern--mobile & {
+    padding-inline: 0;
+
+    .sd-progress-buttons__list {
+      grid-auto-columns: minmax(var(--sjs2-size-x900), 1fr);
+    }
+  }
 }

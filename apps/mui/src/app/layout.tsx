@@ -8,6 +8,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { Providers } from "@/components/Providers";
 import { AdminShell } from "@/components/AdminShell";
+import { embeddedBootstrapScript } from "@/lib/embedded";
 import { surveyOverridesBootstrapScript } from "@/lib/surveyOverridesCss";
 
 export const metadata: Metadata = {
@@ -21,6 +22,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     // hydration, so the client markup intentionally differs from SSR here.
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/*
+          Marks <html> when the demo runs inside an iframe, so the shell can
+          drop its navigation before the first paint.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: embeddedBootstrapScript() }} />
         {/*
           Creates the app-local SurveyJS overrides <link> for the persisted
           palette. Runs while the document is still parsing so the sheet is

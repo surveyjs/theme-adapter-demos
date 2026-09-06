@@ -61,9 +61,15 @@
    1.5rem circles in `--bs-secondary-bg`, 0.875rem/500 titles underneath —
    which is why it lives with the app rather than in the adapter. */
 .sd-progress-buttons {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  padding-inline: 1rem;
+  padding: 1rem;
+
+  .sd-root-modern--mobile & {
+    padding-inline: 0;
+
+    .sd-progress-buttons__list {
+      grid-auto-columns: minmax(var(--sjs2-size-x900), 1fr);
+    }
+  }
 }
 
 .sd-progress-buttons--titles-bottom .sd-progress-buttons__button {

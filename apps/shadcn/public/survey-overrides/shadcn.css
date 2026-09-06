@@ -52,6 +52,14 @@
    `text-sm/medium text-muted-foreground` titles underneath. */
 .sd-progress-buttons {
   padding: 0 calc(var(--spacing) * 6) calc(var(--spacing) * 2);
+
+  .sd-root-modern--mobile & {
+    padding-inline: 0;
+   
+    .sd-progress-buttons__list {
+      grid-auto-columns: minmax(var(--sjs2-size-x900), 1fr);
+    }
+  }
 }
 
 .sd-progress-buttons--titles-bottom .sd-progress-buttons__button {
