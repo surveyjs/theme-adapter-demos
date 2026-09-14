@@ -50,7 +50,7 @@ export default defineConfig({
     // which only `--lang` below sets.
     locale: "en-US",
     timezoneId: "UTC",
-    trace: "retain-on-failure",
+    trace: "off",
     launchOptions: {
       // `--disable-lcd-text` pins text to grayscale antialiasing. Chromium
       // otherwise switches between grayscale and subpixel depending on
