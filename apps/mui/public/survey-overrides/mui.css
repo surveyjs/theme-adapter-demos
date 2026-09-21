@@ -57,8 +57,8 @@
   .sd-root-modern--mobile & {
     padding-inline: 0;
 
-    .sd-progress-buttons__list {
-      grid-auto-columns: minmax(var(--sjs2-size-x900), 1fr);
+    .sd-progress-buttons__list li {
+      min-width: var(--sjs2-size-x900);
     }
   }
 }

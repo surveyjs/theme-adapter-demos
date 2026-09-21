@@ -55,9 +55,9 @@
 
   .sd-root-modern--mobile & {
     padding-inline: 0;
-   
-    .sd-progress-buttons__list {
-      grid-auto-columns: minmax(var(--sjs2-size-x900), 1fr);
+
+    .sd-progress-buttons__list li {
+      min-width: var(--sjs2-size-x900);
     }
   }
 }
@@ -74,9 +74,21 @@
   color: var(--muted-foreground);
 }
 
+/* The app-owned stepper gives every step an equal column with the indicator in its
+   middle, so the edge steps keep a full column instead of the shrunken one the
+   SurveyJS layout uses to pin its first and last markers to the container edges. */
 .sd-progress-buttons__list li:first-child,
 .sd-progress-buttons__list li:last-child {
+  flex: 1 1 0;
+  width: auto;
+  min-width: var(--sjs2-size-x1200);
   align-items: center;
+
+  .sd-progress-buttons__page-title,
+  .sd-progress-buttons__page-description {
+    max-width: calc(100% - var(--sjs2-size-x400));
+    text-align: center;
+  }
 }
 
 .sd-progress-buttons--titles-bottom .sd-progress-buttons__list-container {
@@ -91,14 +103,9 @@
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
-.sd-progress-buttons--numbered.sd-progress-buttons--titles-bottom .sd-progress-buttons__list li:after {
-  top: 1.125rem;
-  bottom: unset;
-}
-
-.sd-progress-buttons--numbered .sd-progress-buttons__list li::after,
-.sd-progress-buttons--numbered .sd-progress-buttons__list li:nth-child(2):not(:last-child)::after,
-.sd-progress-buttons--numbered .sd-progress-buttons__list li:nth-child(n + 3):last-child::after {
-  width: calc(100% - 2.25em);
-  right: calc(50% + 1.125em);
+/* the connectors are placed off the marker size, so the larger indicator only has
+   to be declared once */
+.sd-progress-buttons--numbered .sd-progress-buttons__list {
+  --sd-progress-buttons-marker-size: 2.25rem;
+  --sd-progress-buttons-gap: 0px;
 }
