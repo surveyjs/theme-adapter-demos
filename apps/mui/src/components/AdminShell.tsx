@@ -68,6 +68,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
           borderBottom: 1,
           borderColor: "divider",
           bgcolor: "background.paper",
+          // `?header=0`. The bar is position:fixed, so the Toolbar spacers
+          // below have to go with it or they leave an empty band.
+          "html[data-hide-header] &": { display: "none" },
         }}
       >
         <Toolbar sx={{ gap: { xs: 1, md: 2 }, minWidth: 0 }}>
@@ -82,8 +85,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
             sx={{
               display: { md: "none" },
               flexShrink: 0,
-              // It opens the nav that is gone when framed, so it goes with it.
-              "html[data-embedded] &": { display: "none" },
+              // It opens the nav that is gone when framed or `sidebar=0`, so
+              // it goes with it.
+              "html[data-embedded] &, html[data-hide-sidebar] &": { display: "none" },
             }}
           >
             <MenuIcon />
@@ -159,16 +163,17 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
       {/* Navigation drawers. The persistent variant owns md+; the temporary one
           owns smaller screens and closes on navigation. Both go away when the
-          demo is framed (`data-embedded` on <html>, see lib/embedded): the page
-          hosting the iframe carries the navigation. Emotion inlines these rules
-          into the SSR <head>, so they hold from the first paint; `main` keeps
-          its flexGrow, so it reclaims the freed drawer width on its own. */}
+          demo is framed or the URL says `sidebar=0` (`data-embedded` /
+          `data-hide-sidebar` on <html>, see lib/embedded). Emotion inlines
+          these rules into the SSR <head>, so they hold from the first paint;
+          `main` keeps its flexGrow, so it reclaims the freed drawer width on
+          its own. */}
       <Box
         component="nav"
         sx={{
           width: { md: DRAWER_WIDTH },
           flexShrink: { md: 0 },
-          "html[data-embedded] &": { display: "none" },
+          "html[data-embedded] &, html[data-hide-sidebar] &": { display: "none" },
         }}
       >
         <Drawer
@@ -193,8 +198,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
             "& .MuiDrawer-paper": { width: DRAWER_WIDTH, boxSizing: "border-box" },
           }}
         >
-          {/* Spacer matching the AppBar height so nav sits below the header. */}
-          <Toolbar />
+          {/* Spacer matching the AppBar height so nav sits below the header.
+              Gone with the bar when `header=0`. */}
+          <Toolbar sx={{ "html[data-hide-header] &": { display: "none" } }} />
           <Sidebar />
         </Drawer>
       </Box>
@@ -215,8 +221,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
           flexDirection: "column",
         }}
       >
-        {/* Spacer matching the fixed AppBar height. */}
-        <Toolbar sx={{ flexShrink: 0 }} />
+        {/* Spacer matching the fixed AppBar height. Gone with the bar when
+            `header=0`, so the content starts at the top of the viewport. */}
+        <Toolbar sx={{ flexShrink: 0, "html[data-hide-header] &": { display: "none" } }} />
         {isBuilder ? (
           // Fill the remaining height below the AppBar spacer; the Creator inside
           // stretches to 100% of this region.

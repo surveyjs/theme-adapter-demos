@@ -122,18 +122,29 @@
 }
 
 /*
- * When the demo is framed (`data-embedded` on <html>, see lib/embedded), the
- * host page carries the navigation — so drop the sidebar, the burger that
- * opens it, and the mobile drawer. These rules live in CSS (not an effect)
- * so they hold from the first paint; `main` keeps its flex-grow and reclaims
- * the freed sidebar width on its own.
+ * Drop the sidebar, the burger that opens it, and the mobile drawer when the
+ * demo is framed (`data-embedded`) or the URL says `sidebar=0`
+ * (`data-hide-sidebar`). See lib/embedded. These rules live in CSS (not an
+ * effect) so they hold from the first paint; `main` keeps its flex-grow and
+ * reclaims the freed sidebar width on its own.
+ *
+ * `?header=0` (`data-hide-header`) drops the top bar. It is in normal flow,
+ * so the content row below reclaims that height on its own.
  *
  * `!important` is load-order insurance: theme `<link>`s land after this
  * bundle, and `d-lg-block` on the aside is itself `display: block !important`.
  */
 html[data-embedded] .navbar .navbar-toggler,
+html[data-hide-sidebar] .navbar .navbar-toggler,
 html[data-embedded] .app-sidebar,
+html[data-hide-sidebar] .app-sidebar,
 html[data-embedded] .offcanvas.app-drawer,
-html[data-embedded] .offcanvas-backdrop.app-drawer-backdrop {
+html[data-hide-sidebar] .offcanvas.app-drawer,
+html[data-embedded] .offcanvas-backdrop.app-drawer-backdrop,
+html[data-hide-sidebar] .offcanvas-backdrop.app-drawer-backdrop {
+  display: none !important;
+}
+
+html[data-hide-header] .navbar.app-header {
   display: none !important;
 }

@@ -21,8 +21,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         {/*
-          Marks <html> when the demo runs inside an iframe, so the shell can
-          drop its navigation before the first paint.
+          Marks <html> when the demo runs inside an iframe, or when the URL
+          asks to hide the sidebar (`sidebar=0`) or the header (`header=0`),
+          so the shell can drop that chrome before the first paint.
         */}
         <script dangerouslySetInnerHTML={{ __html: embeddedBootstrapScript() }} />
         <script dangerouslySetInnerHTML={{ __html: STYLE_BOOTSTRAP }} />
