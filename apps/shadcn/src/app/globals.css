@@ -8,11 +8,13 @@
 /* Chrome visibility, set on <html> before paint (see lib/embedded).
    `embedded:` hides the sidebar and burger inside an iframe;
    `hide-sidebar:` does the same for `?sidebar=0`;
-   `hide-header:` hides the top bar for `?header=0`.
+   `hide-header:` hides the top bar for `?header=0`;
+   `hide-footer:` hides the claims comparison footer for `?footer=0`.
    CSS, not an effect, so no flash. */
 @custom-variant embedded (&:is(html[data-embedded] *));
 @custom-variant hide-sidebar (&:is(html[data-hide-sidebar] *));
 @custom-variant hide-header (&:is(html[data-hide-header] *));
+@custom-variant hide-footer (&:is(html[data-hide-footer] *));
 
 /* Map the shadcn design tokens onto Tailwind color/radius utilities. Because
    these reference the runtime CSS variables (not literals), every utility

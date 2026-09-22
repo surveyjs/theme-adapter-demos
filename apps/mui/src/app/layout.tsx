@@ -24,8 +24,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         {/*
           Marks <html> when the demo runs inside an iframe, or when the URL
-          asks to hide the sidebar (`sidebar=0`) or the header (`header=0`),
-          so the shell can drop that chrome before the first paint.
+          asks to hide the sidebar (`sidebar=0`), the header (`header=0`), or
+          the claims comparison footer (`footer=0`), so that chrome can drop
+          before the first paint.
         */}
         <script dangerouslySetInnerHTML={{ __html: embeddedBootstrapScript() }} />
         {/*

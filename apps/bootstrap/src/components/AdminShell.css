@@ -148,3 +148,9 @@ html[data-hide-sidebar] .offcanvas-backdrop.app-drawer-backdrop {
 html[data-hide-header] .navbar.app-header {
   display: none !important;
 }
+
+/* `?footer=0` drops the claims "lines vs lines" comparison. Hiding the
+ * column (not only the <details>) keeps the row from leaving an empty gutter. */
+html[data-hide-footer] .app-metrics-footer {
+  display: none !important;
+}

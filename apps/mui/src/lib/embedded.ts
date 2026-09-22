@@ -17,8 +17,9 @@
  *
  *  - Query params, independent of the frame check. `?sidebar=0` hides that
  *    same navigation (`data-hide-sidebar`). `?header=0` hides the top header
- *    (`data-hide-header`). Either param can be passed on its own.
+ *    (`data-hide-header`). `?footer=0` hides the claims comparison footer
+ *    (`data-hide-footer`). Each param can be passed on its own.
  */
 export function embeddedBootstrapScript() {
-  return `(function(){var root=document.documentElement;try{if(window.self!==window.top)root.setAttribute('data-embedded','');}catch(e){root.setAttribute('data-embedded','');}var q=new URLSearchParams(location.search);if(q.get('sidebar')==='0')root.setAttribute('data-hide-sidebar','');if(q.get('header')==='0')root.setAttribute('data-hide-header','');})();`;
+  return `(function(){var root=document.documentElement;try{if(window.self!==window.top)root.setAttribute('data-embedded','');}catch(e){root.setAttribute('data-embedded','');}var q=new URLSearchParams(location.search);if(q.get('sidebar')==='0')root.setAttribute('data-hide-sidebar','');if(q.get('header')==='0')root.setAttribute('data-hide-header','');if(q.get('footer')==='0')root.setAttribute('data-hide-footer','');})();`;
 }

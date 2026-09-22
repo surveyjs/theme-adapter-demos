@@ -37,7 +37,12 @@ export default function ClaimsPage() {
         prefillData={medicalFormSample}
       />
       <NativeControls />
-      <Box sx={{ gridColumn: { lg: "1 / -1" } }}>
+      <Box
+        sx={{
+          gridColumn: { lg: "1 / -1" },
+          "html[data-hide-footer] &": { display: "none" },
+        }}
+      >
         <FormMetricsFooter />
       </Box>
     </Box>

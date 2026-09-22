@@ -28,7 +28,7 @@ export default function ClaimsPage() {
         prefillData={medicalFormSample}
       />
       <NativeControls />
-      <div className="lg:col-span-2">
+      <div className="hide-footer:hidden lg:col-span-2">
         <FormMetricsFooter />
       </div>
     </div>

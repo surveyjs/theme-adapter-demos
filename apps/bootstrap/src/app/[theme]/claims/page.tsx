@@ -32,7 +32,7 @@ export default function ClaimsPage() {
       <div className="col-lg-6">
         <NativeControls />
       </div>
-      <div className="col-12">
+      <div className="col-12 app-metrics-footer">
         <FormMetricsFooter />
       </div>
     </div>
