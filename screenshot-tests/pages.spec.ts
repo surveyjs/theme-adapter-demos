@@ -32,7 +32,12 @@ const SURVEYJS = ".sd-theme-root";
 test("claims overview", async ({ page, forEachTheme }) => {
   await page.setViewportSize({ width: 1440, height: 1300 });
 
-  await forEachTheme(async ({ open, name }) => {
+  await forEachTheme(async ({ open, name, theme }) => {
+    await page.setViewportSize({
+      width: 1440,
+      height: theme === "lux" ? 1800 : 1300,
+    });
+
     const nextButton = page.getByRole('button', { name: 'Next' });
     const prefillDemoDataButton = page.getByRole('button', { name: 'Prefill demo data' });
     const completeButton = page.getByRole('button', { name: 'Complete' });
