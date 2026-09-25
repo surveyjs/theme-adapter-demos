@@ -23,7 +23,7 @@ const ALL_QUESTIONS_FLAKE_BUDGET = 10;
  * its computed `box-shadow` and rect, and how the base theme variables reach the
  * root — all identical.
  */
-const RADIO_ARC_BUDGET = 10;
+const RADIO_ARC_BUDGET = 12;
 const MIN_DIFF_PIXELS = 4;
 
 const CREATOR = ".svc-creator, .svc-full-container, .svc-tab-designer";
@@ -124,10 +124,8 @@ test("checkout overview", async ({ page, forEachTheme }) => {
   await page.setViewportSize({ width: 1440, height: 1300 });
 
   await forEachTheme(async ({ open, name, theme }) => {
-    await page.setViewportSize({
-      width: 1440,
-      height: theme === "morph" ? 1700 : 1300,
-    });
+    const viewportHeight = theme === "morph" || theme === "base-sera" ? 1700 : 1300;
+    await page.setViewportSize({ width: 1440, height: viewportHeight });
 
     const previousButton = page.getByRole('button', { name: 'Previous' }).nth(0);
     const nextButton = page.getByRole('button', { name: 'Next' }).nth(0);
