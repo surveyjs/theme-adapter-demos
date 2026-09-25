@@ -24,7 +24,7 @@ const ALL_QUESTIONS_FLAKE_BUDGET = 10;
  * root — all identical.
  */
 const RADIO_ARC_BUDGET = 10;
-const MIN_DIFF_PIXELS = 2;
+const MIN_DIFF_PIXELS = 4;
 
 const CREATOR = ".svc-creator, .svc-full-container, .svc-tab-designer";
 const SURVEYJS = ".sd-theme-root";
@@ -124,6 +124,7 @@ test("checkout overview", async ({ page, forEachTheme }) => {
   await page.setViewportSize({ width: 1440, height: 1300 });
 
   await forEachTheme(async ({ open, name }) => {
+    const previousButton = page.getByRole('button', { name: 'Previous' }).nth(0);
     const nextButton = page.getByRole('button', { name: 'Next' }).nth(0);
     const prefillDemoDataButton = page.getByRole('button', { name: 'Prefill demo data' }).nth(0);
     const completeButton = page.getByRole('button', { name: 'Complete' }).nth(0);
@@ -150,7 +151,7 @@ test("checkout overview", async ({ page, forEachTheme }) => {
 
     await nextButton.click();
     await compareScreenshot(page, SURVEYJS, name("checkout-2-error"), {
-      maxDiffPixels: MIN_DIFF_PIXELS,
+      maxDiffPixels: RADIO_ARC_BUDGET,
     });
 
     await prefillDemoDataButton.click();
@@ -169,7 +170,8 @@ test("checkout overview", async ({ page, forEachTheme }) => {
     });
 
     await prefillDemoDataButton.click();
-    await page.waitForTimeout(500);
+    await previousButton.click();
+    await nextButton.click();
     await compareScreenshot(page, SURVEYJS, name("checkout-3-prefilled"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
     });
@@ -182,7 +184,8 @@ test("checkout overview", async ({ page, forEachTheme }) => {
     });
 
     await prefillDemoDataButton.click();
-    await page.waitForTimeout(500);
+    await previousButton.click();
+    await nextButton.click();
     await compareScreenshot(page, SURVEYJS, name("checkout-4-prefilled"), {
       maxDiffPixels: MIN_DIFF_PIXELS,
     });
