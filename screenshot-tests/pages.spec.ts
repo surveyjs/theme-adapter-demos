@@ -123,7 +123,12 @@ test("claims overview", async ({ page, forEachTheme }) => {
 test("checkout overview", async ({ page, forEachTheme }) => {
   await page.setViewportSize({ width: 1440, height: 1300 });
 
-  await forEachTheme(async ({ open, name }) => {
+  await forEachTheme(async ({ open, name, theme }) => {
+    await page.setViewportSize({
+      width: 1440,
+      height: theme === "morph" ? 1700 : 1300,
+    });
+
     const previousButton = page.getByRole('button', { name: 'Previous' }).nth(0);
     const nextButton = page.getByRole('button', { name: 'Next' }).nth(0);
     const prefillDemoDataButton = page.getByRole('button', { name: 'Prefill demo data' }).nth(0);
