@@ -1,8 +1,9 @@
 "use client";
 
+import "@/lib/survey-ssr-environment";
 import { useEffect, useState } from "react";
 import { useColorScheme } from "@mui/material/styles";
-import { slk } from "survey-core";
+import { settings, slk } from "survey-core";
 import { SurveyCreator, SurveyCreatorComponent } from "survey-creator-react";
 import type { SurveyJSON } from "@adapter/schemas";
 
@@ -86,6 +87,8 @@ export function BuilderCreator({ json }: { json: SurveyJSON }) {
     });
     instance.JSON = json;
     instance.applyTheme({ isPanelless: true, cssVariables: {} });
+    // The Creator keeps its own (private) flag and ignores `settings.animationEnabled`.
+    instance["animationEnabled"] = settings.animationEnabled;
     setCreator(instance);
   }, [json]);
 
