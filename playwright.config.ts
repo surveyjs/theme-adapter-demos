@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 import { baseUrl, selectedApps } from "./screenshot-tests/apps.config";
 
@@ -59,6 +60,14 @@ export default defineConfig({
       // tests flaky — this mirrors their config. Baselines must be re-recorded
       // once with both flags; after that, removing either invalidates them.
       args: ["--disable-lcd-text", "--lang=en-US"],
+      // Bootstrap's `default` theme and shadcn/ui have no webfont: `system-ui`
+      // resolves through fontconfig to DejaVu Sans, and the baselines were
+      // recorded with its ExtraLight face (fonts-dejavu-extra), which
+      // `font-weight: 300` (`.lead`) picks. Runners with only fonts-dejavu-core
+      // draw that text at 400. Adding the bundled files to fontconfig keeps
+      // them *system* fonts — served as a webfont instead, Chromium renders the
+      // same files with different hinting and every text baseline shifts.
+      env: { ...process.env, FONTCONFIG_FILE: resolve(__dirname, "screenshot-tests/fonts/fonts.conf") },
     },
   },
 
