@@ -1,8 +1,9 @@
 "use client";
 
+import "@/lib/survey-ssr-environment";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { slk } from "survey-core";
+import { settings, slk } from "survey-core";
 import { SurveyCreator, SurveyCreatorComponent } from "survey-creator-react";
 import type { SurveyJSON } from "@adapter/schemas";
 
@@ -82,6 +83,8 @@ export function BuilderCreator({ json }: { json: SurveyJSON }) {
       showCreatorThemeSettings: false,
     });
     instance.JSON = json;
+    // The Creator keeps its own (private) flag and ignores `settings.animationEnabled`.
+    instance["animationEnabled"] = settings.animationEnabled;
     setCreator(instance);
   }, [json]);
 

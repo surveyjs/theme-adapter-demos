@@ -57,9 +57,31 @@ export type CompareScreenshotOptions = {
   fullPage?: boolean;
 };
 
+type SurveyGlobal = { settings: { animationEnabled: boolean; respectReducedMotion: boolean } };
+
+/**
+ * Init script, so it must stay self-contained. The apps publish survey-core's
+ * `settings` as `window.Survey` at module load (`lib/survey-ssr-environment`);
+ * the setter switches animation off right then, before any model or Creator is
+ * constructed and reads it.
+ */
+function disableSurveyAnimation(): void {
+  let survey: SurveyGlobal | undefined;
+  Object.defineProperty(window, "Survey", {
+    configurable: true,
+    get: () => survey,
+    set: (value: SurveyGlobal) => {
+      value.settings.animationEnabled = false;
+      value.settings.respectReducedMotion = false;
+      survey = value;
+    },
+  });
+}
+
 /** Must run before the first navigation — the apps read storage pre-paint. */
 export async function preparePage(page: Page): Promise<void> {
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(disableSurveyAnimation);
   await page.addInitScript(
     ({ defaults, css }: { defaults: Record<string, string>; css: string }) => {
       try {
