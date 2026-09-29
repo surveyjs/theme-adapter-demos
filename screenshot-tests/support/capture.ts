@@ -57,7 +57,7 @@ export type CompareScreenshotOptions = {
   fullPage?: boolean;
 };
 
-type SurveyGlobal = { settings: { animationEnabled: boolean; respectReducedMotion: boolean } };
+type SurveyGlobal = { settings: { animationEnabled: boolean; animation: { respectReducedMotion: boolean } } };
 
 /**
  * Init script, so it must stay self-contained. The apps publish survey-core's
@@ -72,7 +72,7 @@ function disableSurveyAnimation(): void {
     get: () => survey,
     set: (value: SurveyGlobal) => {
       value.settings.animationEnabled = false;
-      value.settings.respectReducedMotion = false;
+      value.settings.animation.respectReducedMotion = false;
       survey = value;
     },
   });
