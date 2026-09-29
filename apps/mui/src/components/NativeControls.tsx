@@ -3,7 +3,6 @@
 import {
   useState,
   type FormEvent,
-  type ReactNode,
 } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -89,22 +88,6 @@ function maskPhone(raw: string): string {
   if (prefix) out += ` ${prefix}`;
   if (line) out += `-${line}`;
   return out;
-}
-
-/**
- * Page-level questions get their own box, matching survey-core's default
- * (`isCompact` left unset). Questions inside a panel (here: the insurance /
- * history Cards) keep no extra box, so only the fields NOT already in a Card
- * are wrapped.
- *
- * `flex: 1` keeps the wrapped field filling its slot in the two-column rows.
- */
-function QuestionBox({ children }: { children: ReactNode }) {
-  return (
-    <Card variant="outlined" sx={{ flex: 1, minWidth: 0, alignSelf: "stretch" }}>
-      <CardContent>{children}</CardContent>
-    </Card>
-  );
 }
 
 export function NativeControls() {
@@ -302,7 +285,6 @@ export function NativeControls() {
           {currentPage === 0 && (
             <Stack spacing={3}>
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                <QuestionBox>
                   <TextField
                     id="nf-first-name"
                     label="First name"
@@ -313,8 +295,6 @@ export function NativeControls() {
                     helperText={showErrors && errors.firstName ? "First name is required." : undefined}
                     required
                   />
-                </QuestionBox>
-                <QuestionBox>
                   <TextField
                     id="nf-last-name"
                     label="Last name"
@@ -325,11 +305,9 @@ export function NativeControls() {
                     helperText={showErrors && errors.lastName ? "Last name is required." : undefined}
                     required
                   />
-                </QuestionBox>
               </Stack>
 
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="flex-start">
-                <QuestionBox>
                   <TextField
                     id="nf-dob"
                     label="Date of birth"
@@ -342,8 +320,6 @@ export function NativeControls() {
                     helperText={showErrors && errors.dob ? "Date of birth is required." : undefined}
                     required
                   />
-                </QuestionBox>
-                <QuestionBox>
                   <FormControl fullWidth>
                     <FormLabel id="nf-sex-label">Sex assigned at birth</FormLabel>
                     <RadioGroup
@@ -356,11 +332,9 @@ export function NativeControls() {
                       <FormControlLabel value="m" control={<Radio />} label="Male" />
                     </RadioGroup>
                   </FormControl>
-                </QuestionBox>
               </Stack>
 
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                <QuestionBox>
                   <TextField
                     id="nf-phone"
                     label="Mobile phone"
@@ -371,8 +345,6 @@ export function NativeControls() {
                     onChange={(e) => setPhone(maskPhone(e.target.value))}
                     helperText="We'll send appointment reminders to this number."
                   />
-                </QuestionBox>
-                <QuestionBox>
                   <FormControl fullWidth>
                     <InputLabel id="nf-contact-label">Preferred contact method</InputLabel>
                     <Select
@@ -386,7 +358,6 @@ export function NativeControls() {
                       <MenuItem value="Text message">Text message</MenuItem>
                     </Select>
                   </FormControl>
-                </QuestionBox>
               </Stack>
             </Stack>
           )}
@@ -445,7 +416,6 @@ export function NativeControls() {
                 </CardContent>
               </Card>
 
-              <QuestionBox>
                 <FormControlLabel
                   control={
                     <Switch
@@ -455,7 +425,6 @@ export function NativeControls() {
                   }
                   label="Do you have secondary insurance?"
                 />
-              </QuestionBox>
 
               {hasSecondary && (
                 <Card variant="outlined">
@@ -619,7 +588,6 @@ export function NativeControls() {
               </CardContent>
               </Card>
 
-              <QuestionBox>
                 <TextField
                   label="Current medications"
                   fullWidth
@@ -628,14 +596,12 @@ export function NativeControls() {
                   value={currentMedications}
                   onChange={(e) => setCurrentMedications(e.target.value)}
                 />
-              </QuestionBox>
             </Stack>
           )}
 
           {/* ── Consent ───────────────────────────────────────────── */}
           {currentPage === 3 && (
             <Stack spacing={2}>
-              <QuestionBox>
                 <FormControl error={showErrors && errors.consentTreatment}>
                   <FormControlLabel
                     required
@@ -651,9 +617,7 @@ export function NativeControls() {
                     <FormHelperText>Consent to treatment is required.</FormHelperText>
                   )}
                 </FormControl>
-              </QuestionBox>
 
-              <QuestionBox>
                 <FormControl error={showErrors && errors.consentPrivacy}>
                   <FormControlLabel
                     required
@@ -669,18 +633,14 @@ export function NativeControls() {
                     <FormHelperText>Acknowledgement is required.</FormHelperText>
                   )}
                 </FormControl>
-              </QuestionBox>
 
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                <QuestionBox>
                   <TextField
                     label="Signature"
                     fullWidth
                     value={signature}
                     onChange={(e) => setSignature(e.target.value)}
                   />
-                </QuestionBox>
-                <QuestionBox>
                   <TextField
                     label="Date"
                     type="date"
@@ -689,7 +649,6 @@ export function NativeControls() {
                     onChange={(e) => setSignedDate(e.target.value)}
                     sx={{ maxWidth: { sm: "calc(50% - 8px)" } }}
                   />
-                </QuestionBox>
               </Stack>
             </Stack>
           )}
