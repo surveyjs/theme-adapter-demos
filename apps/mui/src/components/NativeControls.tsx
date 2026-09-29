@@ -34,7 +34,6 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { medicalFormJson, medicalFormSample } from "@adapter/schemas";
-import { useBorderlessMode } from "./BorderlessMode";
 import { FormCompleted } from "./FormCompleted";
 import { RequiredMark } from "./RequiredLabel";
 
@@ -93,18 +92,14 @@ function maskPhone(raw: string): string {
 }
 
 /**
- * Native twin of the "Borderless questions" switch (top menu), which maps onto
- * survey-core's `isCompact` in the SurveyJS column: with it off, a question
- * standing directly on the page gets its own box. Questions inside a panel
- * (here: the insurance / history Cards) keep no box either way, so only the
- * fields NOT already in a Card are wrapped.
+ * Page-level questions get their own box, matching survey-core's default
+ * (`isCompact` left unset). Questions inside a panel (here: the insurance /
+ * history Cards) keep no extra box, so only the fields NOT already in a Card
+ * are wrapped.
  *
- * `flex: 1` keeps the wrapped field filling its slot in the two-column rows,
- * the same width it has when it sits in the row unwrapped.
+ * `flex: 1` keeps the wrapped field filling its slot in the two-column rows.
  */
 function QuestionBox({ children }: { children: ReactNode }) {
-  const { borderless } = useBorderlessMode();
-  if (borderless) return <>{children}</>;
   return (
     <Card variant="outlined" sx={{ flex: 1, minWidth: 0, alignSelf: "stretch" }}>
       <CardContent>{children}</CardContent>

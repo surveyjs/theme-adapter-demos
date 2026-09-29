@@ -4,7 +4,6 @@ import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "reac
 import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
 import { medicalFormJson, medicalFormSample } from "@adapter/schemas";
 import { Trash } from 'react-bootstrap-icons';
-import { useBorderlessMode } from "./BorderlessMode";
 import { FormCompleted } from "./FormCompleted";
 import { RequiredLabel, RequiredMark } from "./RequiredLabel";
 import "./NativeControls.css";
@@ -64,15 +63,12 @@ function maskPhone(raw: string): string {
 }
 
 /**
- * Native twin of the "Borderless questions" switch (top menu), which maps onto
- * survey-core's `isCompact` in the SurveyJS column: with it off, a question
- * standing directly on the page gets its own box. Questions inside a panel
- * (here: the insurance / history Cards) keep no box either way, so only the
- * fields NOT already in a Card are wrapped.
+ * Page-level questions get their own box, matching survey-core's default
+ * (`isCompact` left unset). Questions inside a panel (here: the insurance /
+ * history Cards) keep no extra box, so only the fields NOT already in a Card
+ * are wrapped.
  */
 function QuestionBox({ children }: { children: ReactNode }) {
-  const { borderless } = useBorderlessMode();
-  if (borderless) return <>{children}</>;
   return <Card style={{ minHeight: "100%" }} body>{children}</Card>;
 }
 

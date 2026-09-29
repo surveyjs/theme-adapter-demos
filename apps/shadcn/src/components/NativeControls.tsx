@@ -56,7 +56,6 @@ import {
   StepperList,
   StepperSeparator,
 } from "@/components/ui/stepper";
-import { useBorderlessMode } from "./BorderlessMode";
 import { FormCompleted } from "./FormCompleted";
 import { RequiredLabel, RequiredMark } from "./RequiredLabel";
 
@@ -118,15 +117,12 @@ function maskPhone(raw: string): string {
 }
 
 /**
- * Native twin of the "Borderless questions" switch (top menu), which maps onto
- * survey-core's `isCompact` in the SurveyJS column: with it off, a question
- * standing directly on the page gets its own box. Questions inside a panel
- * (here: the insurance / history Cards) keep no box either way, so only the
- * fields NOT already in a Card are wrapped.
+ * Page-level questions get their own box, matching survey-core's default
+ * (`isCompact` left unset). Questions inside a panel (here: the insurance /
+ * history Cards) keep no extra box, so only the fields NOT already in a Card
+ * are wrapped.
  */
 function QuestionBox({ children }: { children: ReactNode }) {
-  const { borderless } = useBorderlessMode();
-  if (borderless) return <>{children}</>;
   return (
     <Card>
       <CardContent>{children}</CardContent>

@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AdminShell } from "@/components/AdminShell";
 import { AllQuestionsModeProvider } from "@/components/AllQuestionsMode";
-import { BorderlessModeProvider } from "@/components/BorderlessMode";
 import { embeddedBootstrapScript } from "@/lib/embedded";
 import { modeBootstrapScript } from "@/lib/themes";
 
@@ -28,11 +27,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <ThemeProvider>
-          <BorderlessModeProvider>
-            <AllQuestionsModeProvider>
-              <AdminShell>{children}</AdminShell>
-            </AllQuestionsModeProvider>
-          </BorderlessModeProvider>
+          <AllQuestionsModeProvider>
+            <AdminShell>{children}</AdminShell>
+          </AllQuestionsModeProvider>
         </ThemeProvider>
       </body>
     </html>

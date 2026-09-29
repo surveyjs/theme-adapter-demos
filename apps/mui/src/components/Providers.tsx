@@ -5,7 +5,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "@/theme/theme";
 import { AllQuestionsModeProvider } from "./AllQuestionsMode";
-import { BorderlessModeProvider } from "./BorderlessMode";
 import { MuiSurveyOverridesStyles } from "./MuiSurveyOverridesStyles";
 
 /**
@@ -19,9 +18,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <ThemeProvider theme={theme} defaultMode="light">
       <CssBaseline />
       <MuiSurveyOverridesStyles />
-      <BorderlessModeProvider>
-        <AllQuestionsModeProvider>{children}</AllQuestionsModeProvider>
-      </BorderlessModeProvider>
+      <AllQuestionsModeProvider>{children}</AllQuestionsModeProvider>
     </ThemeProvider>
   );
 }

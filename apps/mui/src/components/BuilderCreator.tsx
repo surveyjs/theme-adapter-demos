@@ -86,7 +86,6 @@ export function BuilderCreator({ json }: { json: SurveyJSON }) {
       showCreatorThemeSettings: false,
     });
     instance.JSON = json;
-    instance.applyTheme({ isPanelless: true, cssVariables: {} });
     // The Creator keeps its own (private) flag and ignores `settings.animationEnabled`.
     instance["animationEnabled"] = settings.animationEnabled;
     setCreator(instance);
