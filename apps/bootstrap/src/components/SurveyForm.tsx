@@ -126,7 +126,7 @@ export function SurveyForm({
   // screen): default border, page background — no Card chrome. The survey body
   // supplies its own inner padding; `overflow-hidden` clips the title bar.
   return (
-    <div className="border overflow-hidden">
+    <div className="border overflow-hidden h-100">
       <Survey model={model} />
     </div>
   );

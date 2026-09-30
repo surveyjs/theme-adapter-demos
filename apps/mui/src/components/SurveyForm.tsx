@@ -134,7 +134,7 @@ export function SurveyForm({
   // screen): default border, page background — no Card chrome. The survey body
   // supplies its own inner padding; `overflow: hidden` clips the title bar.
   return (
-    <Box sx={{ border: 1, borderColor: "divider", overflow: "hidden" }}>
+    <Box sx={{ height: "100%", border: 1, borderColor: "divider", overflow: "hidden" }}>
       <Survey model={model} />
     </Box>
   );
