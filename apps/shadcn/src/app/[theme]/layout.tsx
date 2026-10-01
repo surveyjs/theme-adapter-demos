@@ -1,15 +1,10 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import {
-  surveyAdapterHref,
-  surveyOverridesHref,
-  SURVEY_OVERRIDES_SHARED_HREF,
-} from "@/lib/surveyAdapterCss";
+import LayoutClient from "./layoutClient";
 import {
   DEFAULT_STYLE_ID,
   isVisualStyleId,
   VISUAL_STYLES,
-  type VisualStyleId,
 } from "@/lib/styles";
 
 /**
@@ -29,15 +24,6 @@ export default async function ThemeLayout({
   const { theme: themeParam } = await params;
   if (!isVisualStyleId(themeParam)) {
     redirect(`/${DEFAULT_STYLE_ID}`);
-  }
-  const style: VisualStyleId = themeParam;
-
-  return (
-    <>
-      <link rel="stylesheet" href={surveyAdapterHref(style)} />
-      <link rel="stylesheet" href={SURVEY_OVERRIDES_SHARED_HREF} />
-      <link rel="stylesheet" href={surveyOverridesHref(style)} />
-      {children}
-    </>
-  );
+  }   
+  return <LayoutClient theme={themeParam}>{children}</LayoutClient>
 }
