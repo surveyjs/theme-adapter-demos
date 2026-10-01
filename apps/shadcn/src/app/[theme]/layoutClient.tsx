@@ -43,9 +43,7 @@ export default function ThemeLayout({
       <link rel="stylesheet" href={surveyAdapterHref(theme)} ref={adapterRef} onLoad={onLoad} />
       <link rel="stylesheet" href={SURVEY_OVERRIDES_SHARED_HREF} />
       <link rel="stylesheet" href={surveyOverridesHref(theme)} ref={overridesRef} onLoad={onLoad} />
-      <div style={{ opacity: isReady ? 1 : 0 }}>
-        {children}
-      </div>
+      {isReady ? children : null}
     </>
   );
 }
