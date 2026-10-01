@@ -1,7 +1,7 @@
 "use client";
 
 import "@/lib/survey-ssr-environment";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Survey } from "survey-react-ui";
 import type { Question } from "survey-core";
 import {
@@ -10,7 +10,6 @@ import {
   type SurveyData,
   type SurveyMode,
 } from "@adapter/schemas";
-import { useBorderlessMode } from "./BorderlessMode";
 import { FormCompleted } from "./FormCompleted";
 
 // Base V3 CSS FIRST, then the shadcn adapter from survey-core ON TOP so the
@@ -55,28 +54,10 @@ export function SurveyForm({
   /** Label for the prefill button (see `prefillData`). */
   prefillLabel?: string;
 }) {
-  // "Borderless questions" switch (top menu) → survey-core's `isCompact`. It is
-  // a non-serializable runtime flag, so it's set on the LIVE model rather than
-  // baked into the schema. The ref seeds it at CONSTRUCTION (below) so the first
-  // render — SSR included — already carries the compact classes; applying it only
-  // from the effect would paint the bordered default for a frame first, which
-  // reads as a blink on refresh. `borderless` stays out of the model's deps so
-  // toggling the switch never rebuilds the model.
-  const { borderless } = useBorderlessMode();
-  const borderlessRef = useRef(borderless);
-  borderlessRef.current = borderless;
-
-  const model = useMemo(() => {
-    const m = createSurveyModel(schema, { data, mode });
-    m.isCompact = borderlessRef.current;
-    return m;
-  }, [schema, data, mode]);
-
-  // Later flips of the switch: survey-core is reactive, so the form re-renders
-  // in place — no rebuild, no remount, answers preserved.
-  useEffect(() => {
-    model.isCompact = borderless;
-  }, [model, borderless]);
+  const model = useMemo(
+    () => createSurveyModel(schema, { data, mode }),
+    [schema, data, mode],
+  );
 
   // Optional "Prefill demo data" custom button. Added to the survey's OWN
   // navigation bar through the public `addNavigationItem` API (it renders a
@@ -146,7 +127,7 @@ export function SurveyForm({
   // screen): default border, page background — no Card chrome. The survey body
   // supplies its own inner padding; `overflow-hidden` clips the title bar.
   return (
-    <div className="border overflow-hidden">
+    <div className="h-full border overflow-hidden">
       <Survey model={model} />
     </div>
   );

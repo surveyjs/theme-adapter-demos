@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
 import { medicalFormJson, medicalFormSample } from "@adapter/schemas";
 import { Trash } from 'react-bootstrap-icons';
-import { useBorderlessMode } from "./BorderlessMode";
 import { FormCompleted } from "./FormCompleted";
 import { RequiredLabel, RequiredMark } from "./RequiredLabel";
 import "./NativeControls.css";
@@ -61,19 +60,6 @@ function maskPhone(raw: string): string {
   if (prefix) out += ` ${prefix}`;
   if (line) out += `-${line}`;
   return out;
-}
-
-/**
- * Native twin of the "Borderless questions" switch (top menu), which maps onto
- * survey-core's `isCompact` in the SurveyJS column: with it off, a question
- * standing directly on the page gets its own box. Questions inside a panel
- * (here: the insurance / history Cards) keep no box either way, so only the
- * fields NOT already in a Card are wrapped.
- */
-function QuestionBox({ children }: { children: ReactNode }) {
-  const { borderless } = useBorderlessMode();
-  if (borderless) return <>{children}</>;
-  return <Card style={{ minHeight: "100%" }} body>{children}</Card>;
 }
 
 export function NativeControls() {
@@ -281,7 +267,6 @@ export function NativeControls() {
             <>
               <Row className="mb-3">
                 <Form.Group as={Col} md={6} controlId="nf-first-name">
-                  <QuestionBox>
                     <RequiredLabel>First name</RequiredLabel>
                     <Form.Control
                       type="text"
@@ -293,10 +278,8 @@ export function NativeControls() {
                     <Form.Control.Feedback type="invalid">
                       First name is required.
                     </Form.Control.Feedback>
-                  </QuestionBox>
                 </Form.Group>
                 <Form.Group as={Col} md={6} controlId="nf-last-name">
-                  <QuestionBox>
                     <RequiredLabel>Last name</RequiredLabel>
                     <Form.Control
                       type="text"
@@ -308,13 +291,11 @@ export function NativeControls() {
                     <Form.Control.Feedback type="invalid">
                       Last name is required.
                     </Form.Control.Feedback>
-                  </QuestionBox>
                 </Form.Group>
               </Row>
 
               <Row className="mb-3">
                 <Form.Group as={Col} md={6} controlId="nf-dob">
-                  <QuestionBox>
                     <RequiredLabel>Date of birth</RequiredLabel>
                     <Form.Control
                       type="date"
@@ -326,10 +307,8 @@ export function NativeControls() {
                     <Form.Control.Feedback type="invalid">
                       Date of birth is required.
                     </Form.Control.Feedback>
-                  </QuestionBox>
                 </Form.Group>
                 <Form.Group as={Col} md={6}>
-                  <QuestionBox>
                     <Form.Label className="d-block">Sex assigned at birth</Form.Label>
                     <Form.Check
                       type="radio"
@@ -347,13 +326,11 @@ export function NativeControls() {
                       checked={sex === "m"}
                       onChange={() => setSex("m")}
                     />
-                  </QuestionBox>
                 </Form.Group>
               </Row>
 
               <Row>
                 <Form.Group as={Col} md={6} controlId="nf-phone">
-                  <QuestionBox>
                     <Form.Label>Mobile phone</Form.Label>
                     <Form.Control
                       type="tel"
@@ -365,10 +342,8 @@ export function NativeControls() {
                     <Form.Text muted>
                       We&apos;ll send appointment reminders to this number.
                     </Form.Text>
-                  </QuestionBox>
                 </Form.Group>
                 <Form.Group as={Col} md={6} controlId="nf-contact">
-                  <QuestionBox>
                     <Form.Label>Preferred contact method</Form.Label>
                     <Form.Select
                       value={preferredContact}
@@ -381,7 +356,6 @@ export function NativeControls() {
                       <option>Email</option>
                       <option>Text message</option>
                     </Form.Select>
-                  </QuestionBox>
                 </Form.Group>
               </Row>
             </>
@@ -453,7 +427,6 @@ export function NativeControls() {
               </Card>
 
               <div className="mb-3">
-                <QuestionBox>
                   <Form.Check
                     type="switch"
                     id="nf-has-secondary"
@@ -463,7 +436,6 @@ export function NativeControls() {
                       setHasSecondary(e.target.checked)
                     }
                   />
-                </QuestionBox>
               </div>
 
               {hasSecondary && (
@@ -624,7 +596,6 @@ export function NativeControls() {
               </Button>
               </Card>
               <Form.Group controlId="nf-medications">
-                <QuestionBox>
                   <Form.Label>Current medications</Form.Label>
                   <Form.Control
                     as="textarea"
@@ -632,7 +603,6 @@ export function NativeControls() {
                     value={currentMedications}
                     onChange={(e) => setCurrentMedications(e.target.value)}
                   />
-                </QuestionBox>
               </Form.Group>
 
             </>
@@ -642,7 +612,6 @@ export function NativeControls() {
           {currentPage === 3 && (
             <>
               <Form.Group className="mb-3">
-                <QuestionBox>
                   <Form.Check
                     type="checkbox"
                     id="nf-consent-treatment"
@@ -657,10 +626,8 @@ export function NativeControls() {
                     feedback="Consent to treatment is required."
                     feedbackType="invalid"
                   />
-                </QuestionBox>
               </Form.Group>
               <Form.Group className="mb-3">
-                <QuestionBox>
                   <Form.Check
                     type="checkbox"
                     id="nf-consent-privacy"
@@ -675,29 +642,24 @@ export function NativeControls() {
                     feedback="Acknowledgement is required."
                     feedbackType="invalid"
                   />
-                </QuestionBox>
               </Form.Group>
 
               <Row className="mb-3">
                 <Form.Group as={Col} md={6} controlId="nf-signature">
-                  <QuestionBox>
                     <Form.Label>Signature</Form.Label>
                     <Form.Control
                       type="text"
                       value={signature}
                       onChange={(e) => setSignature(e.target.value)}
                     />
-                  </QuestionBox>
                 </Form.Group>
                 <Form.Group as={Col} md={6} controlId="nf-signed-date">
-                  <QuestionBox>
                     <Form.Label>Date</Form.Label>
                     <Form.Control
                       type="date"
                       value={signedDate}
                       onChange={(e) => setSignedDate(e.target.value)}
                     />
-                  </QuestionBox>
                 </Form.Group>
               </Row>
             </>

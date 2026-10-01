@@ -4,7 +4,6 @@ import {
   useState,
   type ChangeEvent,
   type FormEvent,
-  type ReactNode,
 } from "react";
 // Comparison column shows the active style's REAL shadcn button (per-style,
 // CLI-generated). Aliased to Button so every form button below picks it up.
@@ -56,7 +55,6 @@ import {
   StepperList,
   StepperSeparator,
 } from "@/components/ui/stepper";
-import { useBorderlessMode } from "./BorderlessMode";
 import { FormCompleted } from "./FormCompleted";
 import { RequiredLabel, RequiredMark } from "./RequiredLabel";
 
@@ -115,23 +113,6 @@ function maskPhone(raw: string): string {
   if (prefix) out += ` ${prefix}`;
   if (line) out += `-${line}`;
   return out;
-}
-
-/**
- * Native twin of the "Borderless questions" switch (top menu), which maps onto
- * survey-core's `isCompact` in the SurveyJS column: with it off, a question
- * standing directly on the page gets its own box. Questions inside a panel
- * (here: the insurance / history Cards) keep no box either way, so only the
- * fields NOT already in a Card are wrapped.
- */
-function QuestionBox({ children }: { children: ReactNode }) {
-  const { borderless } = useBorderlessMode();
-  if (borderless) return <>{children}</>;
-  return (
-    <Card>
-      <CardContent>{children}</CardContent>
-    </Card>
-  );
 }
 
 export function NativeControls() {
@@ -337,7 +318,6 @@ export function NativeControls() {
           {currentPage === 0 && (
             <FieldGroup>
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
-                <QuestionBox>
                   <Field data-invalid={showErrors && errors.firstName}>
                     <RequiredLabel htmlFor="nf-first">First name</RequiredLabel>
                     <Input
@@ -350,8 +330,6 @@ export function NativeControls() {
                       <FieldError>First name is required.</FieldError>
                     )}
                   </Field>
-                </QuestionBox>
-                <QuestionBox>
                   <Field data-invalid={showErrors && errors.lastName}>
                     <RequiredLabel htmlFor="nf-last">Last name</RequiredLabel>
                     <Input
@@ -364,11 +342,9 @@ export function NativeControls() {
                       <FieldError>Last name is required.</FieldError>
                     )}
                   </Field>
-                </QuestionBox>
               </FieldGroup>
 
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
-                <QuestionBox>
                   <Field data-invalid={showErrors && errors.dob}>
                     <RequiredLabel htmlFor="nf-dob">Date of birth</RequiredLabel>
                     <Input
@@ -382,8 +358,6 @@ export function NativeControls() {
                       <FieldError>Date of birth is required.</FieldError>
                     )}
                   </Field>
-                </QuestionBox>
-                <QuestionBox>
                   <Field>
                     <FieldLabel>Sex assigned at birth</FieldLabel>
                     <RadioGroup
@@ -400,11 +374,9 @@ export function NativeControls() {
                       </Field>
                     </RadioGroup>
                   </Field>
-                </QuestionBox>
               </FieldGroup>
 
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
-                <QuestionBox>
                   <Field>
                     <FieldLabel htmlFor="nf-phone">Mobile phone</FieldLabel>
                     <Input
@@ -418,8 +390,6 @@ export function NativeControls() {
                       We&apos;ll send appointment reminders to this number.
                     </FieldDescription>
                   </Field>
-                </QuestionBox>
-                <QuestionBox>
                   <Field>
                     <FieldLabel htmlFor="nf-contact">Preferred contact method</FieldLabel>
                     <Combobox
@@ -443,7 +413,6 @@ export function NativeControls() {
                       </ComboboxContent>
                     </Combobox>
                   </Field>
-                </QuestionBox>
               </FieldGroup>
             </FieldGroup>
           )}
@@ -519,7 +488,6 @@ export function NativeControls() {
                 </CardContent>
               </Card>
 
-              <QuestionBox>
                 <Field orientation="horizontal">
                   <Switch
                     id="nf-secondary"
@@ -530,7 +498,6 @@ export function NativeControls() {
                     Do you have secondary insurance?
                   </FieldLabel>
                 </Field>
-              </QuestionBox>
 
               {hasSecondary && (
                 <Card>
@@ -718,7 +685,6 @@ export function NativeControls() {
               </CardContent>
               </Card>
 
-              <QuestionBox>
                 <Field>
                   <FieldLabel htmlFor="nf-meds">Current medications</FieldLabel>
                   <Textarea
@@ -728,14 +694,12 @@ export function NativeControls() {
                     onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setCurrentMedications(e.target.value)}
                   />
                 </Field>
-              </QuestionBox>
             </FieldGroup>
           )}
 
           {/* ── Consent ───────────────────────────────────────────── */}
           {currentPage === 3 && (
             <FieldGroup>
-              <QuestionBox>
                 <Field
                   orientation="horizontal"
                   data-invalid={showErrors && errors.consentTreatment}
@@ -754,9 +718,7 @@ export function NativeControls() {
                     )}
                   </FieldContent>
                 </Field>
-              </QuestionBox>
 
-              <QuestionBox>
                 <Field
                   orientation="horizontal"
                   data-invalid={showErrors && errors.consentPrivacy}
@@ -775,10 +737,8 @@ export function NativeControls() {
                     )}
                   </FieldContent>
                 </Field>
-              </QuestionBox>
 
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
-              <QuestionBox>
                 <Field>
                   <FieldLabel htmlFor="nf-signature">Signature</FieldLabel>
                   <Input
@@ -788,9 +748,7 @@ export function NativeControls() {
                     onChange={(e) => setSignature(e.target.value)}
                   />
                 </Field>
-              </QuestionBox>
 
-              <QuestionBox>
                 <Field>
                   <FieldLabel htmlFor="nf-signed">Date</FieldLabel>
                   <Input
@@ -800,7 +758,6 @@ export function NativeControls() {
                     onChange={(e) => setSignedDate(e.target.value)}
                   />
                 </Field>
-              </QuestionBox>
               </FieldGroup>
             </FieldGroup>
           )}

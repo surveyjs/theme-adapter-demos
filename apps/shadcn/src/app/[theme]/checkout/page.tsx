@@ -9,7 +9,7 @@ import { SurveyForm } from "@/components/SurveyForm";
  */
 export default function CheckoutPage() {
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <div className="mx-auto h-full w-full max-w-3xl">
       <SurveyForm schema={checkoutSchema} prefillData={checkoutSample} />
     </div>
   );

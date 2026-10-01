@@ -7,7 +7,6 @@ import { Container, Navbar, Offcanvas } from "react-bootstrap";
 import { Sidebar } from "./Sidebar";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { AllQuestionsToggle } from "./AllQuestionsToggle";
-import { BorderlessToggle } from "./BorderlessToggle";
 import "./AdminShell.css";
 
 const NAV_ID = "admin-nav";
@@ -124,8 +123,6 @@ export function AdminShell({ children }: { children: ReactNode }) {
             `text-nowrap` — and the brand is the one item that yields, ellipsising
             as the row runs short (see AdminShell.css). */}
         <div className="app-header-controls ms-auto d-flex justify-content-end align-items-center gap-1 gap-sm-2 gap-lg-3">
-          {/* Renders only on survey routes — hidden on /, /builder and /records. */}
-          <BorderlessToggle />
           {/* Route-scoped: only renders on /all-questions. */}
           <AllQuestionsToggle />
           <ThemeSwitcher />

@@ -14,6 +14,7 @@ export default function CheckoutPage() {
       sx={{
         mx: "auto",
         maxWidth: { xs: "100%", xl: 760 },
+        height: "100%",
       }}
     >
       <SurveyForm schema={checkoutSchema} prefillData={checkoutSample} />

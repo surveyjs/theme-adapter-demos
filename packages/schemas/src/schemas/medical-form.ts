@@ -21,6 +21,7 @@ export const medicalFormJson: SurveyJSON = {
   progressBarNavigationTextLocation: "bottom",
   widthMode: "responsive",
   questionErrorLocation: "bottom",
+  fitToContainer: false,
   pages: [
     {
       name: "patient",
