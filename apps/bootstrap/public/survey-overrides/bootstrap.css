@@ -53,6 +53,20 @@
   --sjs2-radius-component-stepper-item: 100%;
 }
 
+
+/* TODO: remove in 3.1.3 */
+.sjs-theme-overrides {
+  --sjs2-layout-component-panel-simple-box-gap-vertical: 0px;
+  --sjs2-layout-component-panel-simple-content-area-padding-horizontal: var(--sjs2-spacing-x000);
+  --sjs2-layout-component-panel-simple-content-area-padding-top: var(--sjs2-spacing-x000);
+  --sjs2-layout-component-panel-simple-content-area-padding-bottom: var(--sjs2-spacing-x000);
+  --sjs2-layout-component-panel-simple-content-area-gap-horizontal: var(--sjs2-spacing-x500);
+  --sjs2-layout-component-panel-simple-nested-content-area-gap-horizontal: var(--sjs2-spacing-x500);
+  --sjs2-radius-component-panel-simple: var(--sjs2-radius-x000);
+  --sjs2-color-component-panel-simple-default-bg: "transparent";
+  --sjs2-color-component-panel-simple-default-border: "transparent";
+}
+
 /* ── stepper ──────────────────────────────────────────────────────────────
    Bootstrap has NO stepper component, so there is nothing for the SurveyJS
    adapter to imitate: the native column's wizard is hand-built here (see
