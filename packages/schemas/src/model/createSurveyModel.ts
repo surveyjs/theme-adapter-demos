@@ -1,3 +1,4 @@
+import "./surveyDefaults";
 import { Model } from "survey-core";
 import type { SchemaDefinition, SurveyData, SurveyJSON, SurveyMode } from "../types";
 
