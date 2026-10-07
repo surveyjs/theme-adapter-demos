@@ -31,10 +31,14 @@ const STORAGE_DEFAULTS: Record<string, string> = {
   "mui-color-scheme-light": "light",
 };
 
-/** The Next dev overlay/indicator renders into these and is not app content. */
+/**
+ * Test-only paint tweaks, not app content: hide the Next dev overlay, and drop
+ * the native textarea resize grip so its corner pixels stay stable.
+ */
 const HIDE_DEV_CHROME = `
   nextjs-portal { display: none !important; }
   [data-nextjs-toast], #__next-build-watcher { display: none !important; }
+  textarea { resize: none !important; }
 `;
 
 export const DEFAULT_STABLE_UI_MS = 600;
