@@ -47,7 +47,14 @@ export function ThemeSwitcher() {
     color: "inherit",
     borderColor: "currentColor",
     "& .MuiChip-label": { display: { xs: "none", lg: "block" } },
-    "& .MuiChip-icon": { marginRight: { xs: 0, lg: "-2px" }, marginLeft: { xs: "4px", lg: "5px" } },
+    // Outlined Chip icons carry margin-left so they sit against the label.
+    // Below lg the label is hidden, and that leftover margin shifts the glyph.
+    // A 32px pill (the Chip height) with zero icon margins centers it.
+    width: { xs: 32, lg: "auto" },
+    "& .MuiChip-icon": {
+      marginLeft: { xs: 0, lg: "5px" },
+      marginRight: { xs: 0, lg: "-2px" },
+    },
   } as const;
 
   return (
