@@ -1,4 +1,15 @@
 import { settings, type ISurveyEnvironment } from "survey-core";
+import * as surveyCore from "survey-core";
+
+// Installed survey-core typings lag the local build that `next dev` aliases.
+const setupThemeAdapter = (
+  surveyCore as typeof surveyCore & {
+    setupThemeAdapter(adapter: "mui" | "bootstrap" | "shadcn"): void;
+  }
+).setupThemeAdapter;
+
+// Adapter defaults must be applied before any model or Creator is constructed.
+setupThemeAdapter("bootstrap");
 
 /**
  * survey-react-ui's dropdown/tagbox `renderFilterInput` destructures

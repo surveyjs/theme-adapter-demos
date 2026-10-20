@@ -5,8 +5,6 @@
  * and never copy or redefine schemas.
  */
 
-import "./model/surveyDefaults";
-
 // Types
 export type {
   SurveyJSON,
