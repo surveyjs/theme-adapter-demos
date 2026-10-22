@@ -214,6 +214,13 @@ test("builder designer", async ({ page, forEachTheme, waitForStableUI }) => {
       await page.locator(CREATOR).first().waitFor({ state: "visible", timeout: 60_000 });
       await waitForStableUI(2_500);
       await compareScreenshot(page, ".svc-creator", name("builder-designer"));
+
+      await page.locator(".svc-creator").getByRole("button", { name: "Collapse All" }).click();
+      // Questions collapse before their page, and a collapsed page hides them,
+      // so wait for attachment rather than visibility.
+      await page.locator(".svc-question__adorner--collapsed").first().waitFor({ state: "attached" });
+      await waitForStableUI(2_500);
+      await compareScreenshot(page, ".svc-creator", name("builder-designer-collapsed"));
     },
     { timeoutPerTheme: 150_000 }
   );
