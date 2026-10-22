@@ -19,10 +19,10 @@ export const FORM_METRICS: FormMetricsInput = {
 
   // The ONE reusable renderer that draws every SurveyJS form in the app — code
   // only; the JSON schema is reported separately (see `jsonBytes`).
-  surveyjsLines: 87,
+  surveyjsLines: 80,
 
   // The hand-written native implementation of the same Patient Intake form.
-  nativeLines: 618,
+  nativeLines: 586,
 
   // Computed live from the imported schema so it never drifts from
   // packages/schemas. Measured here (a server-safe module) rather than inside a

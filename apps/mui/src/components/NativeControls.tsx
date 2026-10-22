@@ -1,5 +1,4 @@
 "use client";
-
 import {
   useState,
   type FormEvent,
@@ -35,48 +34,18 @@ import Typography from "@mui/material/Typography";
 import { medicalFormJson, medicalFormSample } from "@adapter/schemas";
 import { FormCompleted } from "./FormCompleted";
 import { RequiredMark } from "./RequiredLabel";
-
-/**
- * Hand-built Material UI twin of the SurveyJS medical-intake form
- * (`medicalFormJson` in @adapter/schemas), grouped into the SAME four sections —
- * Patient, Insurance, History, Consent — and PAGED into them as a wizard to
- * match the SurveyJS form's `showProgressBar` / `progressBarType: "pages"`.
- *
- * Mirrors the SAME chrome (the survey title + description) and the SAME
- * behaviours: controlled inputs, per-page required-field validation that blocks
- * Next, a conditional secondary-insurance section, dynamic add/remove allergy
- * rows, and a final Complete that validates the whole
- * form and shows a success state.
- *
- * This column is deliberately UNBRIDGED: it is the "what you'd hand-write per
- * form" baseline the comparison footer measures against (see FormMetricsFooter).
- * SurveyJS pages from the JSON for free; here every step is wired by hand — that
- * gap is the point. Pure host chrome — Material UI only, zero SurveyJS
- * involvement (the imported `medicalFormJson` is read only for its description
- * string, so the two columns share the exact same wording).
- *
- * Its line count is cited by the comparison footer — measured in claims/page.tsx
- * (a server component) rather than exported from here, because a plain value
- * exported from a "use client" module can't be read on the server.
- */
-
 type Sex = "f" | "m" | "";
 type Relationship = "self" | "spouse" | "dependent";
 type HistoryAnswer = "yes" | "no" | "unsure";
-
 type Allergy = { allergen: string; severity: string; reaction: string };
-
 const PAGES = ["Patient", "Insurance", "History", "Consent"] as const;
 const LAST_PAGE = PAGES.length - 1;
-
 const HISTORY_ROWS = [
   { value: "diabetes", text: "Diabetes" },
   { value: "hypertension", text: "High blood pressure" },
   { value: "asthma", text: "Asthma" },
   { value: "heart", text: "Heart disease" },
 ] as const;
-
-/** Mask a raw phone string into the +1 (999) 999-9999 pattern. */
 function maskPhone(raw: string): string {
   const digits = raw.replace(/\D/g, "").replace(/^1/, "").slice(0, 10);
   const area = digits.slice(0, 3);
@@ -89,21 +58,15 @@ function maskPhone(raw: string): string {
   if (line) out += `-${line}`;
   return out;
 }
-
 export function NativeControls() {
-  // Wizard paging — render ONE section at a time (Patient → … → Consent).
   const [currentPage, setCurrentPage] = useState(0);
   const [attempted, setAttempted] = useState([false, false, false, false]);
-
-  // Patient
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDob] = useState("");
   const [sex, setSex] = useState<Sex>("");
   const [phone, setPhone] = useState("");
   const [preferredContact, setPreferredContact] = useState("");
-
-  // Insurance
   const [carrier, setCarrier] = useState("");
   const [memberId, setMemberId] = useState("");
   const [groupNumber, setGroupNumber] = useState("");
@@ -111,21 +74,14 @@ export function NativeControls() {
   const [hasSecondary, setHasSecondary] = useState(false);
   const [carrier2, setCarrier2] = useState("");
   const [memberId2, setMemberId2] = useState("");
-
-  // History
   const [history, setHistory] = useState<Record<string, HistoryAnswer>>({});
   const [allergies, setAllergies] = useState<Allergy[]>([]);
   const [currentMedications, setCurrentMedications] = useState("");
-
-  // Consent
   const [consentTreatment, setConsentTreatment] = useState(false);
   const [consentPrivacy, setConsentPrivacy] = useState(false);
   const [signature, setSignature] = useState("");
   const [signedDate, setSignedDate] = useState("");
-
   const [submitted, setSubmitted] = useState(false);
-
-  // Dynamic allergy rows
   function addAllergy() {
     setAllergies((rows) => [...rows, { allergen: "", severity: "", reaction: "" }]);
   }
@@ -137,8 +93,6 @@ export function NativeControls() {
       rows.map((row, i) => (i === index ? { ...row, [field]: value } : row)),
     );
   }
-
-  // Required-field validation — mirrors the SurveyJS schema's `isRequired` flags.
   const errors = {
     firstName: !firstName.trim(),
     lastName: !lastName.trim(),
@@ -151,8 +105,6 @@ export function NativeControls() {
     consentTreatment: !consentTreatment,
     consentPrivacy: !consentPrivacy,
   };
-
-  // Which required fields belong to which wizard page.
   function isPageValid(page: number): boolean {
     switch (page) {
       case 0:
@@ -167,29 +119,20 @@ export function NativeControls() {
         return true;
     }
   }
-
-  // Show inline errors on the current page only once it has been attempted
-  // (Next/Complete pressed), so the user isn't yelled at before they act.
   const showErrors = attempted[currentPage];
-
   function markAttempted(page: number) {
     setAttempted((a) => (a[page] ? a : a.map((v, i) => (i === page ? true : v))));
   }
-
   function goBack() {
     setCurrentPage((p) => Math.max(0, p - 1));
   }
-
   function goNext() {
     markAttempted(currentPage);
     if (isPageValid(currentPage)) setCurrentPage((p) => Math.min(LAST_PAGE, p + 1));
   }
-
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setAttempted([true, true, true, true]);
-    // By construction earlier pages were valid to reach here, but re-check the
-    // whole form and jump back to the first offending page if anything changed.
     const firstInvalid = PAGES.findIndex((_, i) => !isPageValid(i));
     if (firstInvalid >= 0) {
       setCurrentPage(firstInvalid);
@@ -197,19 +140,11 @@ export function NativeControls() {
     }
     setSubmitted(true);
   }
-
   function resetForm() {
     setSubmitted(false);
     setCurrentPage(0);
     setAttempted([false, false, false, false]);
   }
-
-  // "Prefill demo data" — the native twin of the SurveyJS column's custom
-  // navigation button. Like SurveyJS, it fills only the CURRENT page; but where
-  // SurveyJS narrows one shared object (medicalFormSample) to the page's fields
-  // in a couple of generic lines, here every page needs its own hand-written
-  // branch unpacking each field into its controlled state — another slice of the
-  // per-form code the metrics footer is measuring.
   function prefillForm() {
     const s = medicalFormSample;
     switch (currentPage) {
@@ -243,7 +178,6 @@ export function NativeControls() {
         break;
     }
   }
-
   if (submitted) {
     return (
       <FormCompleted
@@ -252,20 +186,14 @@ export function NativeControls() {
       />
     );
   }
-
   return (
     <Box className="native-controls" sx={{ border: 1, borderColor: "divider", p: 2 }}>
-        {/* Survey title + description — mirrors the SurveyJS column's header,
-            sharing the schema's exact description so only the "(…)" suffix
-            differs between the two forms. */}
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Patient Intake (Native MUI)
         </Typography>
         <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
           {medicalFormJson.description as string}
         </Typography>
-
-        {/* ── Wizard progress (mirrors SurveyJS progressBarType: "pages") ── */}
         <Stepper activeStep={currentPage} alternativeLabel sx={{ mb: 4 }}>
           {PAGES.map((title) => (
             <Step key={title}>
@@ -273,15 +201,10 @@ export function NativeControls() {
             </Step>
           ))}
         </Stepper>
-
-        {/* Per-page title — the SurveyJS pages each carry a title, so the
-            native wizard shows the active page's title too. */}
         <Typography variant="h6" sx={{ mb: 2 }}>
           {PAGES[currentPage]}
         </Typography>
-
         <Box component="form" noValidate onSubmit={handleSubmit}>
-          {/* ── Patient ───────────────────────────────────────────── */}
           {currentPage === 0 && (
             <Stack spacing={3}>
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
@@ -306,7 +229,6 @@ export function NativeControls() {
                     required
                   />
               </Stack>
-
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="flex-start">
                   <TextField
                     id="nf-dob"
@@ -333,7 +255,6 @@ export function NativeControls() {
                     </RadioGroup>
                   </FormControl>
               </Stack>
-
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                   <TextField
                     id="nf-phone"
@@ -361,8 +282,6 @@ export function NativeControls() {
               </Stack>
             </Stack>
           )}
-
-          {/* ── Insurance ─────────────────────────────────────────── */}
           {currentPage === 1 && (
             <Stack spacing={3}>
               <Card variant="outlined">
@@ -415,7 +334,6 @@ export function NativeControls() {
                   </Stack>
                 </CardContent>
               </Card>
-
                 <FormControlLabel
                   control={
                     <Switch
@@ -425,7 +343,6 @@ export function NativeControls() {
                   }
                   label="Do you have secondary insurance?"
                 />
-
               {hasSecondary && (
                 <Card variant="outlined">
                   <CardContent>
@@ -457,8 +374,6 @@ export function NativeControls() {
               )}
             </Stack>
           )}
-
-          {/* ── History ───────────────────────────────────────────── */}
           {currentPage === 2 && (
             <Stack spacing={3}>
               <Card variant="outlined">
@@ -501,7 +416,6 @@ export function NativeControls() {
                 </Table>
               </CardContent>
               </Card>
-
               <Card variant="outlined">
               <CardContent>
                 <FormLabel sx={{ display: "block", mb: 2 }}>Allergies</FormLabel>
@@ -587,7 +501,6 @@ export function NativeControls() {
                 </Button>
               </CardContent>
               </Card>
-
                 <TextField
                   label="Current medications"
                   fullWidth
@@ -598,8 +511,6 @@ export function NativeControls() {
                 />
             </Stack>
           )}
-
-          {/* ── Consent ───────────────────────────────────────────── */}
           {currentPage === 3 && (
             <Stack spacing={2}>
                 <FormControl error={showErrors && errors.consentTreatment}>
@@ -617,7 +528,6 @@ export function NativeControls() {
                     <FormHelperText>Consent to treatment is required.</FormHelperText>
                   )}
                 </FormControl>
-
                 <FormControl error={showErrors && errors.consentPrivacy}>
                   <FormControlLabel
                     required
@@ -633,7 +543,6 @@ export function NativeControls() {
                     <FormHelperText>Acknowledgement is required.</FormHelperText>
                   )}
                 </FormControl>
-
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                   <TextField
                     label="Signature"
@@ -652,8 +561,6 @@ export function NativeControls() {
               </Stack>
             </Stack>
           )}
-
-          {/* ── Wizard navigation ─────────────────────────────────── */}
           <Stack direction="row" spacing={1} sx={{ mt: 3 }}>
             {currentPage > 0 && (
               <Button variant="outlined" type="button" onClick={goBack}>
@@ -669,7 +576,6 @@ export function NativeControls() {
                 Complete
               </Button>
             )}
-            {/* Native twin of the SurveyJS custom "Prefill demo data" button. */}
             <Button variant="outlined" type="button" onClick={prefillForm}>
               Prefill demo data
             </Button>
