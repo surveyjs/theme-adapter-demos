@@ -1,5 +1,4 @@
 "use client";
-
 import {
   useState,
   type FormEvent,
@@ -35,23 +34,18 @@ import Typography from "@mui/material/Typography";
 import { medicalFormJson, medicalFormSample } from "@adapter/schemas";
 import { FormCompleted } from "./FormCompleted";
 import { RequiredMark } from "./RequiredLabel";
-
 type Sex = "f" | "m" | "";
 type Relationship = "self" | "spouse" | "dependent";
 type HistoryAnswer = "yes" | "no" | "unsure";
-
 type Allergy = { allergen: string; severity: string; reaction: string };
-
 const PAGES = ["Patient", "Insurance", "History", "Consent"] as const;
 const LAST_PAGE = PAGES.length - 1;
-
 const HISTORY_ROWS = [
   { value: "diabetes", text: "Diabetes" },
   { value: "hypertension", text: "High blood pressure" },
   { value: "asthma", text: "Asthma" },
   { value: "heart", text: "Heart disease" },
 ] as const;
-
 function maskPhone(raw: string): string {
   const digits = raw.replace(/\D/g, "").replace(/^1/, "").slice(0, 10);
   const area = digits.slice(0, 3);
@@ -64,18 +58,15 @@ function maskPhone(raw: string): string {
   if (line) out += `-${line}`;
   return out;
 }
-
 export function NativeControls() {
   const [currentPage, setCurrentPage] = useState(0);
   const [attempted, setAttempted] = useState([false, false, false, false]);
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDob] = useState("");
   const [sex, setSex] = useState<Sex>("");
   const [phone, setPhone] = useState("");
   const [preferredContact, setPreferredContact] = useState("");
-
   const [carrier, setCarrier] = useState("");
   const [memberId, setMemberId] = useState("");
   const [groupNumber, setGroupNumber] = useState("");
@@ -83,18 +74,14 @@ export function NativeControls() {
   const [hasSecondary, setHasSecondary] = useState(false);
   const [carrier2, setCarrier2] = useState("");
   const [memberId2, setMemberId2] = useState("");
-
   const [history, setHistory] = useState<Record<string, HistoryAnswer>>({});
   const [allergies, setAllergies] = useState<Allergy[]>([]);
   const [currentMedications, setCurrentMedications] = useState("");
-
   const [consentTreatment, setConsentTreatment] = useState(false);
   const [consentPrivacy, setConsentPrivacy] = useState(false);
   const [signature, setSignature] = useState("");
   const [signedDate, setSignedDate] = useState("");
-
   const [submitted, setSubmitted] = useState(false);
-
   function addAllergy() {
     setAllergies((rows) => [...rows, { allergen: "", severity: "", reaction: "" }]);
   }
@@ -106,7 +93,6 @@ export function NativeControls() {
       rows.map((row, i) => (i === index ? { ...row, [field]: value } : row)),
     );
   }
-
   const errors = {
     firstName: !firstName.trim(),
     lastName: !lastName.trim(),
@@ -119,7 +105,6 @@ export function NativeControls() {
     consentTreatment: !consentTreatment,
     consentPrivacy: !consentPrivacy,
   };
-
   function isPageValid(page: number): boolean {
     switch (page) {
       case 0:
@@ -134,22 +119,17 @@ export function NativeControls() {
         return true;
     }
   }
-
   const showErrors = attempted[currentPage];
-
   function markAttempted(page: number) {
     setAttempted((a) => (a[page] ? a : a.map((v, i) => (i === page ? true : v))));
   }
-
   function goBack() {
     setCurrentPage((p) => Math.max(0, p - 1));
   }
-
   function goNext() {
     markAttempted(currentPage);
     if (isPageValid(currentPage)) setCurrentPage((p) => Math.min(LAST_PAGE, p + 1));
   }
-
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setAttempted([true, true, true, true]);
@@ -160,13 +140,11 @@ export function NativeControls() {
     }
     setSubmitted(true);
   }
-
   function resetForm() {
     setSubmitted(false);
     setCurrentPage(0);
     setAttempted([false, false, false, false]);
   }
-
   function prefillForm() {
     const s = medicalFormSample;
     switch (currentPage) {
@@ -200,7 +178,6 @@ export function NativeControls() {
         break;
     }
   }
-
   if (submitted) {
     return (
       <FormCompleted
@@ -209,7 +186,6 @@ export function NativeControls() {
       />
     );
   }
-
   return (
     <Box className="native-controls" sx={{ border: 1, borderColor: "divider", p: 2 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
@@ -218,7 +194,6 @@ export function NativeControls() {
         <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
           {medicalFormJson.description as string}
         </Typography>
-
         <Stepper activeStep={currentPage} alternativeLabel sx={{ mb: 4 }}>
           {PAGES.map((title) => (
             <Step key={title}>
@@ -226,11 +201,9 @@ export function NativeControls() {
             </Step>
           ))}
         </Stepper>
-
         <Typography variant="h6" sx={{ mb: 2 }}>
           {PAGES[currentPage]}
         </Typography>
-
         <Box component="form" noValidate onSubmit={handleSubmit}>
           {currentPage === 0 && (
             <Stack spacing={3}>
@@ -256,7 +229,6 @@ export function NativeControls() {
                     required
                   />
               </Stack>
-
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="flex-start">
                   <TextField
                     id="nf-dob"
@@ -283,7 +255,6 @@ export function NativeControls() {
                     </RadioGroup>
                   </FormControl>
               </Stack>
-
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                   <TextField
                     id="nf-phone"
@@ -311,7 +282,6 @@ export function NativeControls() {
               </Stack>
             </Stack>
           )}
-
           {currentPage === 1 && (
             <Stack spacing={3}>
               <Card variant="outlined">
@@ -364,7 +334,6 @@ export function NativeControls() {
                   </Stack>
                 </CardContent>
               </Card>
-
                 <FormControlLabel
                   control={
                     <Switch
@@ -374,7 +343,6 @@ export function NativeControls() {
                   }
                   label="Do you have secondary insurance?"
                 />
-
               {hasSecondary && (
                 <Card variant="outlined">
                   <CardContent>
@@ -406,7 +374,6 @@ export function NativeControls() {
               )}
             </Stack>
           )}
-
           {currentPage === 2 && (
             <Stack spacing={3}>
               <Card variant="outlined">
@@ -449,7 +416,6 @@ export function NativeControls() {
                 </Table>
               </CardContent>
               </Card>
-
               <Card variant="outlined">
               <CardContent>
                 <FormLabel sx={{ display: "block", mb: 2 }}>Allergies</FormLabel>
@@ -535,7 +501,6 @@ export function NativeControls() {
                 </Button>
               </CardContent>
               </Card>
-
                 <TextField
                   label="Current medications"
                   fullWidth
@@ -546,7 +511,6 @@ export function NativeControls() {
                 />
             </Stack>
           )}
-
           {currentPage === 3 && (
             <Stack spacing={2}>
                 <FormControl error={showErrors && errors.consentTreatment}>
@@ -564,7 +528,6 @@ export function NativeControls() {
                     <FormHelperText>Consent to treatment is required.</FormHelperText>
                   )}
                 </FormControl>
-
                 <FormControl error={showErrors && errors.consentPrivacy}>
                   <FormControlLabel
                     required
@@ -580,7 +543,6 @@ export function NativeControls() {
                     <FormHelperText>Acknowledgement is required.</FormHelperText>
                   )}
                 </FormControl>
-
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                   <TextField
                     label="Signature"
@@ -599,7 +561,6 @@ export function NativeControls() {
               </Stack>
             </Stack>
           )}
-
           <Stack direction="row" spacing={1} sx={{ mt: 3 }}>
             {currentPage > 0 && (
               <Button variant="outlined" type="button" onClick={goBack}>

@@ -1,5 +1,4 @@
 "use client";
-
 import "@/lib/survey-ssr-environment";
 import { useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
@@ -12,11 +11,9 @@ import {
   type SurveyMode,
 } from "@adapter/schemas";
 import { FormCompleted } from "./FormCompleted";
-
 import "survey-core/survey-core.min.css";
 import "survey-core/themes/adapters/mui.min.css";
 import "./SurveyForm.css";
-
 export function SurveyForm({
   schema,
   data,
@@ -38,7 +35,6 @@ export function SurveyForm({
     () => createSurveyModel(schema, { data, mode }),
     [schema, data, mode],
   );
-
   useEffect(() => {
     if (!prefillData) return;
     const id = "sv-prefill-demo";
@@ -59,7 +55,6 @@ export function SurveyForm({
       model.navigationBar.removeActionById(id);
     };
   }, [model, prefillData, prefillLabel]);
-
   const [completed, setCompleted] = useState(false);
   useEffect(() => setCompleted(false), [model]);
   useEffect(() => {
@@ -70,16 +65,13 @@ export function SurveyForm({
     model.onComplete.add(handler);
     return () => model.onComplete.remove(handler);
   }, [model, onComplete]);
-
   const handleEdit = () => {
     model.clear(false);
     setCompleted(false);
   };
-
   if (completed) {
     return <FormCompleted message={completedMessage} onEdit={handleEdit} />;
   }
-
   return (
     <Box sx={{ height: "100%", border: 1, borderColor: "divider", overflow: "hidden" }}>
       <Survey model={model} />

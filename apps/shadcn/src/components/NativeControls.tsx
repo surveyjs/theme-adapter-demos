@@ -1,5 +1,4 @@
 "use client";
-
 import {
   useState,
   type ChangeEvent,
@@ -55,26 +54,20 @@ import {
 } from "@/components/ui/stepper";
 import { FormCompleted } from "./FormCompleted";
 import { RequiredLabel, RequiredMark } from "./RequiredLabel";
-
 type Sex = "f" | "m" | "";
 type Relationship = "self" | "spouse" | "dependent";
 type HistoryAnswer = "yes" | "no" | "unsure";
-
 type Allergy = { allergen: string; severity: string; reaction: string };
-
 const PAGES = ["Patient", "Insurance", "History", "Consent"] as const;
 const LAST_PAGE = PAGES.length - 1;
-
 const HISTORY_ROWS = [
   { value: "diabetes", text: "Diabetes" },
   { value: "hypertension", text: "High blood pressure" },
   { value: "asthma", text: "Asthma" },
   { value: "heart", text: "Heart disease" },
 ] as const;
-
 const CONTACT_METHODS = ["Phone", "Email", "Text message"] as const;
 const SEVERITY_OPTIONS = ["Mild", "Moderate", "Severe"] as const;
-
 function maskPhone(raw: string): string {
   const digits = raw.replace(/\D/g, "").replace(/^1/, "").slice(0, 10);
   const area = digits.slice(0, 3);
@@ -87,18 +80,15 @@ function maskPhone(raw: string): string {
   if (line) out += `-${line}`;
   return out;
 }
-
 export function NativeControls() {
   const [currentPage, setCurrentPage] = useState(0);
   const [attempted, setAttempted] = useState([false, false, false, false]);
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDob] = useState("");
   const [sex, setSex] = useState<Sex>("");
   const [phone, setPhone] = useState("");
   const [preferredContact, setPreferredContact] = useState("");
-
   const [carrier, setCarrier] = useState("");
   const [memberId, setMemberId] = useState("");
   const [groupNumber, setGroupNumber] = useState("");
@@ -106,18 +96,14 @@ export function NativeControls() {
   const [hasSecondary, setHasSecondary] = useState(false);
   const [carrier2, setCarrier2] = useState("");
   const [memberId2, setMemberId2] = useState("");
-
   const [history, setHistory] = useState<Record<string, HistoryAnswer>>({});
   const [allergies, setAllergies] = useState<Allergy[]>([]);
   const [currentMedications, setCurrentMedications] = useState("");
-
   const [consentTreatment, setConsentTreatment] = useState(false);
   const [consentPrivacy, setConsentPrivacy] = useState(false);
   const [signature, setSignature] = useState("");
   const [signedDate, setSignedDate] = useState("");
-
   const [submitted, setSubmitted] = useState(false);
-
   function addAllergy() {
     setAllergies((rows) => [...rows, { allergen: "", severity: "", reaction: "" }]);
   }
@@ -129,7 +115,6 @@ export function NativeControls() {
       rows.map((row, i) => (i === index ? { ...row, [field]: value } : row)),
     );
   }
-
   const errors = {
     firstName: !firstName.trim(),
     lastName: !lastName.trim(),
@@ -142,7 +127,6 @@ export function NativeControls() {
     consentTreatment: !consentTreatment,
     consentPrivacy: !consentPrivacy,
   };
-
   function isPageValid(page: number): boolean {
     switch (page) {
       case 0:
@@ -157,22 +141,17 @@ export function NativeControls() {
         return true;
     }
   }
-
   const showErrors = attempted[currentPage];
-
   function markAttempted(page: number) {
     setAttempted((a) => (a[page] ? a : a.map((v, i) => (i === page ? true : v))));
   }
-
   function goBack() {
     setCurrentPage((p) => Math.max(0, p - 1));
   }
-
   function goNext() {
     markAttempted(currentPage);
     if (isPageValid(currentPage)) setCurrentPage((p) => Math.min(LAST_PAGE, p + 1));
   }
-
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setAttempted([true, true, true, true]);
@@ -183,13 +162,11 @@ export function NativeControls() {
     }
     setSubmitted(true);
   }
-
   function resetForm() {
     setSubmitted(false);
     setCurrentPage(0);
     setAttempted([false, false, false, false]);
   }
-
   function prefillForm() {
     const s = medicalFormSample;
     switch (currentPage) {
@@ -223,7 +200,6 @@ export function NativeControls() {
         break;
     }
   }
-
   if (submitted) {
     return (
       <FormCompleted
@@ -232,7 +208,6 @@ export function NativeControls() {
       />
     );
   }
-
   return (
     <div className="native-controls border p-6">
         <div className="mb-6">
@@ -263,11 +238,9 @@ export function NativeControls() {
               ))}
             </StepperList>
           </Stepper>
-
           <h3 className="text-2xl font-semibold leading-none tracking-tight">
             {PAGES[currentPage]}
           </h3>
-
         <form noValidate onSubmit={handleSubmit}>
           {currentPage === 0 && (
             <FieldGroup>
@@ -297,7 +270,6 @@ export function NativeControls() {
                     )}
                   </Field>
               </FieldGroup>
-
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
                   <Field data-invalid={showErrors && errors.dob}>
                     <RequiredLabel htmlFor="nf-dob">Date of birth</RequiredLabel>
@@ -329,7 +301,6 @@ export function NativeControls() {
                     </RadioGroup>
                   </Field>
               </FieldGroup>
-
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
                   <Field>
                     <FieldLabel htmlFor="nf-phone">Mobile phone</FieldLabel>
@@ -370,7 +341,6 @@ export function NativeControls() {
               </FieldGroup>
             </FieldGroup>
           )}
-
           {currentPage === 1 && (
             <FieldGroup>
               <Card>
@@ -440,7 +410,6 @@ export function NativeControls() {
                   </FieldGroup>
                 </CardContent>
               </Card>
-
                 <Field orientation="horizontal">
                   <Switch
                     id="nf-secondary"
@@ -451,7 +420,6 @@ export function NativeControls() {
                     Do you have secondary insurance?
                   </FieldLabel>
                 </Field>
-
               {hasSecondary && (
                 <Card>
                   <CardHeader>
@@ -489,7 +457,6 @@ export function NativeControls() {
               )}
             </FieldGroup>
           )}
-
           {currentPage === 2 && (
             <FieldGroup>
               <Card>
@@ -537,7 +504,6 @@ export function NativeControls() {
                   </Table>
                 </CardContent>
               </Card>
-
               <Card>
               <CardHeader>
                   <FieldLabel>
@@ -636,7 +602,6 @@ export function NativeControls() {
               </Field>
               </CardContent>
               </Card>
-
                 <Field>
                   <FieldLabel htmlFor="nf-meds">Current medications</FieldLabel>
                   <Textarea
@@ -648,7 +613,6 @@ export function NativeControls() {
                 </Field>
             </FieldGroup>
           )}
-
           {currentPage === 3 && (
             <FieldGroup>
                 <Field
@@ -669,7 +633,6 @@ export function NativeControls() {
                     )}
                   </FieldContent>
                 </Field>
-
                 <Field
                   orientation="horizontal"
                   data-invalid={showErrors && errors.consentPrivacy}
@@ -688,7 +651,6 @@ export function NativeControls() {
                     )}
                   </FieldContent>
                 </Field>
-
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
                 <Field>
                   <FieldLabel htmlFor="nf-signature">Signature</FieldLabel>
@@ -699,7 +661,6 @@ export function NativeControls() {
                     onChange={(e) => setSignature(e.target.value)}
                   />
                 </Field>
-
                 <Field>
                   <FieldLabel htmlFor="nf-signed">Date</FieldLabel>
                   <Input
@@ -712,7 +673,6 @@ export function NativeControls() {
               </FieldGroup>
             </FieldGroup>
           )}
-
           <Field className="mt-6" orientation="horizontal">
             {currentPage > 0 && (
               <Button type="button" variant="outline" onClick={goBack}>
