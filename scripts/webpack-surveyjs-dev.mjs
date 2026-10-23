@@ -1,8 +1,8 @@
 /**
  * Local SurveyJS resolution for the demo apps.
  *
- * The root package.json pins the survey-* packages to the published `next`
- * dist-tag, so by default `next build` / `next start` consume the npm packages.
+ * The root package.json depends on the published survey-* packages, so by
+ * default `next build` / `next start` consume the npm packages.
  * `next dev` aliases survey-* imports to the local V3 `build/` folders when
  * those checkouts are present. `next build` does the same when `SURVEYJS_LIBV3`
  * is set (shell or repo-root `.env` / `.env.local`), so production builds can
