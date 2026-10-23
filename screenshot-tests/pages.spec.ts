@@ -1,4 +1,4 @@
-import { test, compareScreenshot } from "./support/test";
+import { test, expect, compareScreenshot } from "./support/test";
 
 /**
  * `maxDiffPixels` covers a long-standing 2-pixel flake on this page (seen on
@@ -214,6 +214,24 @@ test("builder designer", async ({ page, forEachTheme, waitForStableUI }) => {
       await page.locator(CREATOR).first().waitFor({ state: "visible", timeout: 60_000 });
       await waitForStableUI(2_500);
       await compareScreenshot(page, ".svc-creator", name("builder-designer"));
+
+      // "Collapse All" folds pages as well, which hides the questions.
+      // Collapse each question and leave the pages open. The control is in the
+      // DOM but hidden until hover, so click it directly.
+      const questionCollapseButtons = page.locator(
+        ".svc-question__top-actions button[title='Collapse']"
+      );
+      await questionCollapseButtons.first().waitFor({ state: "attached" });
+      await questionCollapseButtons.evaluateAll((buttons) => {
+        for (let i = buttons.length - 1; i >= 0; i--) {
+          (buttons[i] as HTMLButtonElement).click();
+        }
+      });
+      await expect(questionCollapseButtons).toHaveCount(0);
+      await expect(page.locator(".svc-page__content--collapsed")).toHaveCount(0);
+      await expect(page.locator(".svc-question__adorner--collapsed").first()).toBeVisible();
+      await waitForStableUI(2_500);
+      await compareScreenshot(page, ".svc-creator", name("builder-designer-collapsed"));
     },
     { timeoutPerTheme: 150_000 }
   );
