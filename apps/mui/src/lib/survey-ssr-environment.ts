@@ -1,4 +1,7 @@
-import { settings, type ISurveyEnvironment } from "survey-core";
+import { settings, setupThemeAdapter, type ISurveyEnvironment } from "survey-core";
+
+// Adapter defaults must be applied before any model or Creator is constructed.
+setupThemeAdapter("mui");
 
 /**
  * survey-react-ui's dropdown/tagbox `renderFilterInput` destructures
