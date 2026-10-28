@@ -46,10 +46,10 @@
     "next": "^15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "survey-core": "^3.2.2",
-    "survey-creator-core": "^3.2.2",
-    "survey-creator-react": "^3.2.2",
-    "survey-react-ui": "^3.2.2"
+    "survey-core": "latest",
+    "survey-creator-core": "latest",
+    "survey-creator-react": "latest",
+    "survey-react-ui": "latest"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
