@@ -16,6 +16,7 @@ import {
   waitForStableUI as waitForStableUIOnPage,
   type CompareScreenshotOptions,
 } from "./capture";
+import { assertNoExternalRequests } from "./network";
 
 /** Time budget granted per theme×mode cell when a test walks the whole matrix. */
 const DEFAULT_THEME_TIMEOUT_MS = 45_000;
@@ -103,6 +104,10 @@ export const test = base.extend<DemoFixtures>({
         }
       }
     });
+
+    // After the body, so a request that has no fixture fails the test even
+    // when nothing on screen showed it.
+    assertNoExternalRequests(page);
   },
 
   waitForStableUI: async ({ page }, use) => {

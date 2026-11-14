@@ -1,15 +1,19 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import type { ColorMode } from "../apps.config";
+import { routeExternalRequests } from "./network";
 
 /**
  * Deterministic conditions for screenshots: fixed light-mode storage, no
- * animations, no Next dev chrome, fonts loaded, network quiet.
+ * animations, no Next dev chrome, no internet, fonts loaded, network quiet.
  *
  * The font part is the fiddly one — see `waitForFonts`. Bootswatch reaches its
  * Google font through an `@import` *inside* the theme stylesheet, so the
  * `@font-face` rules land a whole network hop after the theme itself, and
  * `&display=swap` paints the fallback meanwhile. Capturing in that window bakes
- * fallback metrics into the baseline with the real glyphs drawn on top.
+ * fallback metrics into the baseline with the real glyphs drawn on top. The
+ * Google stylesheets and font files themselves come from
+ * `screenshot-tests/fixtures/fonts/` (support/network.ts), so every run renders
+ * the same bytes.
  */
 
 /**
@@ -82,8 +86,12 @@ function disableSurveyAnimation(): void {
   });
 }
 
-/** Must run before the first navigation — the apps read storage pre-paint. */
+/**
+ * Must run before the first navigation — the apps read storage pre-paint, and
+ * the first page already requests webfonts and images.
+ */
 export async function preparePage(page: Page): Promise<void> {
+  await routeExternalRequests(page);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(disableSurveyAnimation);
   await page.addInitScript(
@@ -148,8 +156,10 @@ export async function ensureColorMode(page: Page, mode: ColorMode): Promise<void
  *     trivially true in the gap before a lazily-used weight has even started.
  *     Upstream shipped that check and then reverted it (commit e1171a9af).
  *
- * A font that never arrives times out here, which fails the test — better than
- * quietly recording a fallback-font baseline.
+ * A face that fails to load (`status === "error"`: a missing fixture file, a
+ * CORS or decode error) throws here naming every such face, and an `@import`
+ * that never arrives times out in step A. Both fail the test, which beats
+ * quietly comparing a fallback-font render.
  */
 export async function waitForFonts(page: Page): Promise<void> {
   await page.waitForFunction(
@@ -181,13 +191,27 @@ export async function waitForFonts(page: Page): Promise<void> {
     { timeout: FONT_IMPORT_TIMEOUT_MS, polling: 250 }
   );
 
-  await page.evaluate(async () => {
+  const failed = await page.evaluate(async () => {
+    const failures: Array<string> = [];
     const pending: Array<Promise<unknown>> = [];
-    // Per-face catch: `unicode-range` subsets can fail one at a time.
-    document.fonts.forEach((face) => pending.push(face.load().catch(() => undefined)));
+    // Per-face catch: `unicode-range` subsets fail one at a time, and every
+    // failure should be in the message, not only the first.
+    document.fonts.forEach((face) =>
+      pending.push(
+        face.load().catch(() => {
+          failures.push(
+            `"${face.family}" weight ${face.weight} style ${face.style} unicode-range ${face.unicodeRange}`
+          );
+        })
+      )
+    );
     await Promise.all(pending);
     await document.fonts.ready;
+    return failures;
   });
+  if (failed.length > 0) {
+    throw new Error(`Webfonts failed to load (status "error"):\n  ${failed.join("\n  ")}`);
+  }
 }
 
 /** Network quiet, fonts loaded, then a short pause for the final repaint. */
