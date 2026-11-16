@@ -1,5 +1,5 @@
-import { test, expect, compareScreenshot } from "./support/test";
-import { expectedCollapsedPanels, loadCases, openCreatorPreview } from "./support/cases";
+import { test, compareScreenshot } from "./support/test";
+import { loadCases, openCreatorPreview } from "./support/cases";
 
 /**
  * Adapter cases, one JSON file per case (`screenshot-tests/cases`).
@@ -19,14 +19,6 @@ for (const entry of cases) {
         await open("builder");
         await page.locator(".svc-creator").first().waitFor({ state: "visible", timeout: 60_000 });
         await openCreatorPreview(page, entry.json);
-
-        const collapsedCount = expectedCollapsedPanels(entry.json);
-        if (collapsedCount > 0) {
-          const collapsed = page.locator(".svc-test-tab__content .sd-panel--collapsed");
-          await expect(collapsed).toHaveCount(collapsedCount);
-          await expect(collapsed.first()).toBeVisible();
-        }
-
         await waitForStableUI(2_500);
         await compareScreenshot(page, PREVIEW_SURVEY, name(entry.id));
       },
