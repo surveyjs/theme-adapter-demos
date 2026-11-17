@@ -54,3 +54,30 @@ export async function openCreatorPreview(page: Page, json: unknown): Promise<voi
   await page.getByRole("tab", { name: "Preview" }).click();
   await page.locator(".svc-test-tab__content .sd-root-modern").waitFor({ state: "visible" });
 }
+
+/**
+ * Matrix tables scroll inside `.sd-table-wrapper`. Wait until overflow exists,
+ * then park the thumb in the middle so sticky edges and the scroller chrome
+ * show up in the baseline. Throws if the scroll did not stick — silent no-ops
+ * produced left-aligned baselines that looked scrolled-ready but weren't.
+ */
+export async function scrollTableWrapperToMiddle(page: Page): Promise<void> {
+  const wrapper = page.locator(".svc-test-tab__content .sd-table-wrapper").first();
+  await wrapper.waitFor({ state: "visible" });
+  await page.waitForFunction(() => {
+    const el = document.querySelector(
+      ".svc-test-tab__content .sd-table-wrapper"
+    ) as HTMLElement | null;
+    return !!el && el.scrollWidth - el.clientWidth > 1;
+  });
+  const result = await wrapper.evaluate((el) => {
+    const max = el.scrollWidth - el.clientWidth;
+    el.scrollLeft = max / 2;
+    return { max, left: el.scrollLeft };
+  });
+  if (result.max <= 1 || result.left < result.max / 4) {
+    throw new Error(
+      `scrollTableWrapperToMiddle failed: scrollLeft=${result.left}, max=${result.max}`
+    );
+  }
+}
