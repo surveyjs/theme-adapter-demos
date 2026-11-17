@@ -1,4 +1,4 @@
-import { test, compareScreenshot } from "./support/test";
+import { testEachTheme, compareScreenshot } from "./support/test";
 import { loadCases, openCreatorPreview } from "./support/cases";
 
 /**
@@ -13,16 +13,11 @@ const PREVIEW_SURVEY = ".svc-test-tab__content .sd-root-modern";
 const cases = loadCases();
 
 for (const entry of cases) {
-  test(entry.id, async ({ page, forEachTheme, waitForStableUI }) => {
-    await forEachTheme(
-      async ({ open, name }) => {
-        await open("builder");
-        await page.locator(".svc-creator").first().waitFor({ state: "visible", timeout: 60_000 });
-        await openCreatorPreview(page, entry.json);
-        await waitForStableUI(2_500);
-        await compareScreenshot(page, PREVIEW_SURVEY, name(entry.id));
-      },
-      { timeoutPerTheme: 120_000 }
-    );
+  testEachTheme(entry.id, async ({ page, waitForStableUI, open, name }) => {
+    await open("builder");
+    await page.locator(".svc-creator").first().waitFor({ state: "visible", timeout: 60_000 });
+    await openCreatorPreview(page, entry.json);
+    await waitForStableUI(2_500);
+    await compareScreenshot(page, PREVIEW_SURVEY, name(entry.id));
   });
 }
