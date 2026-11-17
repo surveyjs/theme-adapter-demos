@@ -1,13 +1,15 @@
 import { resolve } from "node:path";
 import { defineConfig, devices } from "@playwright/test";
-import { baseUrl, selectedApps } from "./screenshot-tests/apps.config";
+import { APPS, appTag, baseUrl, selectedApps } from "./screenshot-tests/apps.config";
 
 /**
  * Visual regression across the three demo apps.
  *
- * One project per app. Themes and color modes are walked at runtime by the
- * `forEachTheme` fixture (support/test.ts), which also builds the baseline
- * name, so specs stay classic per-page tests.
+ * One project per app. `testEachTheme` (support/test.ts) registers one test
+ * per page × color mode × theme, and builds the baseline name. Tests are
+ * collected before the project is known, so every selected app's cells are
+ * registered in every project, each under its app's tag (`@bootstrap`), and
+ * each project's `grepInvert` drops the other apps' tags.
  *
  * `E2E_APPS` (set via cross-env in the npm scripts) picks which apps run, so
  * only their production servers get started.
@@ -22,7 +24,7 @@ export default defineConfig({
   snapshotPathTemplate: "screenshot-tests/screenshots/{projectName}/{arg}{ext}",
   outputDir: "./test-results",
 
-  // Tests that walk the theme matrix raise this themselves via forEachTheme.
+  // Per test, so per cell. Builder cells raise it via testEachTheme.
   timeout: 120_000,
   expect: {
     timeout: 30_000,
@@ -74,6 +76,12 @@ export default defineConfig({
   projects: apps.map((app) => ({
     name: app.id,
     metadata: { appId: app.id },
+    // `grepInvert` rather than `grep`: a test without an app tag still runs in
+    // every project instead of in none. `(?!\S)` rather than `\b`, so that
+    // `@bootstrap` would not also drop a future `@bootstrap-5`.
+    grepInvert: APPS.filter((other) => other.id !== app.id).map(
+      (other) => new RegExp(`${appTag(other.id)}(?!\\S)`)
+    ),
     use: { baseURL: baseUrl(app) },
   })),
 

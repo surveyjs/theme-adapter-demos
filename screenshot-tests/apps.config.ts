@@ -83,6 +83,13 @@ export function baseUrl(app: AppConfig): string {
   return `http://localhost:${app.port}`;
 }
 
+// Every selected app's cells are registered in every project (the project is
+// not known while tests are collected); each project in playwright.config.ts
+// drops the other apps' cells by this tag.
+export function appTag(appId: string): string {
+  return `@${appId}`;
+}
+
 /** Same shape as `themedPath` in @adapter/schemas: `/theme/page` or `/page`. */
 export function routeFor(theme: string | null, page: PageId): string {
   return theme ? `/${theme}/${page}` : `/${page}`;

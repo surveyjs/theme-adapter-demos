@@ -1,9 +1,10 @@
-import { test as base, expect } from "@playwright/test";
+import { test as base, expect, type Page } from "@playwright/test";
 import {
+  appTag,
   baseUrl,
   COLOR_MODES,
-  getApp,
   routeFor,
+  selectedApps,
   themeMatrix,
   type ColorMode,
   type PageId,
@@ -17,9 +18,6 @@ import {
   type CompareScreenshotOptions,
 } from "./capture";
 import { assertNoExternalRequests } from "./network";
-
-/** Time budget granted per theme×mode cell when a test walks the whole matrix. */
-const DEFAULT_THEME_TIMEOUT_MS = 45_000;
 
 /** One cell of the theme × color-mode matrix. */
 export type ThemeRun = {
@@ -37,19 +35,11 @@ export type ThemeRun = {
 };
 
 type DemoFixtures = {
-  /** App id from the current Playwright project (`bootstrap` / `shadcn` / `mui`). */
-  appId: string;
-  /**
-   * Run `body` once per theme × color mode of the current app, each as its own
-   * reporter step. Raises the test timeout to `timeoutPerTheme` × cell count.
-   */
-  forEachTheme: (
-    body: (run: ThemeRun) => Promise<void>,
-    options?: { timeoutPerTheme?: number }
-  ) => Promise<void>;
   /** Wait for network/fonts after an interaction. */
   waitForStableUI: (ms?: number) => Promise<void>;
 };
+
+export type ThemeCell = ThemeRun & DemoFixtures & { page: Page };
 
 function readAppId(testInfo: { project: { metadata?: Record<string, unknown> } }): string {
   const appId = testInfo.project.metadata?.appId;
@@ -62,33 +52,64 @@ function readAppId(testInfo: { project: { metadata?: Record<string, unknown> } }
 }
 
 /**
- * Classic Playwright `test` extended with demo helpers.
- * The app comes from the Playwright project, the themes from apps.config —
- * specs never build the matrix themselves.
+ * Classic Playwright `test` extended with demo helpers. Every test gets a fresh
+ * page with the deterministic setup of `preparePage`, and fails at teardown if
+ * a request left localhost without a fixture.
  */
 export const test = base.extend<DemoFixtures>({
-  appId: async ({}, use, testInfo) => {
-    await use(readAppId(testInfo));
-  },
-
-  forEachTheme: async ({ page, appId }, use, testInfo) => {
+  page: async ({ page }, use) => {
     // Must precede the first navigation — the apps read storage pre-paint.
     await preparePage(page);
+    await use(page);
+    // After the body, so a request that has no fixture fails the test even
+    // when nothing on screen showed it.
+    assertNoExternalRequests(page);
+  },
 
-    const app = getApp(appId);
-    const themes = themeMatrix(app);
+  waitForStableUI: async ({ page }, use) => {
+    await use(async (ms) => {
+      await waitForStableUIOnPage(page, ms);
+    });
+  },
+});
 
-    await use(async (body, options = {}) => {
-      const perTheme = options.timeoutPerTheme ?? DEFAULT_THEME_TIMEOUT_MS;
-      testInfo.setTimeout(themes.length * COLOR_MODES.length * perTheme);
+// Registers one test per app × color mode × theme, titled
+// `<title> › <mode> › <theme>` (mui: `<title> › <mode>`), so a retry, a shard
+// or a worker handles a single cell and `-g` can pick a page, mode or theme.
+// `-g` matches substrings: `-g dark` also selects bootstrap's `darkly`, use
+// `-g "dark( ›|$)"` for the dark mode.
+// The apps come from apps.config, so specs never build the matrix themselves.
+export function testEachTheme(
+  title: string,
+  body: (cell: ThemeCell) => Promise<void>,
+  options: { timeout?: number } = {}
+): void {
+  for (const app of selectedApps()) {
+    // The describe keeps titles unique within a file: bootstrap and shadcn
+    // both have a `default` theme.
+    test.describe(app.id, { tag: appTag(app.id) }, () => {
+      if (options.timeout) test.describe.configure({ timeout: options.timeout });
 
       for (const mode of COLOR_MODES) {
-        // Keeps `prefers-color-scheme` in step with the in-app toggle.
-        await page.emulateMedia({ colorScheme: mode });
+        for (const theme of themeMatrix(app)) {
+          const cellTitle = [title, mode, theme].filter(Boolean).join(" › ");
 
-        for (const theme of themes) {
-          await base.step(`${mode} › ${theme ?? "default"}`, async () => {
+          test(cellTitle, async ({ page, waitForStableUI }, testInfo) => {
+            // The baseline folder is the project name: a cell that leaked into
+            // another app's project would compare against the wrong baselines.
+            const projectApp = readAppId(testInfo);
+            if (projectApp !== app.id) {
+              throw new Error(
+                `Cell of app "${app.id}" ran in project "${projectApp}": check the project's grepInvert.`
+              );
+            }
+
+            // Keeps `prefers-color-scheme` in step with the in-app toggle.
+            await page.emulateMedia({ colorScheme: mode });
+
             await body({
+              page,
+              waitForStableUI,
               theme,
               mode,
               open: async (pageId) => {
@@ -104,18 +125,8 @@ export const test = base.extend<DemoFixtures>({
         }
       }
     });
-
-    // After the body, so a request that has no fixture fails the test even
-    // when nothing on screen showed it.
-    assertNoExternalRequests(page);
-  },
-
-  waitForStableUI: async ({ page }, use) => {
-    await use(async (ms) => {
-      await waitForStableUIOnPage(page, ms);
-    });
-  },
-});
+  }
+}
 
 export { expect, compareScreenshot };
 export type { CompareScreenshotOptions };
