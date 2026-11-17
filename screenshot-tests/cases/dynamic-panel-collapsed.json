@@ -1,0 +1,31 @@
+{
+  "pages": [
+    {
+      "name": "page1",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "household",
+          "title": "Household members",
+          "templateTitle": "Member {panelIndex}",
+          "panelCount": 3,
+          "panelsState": "collapsed",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "fullName",
+              "title": "Full name",
+              "isRequired": true
+            },
+            {
+              "type": "text",
+              "name": "birthDate",
+              "inputType": "date",
+              "title": "Date of birth"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
