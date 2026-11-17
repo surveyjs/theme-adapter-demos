@@ -53,4 +53,11 @@ export async function openCreatorPreview(page: Page, json: unknown): Promise<voi
 
   await page.getByRole("tab", { name: "Preview" }).click();
   await page.locator(".svc-test-tab__content .sd-root-modern").waitFor({ state: "visible" });
+
+  // Applying the JSON sets the creator's state to "modified", which shows a
+  // "Modified" toast over the preview for `settings.notifications.lifetime`
+  // (2 s). The baselines were captured after it had gone.
+  const toast = page.locator(".svc-notifier--shown", { hasText: "Modified" });
+  await toast.waitFor({ state: "visible" });
+  await toast.waitFor({ state: "hidden" });
 }

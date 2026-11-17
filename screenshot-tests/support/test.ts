@@ -14,7 +14,8 @@ import {
   ensureColorMode,
   openRoute,
   preparePage,
-  waitForStableUI as waitForStableUIOnPage,
+  waitForCreatorReady,
+  waitForSettledLayout,
   type CompareScreenshotOptions,
 } from "./capture";
 import { assertNoExternalRequests } from "./network";
@@ -34,12 +35,7 @@ export type ThemeRun = {
   name: (basename: string) => string;
 };
 
-type DemoFixtures = {
-  /** Wait for network/fonts after an interaction. */
-  waitForStableUI: (ms?: number) => Promise<void>;
-};
-
-export type ThemeCell = ThemeRun & DemoFixtures & { page: Page };
+export type ThemeCell = ThemeRun & { page: Page };
 
 function readAppId(testInfo: { project: { metadata?: Record<string, unknown> } }): string {
   const appId = testInfo.project.metadata?.appId;
@@ -52,11 +48,11 @@ function readAppId(testInfo: { project: { metadata?: Record<string, unknown> } }
 }
 
 /**
- * Classic Playwright `test` extended with demo helpers. Every test gets a fresh
- * page with the deterministic setup of `preparePage`, and fails at teardown if
- * a request left localhost without a fixture.
+ * Classic Playwright `test` with the demo setup. Every test gets a fresh page
+ * with the deterministic setup of `preparePage`, and fails at teardown if a
+ * request left localhost without a fixture.
  */
-export const test = base.extend<DemoFixtures>({
+export const test = base.extend({
   page: async ({ page }, use) => {
     // Must precede the first navigation — the apps read storage pre-paint.
     await preparePage(page);
@@ -64,12 +60,6 @@ export const test = base.extend<DemoFixtures>({
     // After the body, so a request that has no fixture fails the test even
     // when nothing on screen showed it.
     assertNoExternalRequests(page);
-  },
-
-  waitForStableUI: async ({ page }, use) => {
-    await use(async (ms) => {
-      await waitForStableUIOnPage(page, ms);
-    });
   },
 });
 
@@ -94,7 +84,7 @@ export function testEachTheme(
         for (const theme of themeMatrix(app)) {
           const cellTitle = [title, mode, theme].filter(Boolean).join(" › ");
 
-          test(cellTitle, async ({ page, waitForStableUI }, testInfo) => {
+          test(cellTitle, async ({ page }, testInfo) => {
             // The baseline folder is the project name: a cell that leaked into
             // another app's project would compare against the wrong baselines.
             const projectApp = readAppId(testInfo);
@@ -109,12 +99,11 @@ export function testEachTheme(
 
             await body({
               page,
-              waitForStableUI,
               theme,
               mode,
               open: async (pageId) => {
                 await openRoute(page, `${baseUrl(app)}${routeFor(theme, pageId)}`);
-                await ensureColorMode(page, mode);
+                await ensureColorMode(page, mode, { tooltip: app.modeToggleTooltip ?? false });
               },
               name: (basename) =>
                 [theme, mode === "dark" ? "dark" : null, basename]
@@ -128,5 +117,5 @@ export function testEachTheme(
   }
 }
 
-export { expect, compareScreenshot };
+export { expect, compareScreenshot, waitForCreatorReady, waitForSettledLayout };
 export type { CompareScreenshotOptions };
