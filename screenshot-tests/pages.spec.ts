@@ -1,4 +1,10 @@
-import { testEachTheme, expect, compareScreenshot } from "./support/test";
+import {
+  testEachTheme,
+  expect,
+  compareScreenshot,
+  waitForCreatorReady,
+  waitForSettledLayout,
+} from "./support/test";
 
 /**
  * `maxDiffPixels` covers a long-standing 2-pixel flake on this page (seen on
@@ -179,7 +185,10 @@ testEachTheme("checkout overview", async ({ page, open, name, theme }) => {
 
   await nextButton.click();
   await completeButton.click();
-  await page.waitForTimeout(500);
+  // The survey shows the error and focuses that question once any scroll has
+  // settled (survey-core's `focusElement`). The capture shows both.
+  await expect(page.locator(".sd-question--error").first()).toBeVisible();
+  await page.waitForFunction(() => !!document.activeElement?.closest(".sd-question--error"));
   await compareScreenshot(page, SURVEYJS, name("checkout-4-error"), {
     maxDiffPixels: MIN_DIFF_PIXELS,
   });
@@ -197,10 +206,10 @@ testEachTheme("records overview", async ({ page, open, name }) => {
   await compareScreenshot(page, ".records-page", name("records-1"));
 });
 
-testEachTheme("builder designer", async ({ page, waitForStableUI, open, name }) => {
+testEachTheme("builder designer", async ({ page, open, name }) => {
   await open("builder");
   await page.locator(CREATOR).first().waitFor({ state: "visible", timeout: 60_000 });
-  await waitForStableUI(2_500);
+  await waitForCreatorReady(page);
   await compareScreenshot(page, ".svc-creator", name("builder-designer"));
 
   // "Collapse All" folds pages as well, which hides the questions.
@@ -218,7 +227,19 @@ testEachTheme("builder designer", async ({ page, waitForStableUI, open, name }) 
   await expect(questionCollapseButtons).toHaveCount(0);
   await expect(page.locator(".svc-page__content--collapsed")).toHaveCount(0);
   await expect(page.locator(".svc-question__adorner--collapsed").first()).toBeVisible();
-  await waitForStableUI(2_500);
+  // Rows the designer has not rendered yet (lazy rendering) are skeletons, and
+  // it renders those that come into view after a 50 ms debounce. Below the fold
+  // they stay skeletons, in the baselines too.
+  await page.waitForFunction(
+    () =>
+      ![...document.querySelectorAll(".svc-creator .sv-skeleton-element")].some((el) => {
+        const rect = el.getBoundingClientRect();
+        return rect.height > 0 && rect.bottom > 0 && rect.top < window.innerHeight;
+      }),
+    undefined,
+    { polling: "raf" }
+  );
+  await waitForSettledLayout(page);
   await compareScreenshot(page, ".svc-creator", name("builder-designer-collapsed"));
 }, { timeout: 150_000 });
 

@@ -30,6 +30,12 @@ export interface AppConfig {
   readonly workspace: string;
   /** URL theme slugs; empty means the app has no `[theme]` segment. */
   readonly themes: readonly string[];
+  /**
+   * The light/dark toggle opens a tooltip on hover (mui: `<Tooltip>` in
+   * `apps/mui/src/components/ThemeSwitcher.tsx`). The mouse stays on the toggle
+   * after the click, and the baselines show the tooltip open.
+   */
+  readonly modeToggleTooltip?: boolean;
 }
 
 export const APPS: readonly AppConfig[] = [
@@ -70,6 +76,7 @@ export const APPS: readonly AppConfig[] = [
     port: 3002,
     workspace: "@adapter/mui",
     themes: [],
+    modeToggleTooltip: true,
   },
 ] as const;
 
