@@ -1,4 +1,4 @@
-import { testEachTheme, compareScreenshot } from "./support/test";
+import { testEachTheme, compareScreenshot, waitForCreatorReady } from "./support/test";
 
 const ALL_QUESTIONS_FLAKE_BUDGET = 10;
 /** The radio-decorator arc artefact, same capture as desktop — see pages.spec.ts. */
@@ -36,12 +36,12 @@ testEachTheme("mobile records", async ({ page, open, name }) => {
   await compareScreenshot(page, ".records-page", name("mobile-records-1"));
 });
 
-testEachTheme("mobile builder", async ({ page, waitForStableUI, open, name }) => {
+testEachTheme("mobile builder", async ({ page, open, name }) => {
   await page.setViewportSize({ width: 400, height: 900 });
 
   await open("builder");
   await page.locator(CREATOR).first().waitFor({ state: "visible", timeout: 60_000 });
-  await waitForStableUI(2_500);
+  await waitForCreatorReady(page);
   await compareScreenshot(page, ".svc-creator", name("mobile-builder-designer"));
 }, { timeout: 150_000 });
 
