@@ -19,6 +19,10 @@
               "name": "column3",
               "title": "Column 3",
               "cellType": "rating"
+            },
+            {
+              "name": "column4",
+              "title": "Column 4"
             }
           ],
           "detailElements": [
