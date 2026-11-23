@@ -1,0 +1,33 @@
+{
+  "pages": [
+    {
+      "name": "page1",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "question1",
+          "defaultValue": [
+            {
+              "question2": "1",
+              "question3": "2"
+            },
+            {
+              "question2": "3",
+              "question3": "4"
+            }
+          ],
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "question2"
+            },
+            {
+              "type": "text",
+              "name": "question3"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
